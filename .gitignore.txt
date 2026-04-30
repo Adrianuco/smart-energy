@@ -1,0 +1,72 @@
+# =========================
+# GENERAL
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# IDEs (IntelliJ / Android Studio)
+# =========================
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# =========================
+# ANDROID
+# =========================
+# Gradle
+.gradle/
+build/
+
+# Local config
+local.properties
+
+# Generated files
+captures/
+.externalNativeBuild/
+.cxx/
+
+# APKs / outputs
+*.apk
+*.ap_
+*.aab
+
+# Logs
+*.log
+
+# =========================
+# KOTLIN / JAVA
+# =========================
+*.class
+*.jar
+*.war
+*.ear
+
+# =========================
+# SPRING BOOT / BACKEND
+# =========================
+target/
+*.log
+
+# =========================
+# DATABASE / ENV
+# =========================
+.env
+.env.*
+*.db
+*.sqlite
+
+# =========================
+# POSTGRESQL / DATABASE
+# =========================
+*.sql.backup
+*.dump
+*.bak
+
+# =========================
+# OS / MISC
+# =========================
+*.swp
+*.swo
