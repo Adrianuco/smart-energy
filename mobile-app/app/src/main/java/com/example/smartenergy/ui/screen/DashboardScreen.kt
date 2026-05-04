@@ -13,11 +13,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,122 +32,153 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.smartenergy.ui.components.ConsumoGraph
 
-@Preview
 @Composable
-fun DashboardScreen() {
+fun DashboardScreen(onVerEdificiosClick: () -> Unit) {
     var consumo by remember { mutableStateOf(250) }
-    var eficiencia by remember {mutableStateOf(0.8f)}
-    var alertas by remember {mutableStateOf(5)}
+    var eficiencia by remember { mutableStateOf(0.8f) }
+    var alertas by remember { mutableStateOf(5) }
+
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top=200.dp, bottom=100.dp ,start=30.dp, end=30.dp)
+            .padding(top = 140.dp, start = 20.dp, end = 20.dp)
     ) {
+        Text(
+            "Dashboard",
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF1C1B1F)
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+
         Card(
-        modifier = Modifier
-            .fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp),
+            shape = RoundedCornerShape(24.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White)
         ) {
             Column(
                 modifier = Modifier
                     .padding(20.dp)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center
             ) {
-                Text("Consumo")
+                Text("Consumo Actual",
+                    color = Color.Gray,
+                    style = MaterialTheme.typography.labelLarge
+                )
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    "$consumo kWh", fontSize = 36.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color(0xFF6750A4)
+                )
 
-                Text("$consumo kWh", fontSize = 24.sp)
-
-                Spacer(modifier = Modifier.height(40.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     LinearProgressIndicator(
-                        progress = {eficiencia},
+                        progress = { eficiencia },
+                        modifier = Modifier.weight(1f).height(8.dp).clip(CircleShape),
+                        color = Color(0xFF6750A4),
+                        trackColor = Color(0xFFEADDFF)
                     )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Text("${eficiencia * 100}%")
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Text("${(eficiencia * 100).toInt()}%", fontWeight = FontWeight.Bold)
                 }
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                Text("Eficiencia")
+                Text(
+                    "Eficiencia energética",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray
+                )
             }
-
         }
 
         Spacer(modifier = Modifier.height(80.dp))
+
         Row(
-            modifier = Modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Column(
-                modifier = Modifier.fillMaxHeight(),
-                verticalArrangement = Arrangement.SpaceEvenly
-                , horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Card(
-                    modifier = Modifier
-                        .width(120.dp)
-                        .height(60.dp),
-
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFFFD8E4))
                 ) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxSize(),
+                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceEvenly
+                        horizontalArrangement = Arrangement.Center
                     ) {
-                        Badge(
-                            modifier = Modifier.size(30.dp)
-                        ) {
-                            Text("$alertas")
-                        }
-                        Text("Alertas")
+                        Badge(containerColor = Color.Red) { Text("$alertas", color = Color.White) }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Alertas", fontWeight = FontWeight.Medium)
                     }
                 }
 
-                Spacer(modifier = Modifier.height(40.dp))
-
                 Button(
-                    modifier = Modifier
-                        .width(170.dp),
-                    onClick = {}
+                    onClick = { },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text("Reportar Incidencia")
+                    Text("Reportar", textAlign = TextAlign.Center)
                 }
 
-                Button(
-                    modifier = Modifier
-                        .width(170.dp),
-                    onClick = {}
+                OutlinedButton(
+                    onClick = onVerEdificiosClick,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
                     Text("Ver Edificios")
                 }
-
             }
-            Spacer(modifier = Modifier.width(20.dp))
-            Column(
 
+            Card(
+                modifier = Modifier.weight(1f).height(200.dp),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(2.dp)
             ) {
-                Card(
-                    modifier = Modifier.fillMaxSize()
-
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .padding(10.dp)
-                    ) {
-                        Text("Resumen")
-                    }
+                    Text(
+                        "Tendencia Hoy",
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleSmall)
+
+                    Text("Consumo en kWh",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.Gray)
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    val datosEjemplo = listOf(10f, 15f, 50f, 100f, 80f, 120f, 90f)
+
+                    ConsumoGraph(listConsumo = datosEjemplo)
                 }
             }
         }

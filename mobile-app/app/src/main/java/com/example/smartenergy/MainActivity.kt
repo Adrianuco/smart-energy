@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.smartenergy.ui.screen.DashboardScreen
+import com.example.smartenergy.ui.screen.EdificiosScreen
 import com.example.smartenergy.ui.theme.SmartEnergyTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,7 +21,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SmartEnergyTheme {
-                DashboardScreen()
+                DashboardScreen(onVerEdificiosClick = {  })
             }
         }
     }
