@@ -11,7 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.smartenergy.model.Aula
+import com.example.smartenergy.model.Edificio
+import com.example.smartenergy.ui.navigation.AppNavigation
 import com.example.smartenergy.ui.screen.DashboardScreen
+import com.example.smartenergy.ui.screen.DetalleEdificioScreen
 import com.example.smartenergy.ui.screen.EdificiosScreen
 import com.example.smartenergy.ui.screen.LoginScreen
 import com.example.smartenergy.ui.theme.SmartEnergyTheme
@@ -22,7 +26,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SmartEnergyTheme {
-                LoginScreen(onLoginClick = {email, pass -> {}}, onGuestClick = {})
+                AppNavigation()
             }
         }
     }

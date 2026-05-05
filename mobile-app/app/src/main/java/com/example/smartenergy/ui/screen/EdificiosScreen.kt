@@ -27,20 +27,47 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.smartenergy.model.Aula
 import com.example.smartenergy.model.Edificio
 import com.example.smartenergy.ui.components.EdificioCard
 import com.example.smartenergy.ui.components.FilterBar
 
-@Composable
-fun EdificiosScreen() {
-    val listaEdificios = listOf(
-        Edificio("Edificio A", "240 kWh" ,"OK"),
-        Edificio("Edificio B", "240 kWh", "Problemas"),
-        Edificio("Edificio C", "240 kWh", "Advertencias"),
-        Edificio("Edificio D", "240 kWh","OK"),
-        Edificio("Edificio E", "240 kWh", "Problemas"),
-    )
+val listaAulasEdficioA = listOf(
+    Aula("Aula A-101", 60f),
+    Aula("Aula A-104", 80f),
+    Aula("Aula A-202", 40f),
+)
+val listaAulasEdficioB = listOf(
+    Aula("Aula B-101", 60f),
+    Aula("Aula B-104", 80f),
+    Aula("Aula B-202", 40f),
+)
+val listaAulasEdficioC = listOf(
+    Aula("Aula C-101", 60f),
+    Aula("Aula C-104", 80f),
+    Aula("Aula C-202", 40f),
+)
+val listaAulasEdficioD = listOf(
+    Aula("Aula D-101", 60f),
+    Aula("Aula D-104", 80f),
+    Aula("Aula D-202", 40f),
+)
+val listaAulasEdficioE = listOf(
+    Aula("Aula E-101", 60f),
+    Aula("Aula E-104", 80f),
+    Aula("Aula E-202", 40f),
+)
 
+val listaEdificios = listOf(
+    Edificio("Edificio A", 240f ,"OK", listaAulasEdficioA),
+    Edificio("Edificio B", 240f, "Problemas", listaAulasEdficioB),
+    Edificio("Edificio C", 240f, "Advertencias", listaAulasEdficioC),
+    Edificio("Edificio D", 240f, "OK", listaAulasEdficioD),
+    Edificio("Edificio E", 240f, "Problemas", listaAulasEdficioE),
+)
+
+@Composable
+fun EdificiosScreen(onEdificioClick: (String) -> Unit) {
 
     var filtroSeleccionado by remember { mutableStateOf("Todos") }
 
@@ -80,7 +107,7 @@ fun EdificiosScreen() {
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(edificiosFiltrados) { edificio ->
-                EdificioCard(edificio, onCardClick = {})
+                EdificioCard(edificio, onCardClick = { onEdificioClick(edificio.nombre) })
             }
         }
     }

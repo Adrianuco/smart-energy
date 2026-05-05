@@ -68,7 +68,7 @@ fun EdificioCard(edificio: Edificio, onCardClick: (Edificio) -> Unit) {
                     color = Color.Black
                 )
                 Text(
-                    text = edificio.consumo,
+                    text = "${edificio.consumo} kWh",
                     color = Color.Gray
                 )
             }

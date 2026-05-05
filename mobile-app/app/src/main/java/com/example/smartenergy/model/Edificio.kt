@@ -2,6 +2,7 @@ package com.example.smartenergy.model
 
 data class Edificio(
     val nombre: String,
-    val consumo: String,
-    val estado: String
+    val consumo: Float,
+    val estado: String,
+    val aulas: List<Aula>
 )
