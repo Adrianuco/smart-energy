@@ -1,5 +1,6 @@
 package com.example.smartenergy.ui.screen
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -22,10 +23,19 @@ fun ReportsScreen() {
         }
     ) { paddingValues ->
 
-        Text(
-            text = "Pantalla de Reportes  ",
-            modifier = Modifier.padding(paddingValues)
+         (
+            Column(
+            modifier = Modifier
+                .padding(paddingValues)
         )
+            {
+
+                   Text(
+                text = "Pantalla de Reportes"
+                 )
+
+            }
+
 
     }
 }
