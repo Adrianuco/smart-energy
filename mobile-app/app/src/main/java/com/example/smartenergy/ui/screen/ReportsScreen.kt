@@ -77,7 +77,32 @@ fun ReportsScreen() {
 
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
+            )
+            {
+                Card(
+                    modifier = Modifier.padding(8.dp)
+                ) {
+
+                    Text(
+                        text = "Equipos encendidos fuera de horario: 2",
+                        modifier = Modifier.padding(16.dp)
+                    )
+
+                }
+
+
+                   Card(
+                    modifier = Modifier.padding(8.dp)
+                ) {
+
+                    Text(
+                        text = "Consumo semanal estimado: 860 kWh",
+                        modifier = Modifier.padding(16.dp)
+                    )
+
+
+
+                }
 
 
 
