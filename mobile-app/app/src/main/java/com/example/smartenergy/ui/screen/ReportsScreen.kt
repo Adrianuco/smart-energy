@@ -68,6 +68,18 @@ fun ReportsScreen() {
                 .padding(16.dp)
         ) {
 
+            Text(
+                text = "Reportes Energéticos",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+
+
 
                         }
 
@@ -75,3 +87,9 @@ fun ReportsScreen() {
 
                 }
 
+            }
+
+        }
+
+    }
+}
