@@ -25,7 +25,10 @@ import com.example.smartenergy.model.Aula
 import com.example.smartenergy.model.Edificio
 
 @Composable
-fun DetalleEdificioScreen(edificio: Edificio) {
+fun DetalleEdificioScreen(
+    edificio: Edificio,
+    onAddAulasClick: (String) -> Unit
+) {
 
     val edificioActual = edificio.nombre
     val porcentaje = 80
@@ -43,15 +46,26 @@ fun DetalleEdificioScreen(edificio: Edificio) {
 
             Column {
 
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Text(
-                    text = edificioActual,
+                Row(
                     modifier = Modifier.fillMaxWidth(),
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = edificioActual,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    
+                    Button(
+                        onClick = { onAddAulasClick(edificio.nombre) },
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = null)
+                        Spacer(Modifier.width(4.dp))
+                        Text("Agregar Aulas")
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(65.dp))
 
