@@ -16,7 +16,10 @@ import com.example.smartenergy.model.Edificio
 import com.example.smartenergy.ui.screen.DashboardScreen
 import com.example.smartenergy.ui.screen.DetalleEdificioScreen
 import com.example.smartenergy.ui.screen.EdificiosScreen
+import com.example.smartenergy.ui.screen.HorariosScreen
+import com.example.smartenergy.ui.screen.InfrastructureScreen
 import com.example.smartenergy.ui.screen.LoginScreen
+import com.example.smartenergy.ui.screen.SettingsScreen
 import com.example.smartenergy.ui.screen.listaEdificios
 
 @Composable
@@ -50,9 +53,14 @@ fun AppNavigation() {
             }
 
             composable<EdificiosRuta> {
-                EdificiosScreen(onEdificioClick = { nombre ->
-                    navController.navigate(DetalleRuta(edificioNombre = nombre))
-                })
+                EdificiosScreen(
+                    onEdificioClick = { nombre ->
+                        navController.navigate(DetalleRuta(edificioNombre = nombre))
+                    },
+                    onAddEdificioClick = {
+                        navController.navigate(InfraestructuraRuta())
+                    }
+                )
             }
 
             composable<DetalleRuta> { backStackEntry ->
@@ -62,8 +70,27 @@ fun AppNavigation() {
                 if (edificioSelected != null) {
                     DetalleEdificioScreen(
                         edificio = edificioSelected,
+                        onAddAulasClick = { nombre ->
+                            navController.navigate(InfraestructuraRuta(edificioNombre = nombre))
+                        }
                     )
                 }
+            }
+
+            composable<InfraestructuraRuta> { backStackEntry ->
+                val destino = backStackEntry.toRoute<InfraestructuraRuta>()
+                InfrastructureScreen(
+                    initialBuildingName = destino.edificioNombre,
+                    onBack = { navController.popBackStack() }
+                )
+            }
+
+            composable<AjustesRuta> {
+                SettingsScreen()
+            }
+
+            composable<HorariosRuta> {
+                HorariosScreen()
             }
         }
     }
