@@ -16,6 +16,7 @@ import com.example.smartenergy.model.Edificio
 import com.example.smartenergy.ui.screen.DashboardScreen
 import com.example.smartenergy.ui.screen.DetalleEdificioScreen
 import com.example.smartenergy.ui.screen.EdificiosScreen
+import com.example.smartenergy.ui.screen.IncidenciaScreen
 import com.example.smartenergy.ui.screen.LoginScreen
 import com.example.smartenergy.ui.screen.listaEdificios
 
@@ -46,13 +47,20 @@ fun AppNavigation() {
             }
 
             composable<DashboardRuta> {
-                DashboardScreen(onVerEdificiosClick = { navController.navigate(EdificiosRuta) })
+                DashboardScreen(onVerEdificiosClick = { navController.navigate(EdificiosRuta) },
+                    onReportarClick = {
+                    navController.navigate(IncidenciaRuta)
+                })
             }
 
             composable<EdificiosRuta> {
                 EdificiosScreen(onEdificioClick = { nombre ->
                     navController.navigate(DetalleRuta(edificioNombre = nombre))
                 })
+            }
+
+            composable<IncidenciaRuta> {
+                IncidenciaScreen()
             }
 
             composable<DetalleRuta> { backStackEntry ->

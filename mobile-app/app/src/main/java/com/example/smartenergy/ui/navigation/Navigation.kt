@@ -10,6 +10,8 @@ import kotlinx.serialization.Serializable
 @Serializable object DashboardRuta
 @Serializable object EdificiosRuta
 
+@Serializable object IncidenciaRuta
+
 @Serializable data class DetalleRuta(val edificioNombre: String)
 
 sealed class Tab(val route: Any, val icon: ImageVector, val label: String) {

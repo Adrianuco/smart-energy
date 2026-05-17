@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.sp
 import com.example.smartenergy.ui.components.ConsumoGraph
 
 @Composable
-fun DashboardScreen(onVerEdificiosClick: () -> Unit) {
+fun DashboardScreen(onVerEdificiosClick: () -> Unit, onReportarClick: () -> Unit) {
     var consumo by remember { mutableStateOf(250) }
     var eficiencia by remember { mutableStateOf(0.8f) }
     var alertas by remember { mutableStateOf(5) }
@@ -139,7 +139,7 @@ fun DashboardScreen(onVerEdificiosClick: () -> Unit) {
                 }
 
                 Button(
-                    onClick = { },
+                    onClick = onReportarClick,
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp)
                 ) {

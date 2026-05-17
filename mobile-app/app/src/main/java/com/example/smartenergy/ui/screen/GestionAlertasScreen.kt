@@ -41,14 +41,7 @@ val listaAlertas = listOf(
 @Composable
 fun GestionAlertasScreen() {
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text("Gestión de Alertas")
-                }
-            )
-        }
+    Scaffold (
     ) { paddingValues ->
 
         Column(
