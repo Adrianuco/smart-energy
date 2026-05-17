@@ -16,9 +16,11 @@ import com.example.smartenergy.model.Edificio
 import com.example.smartenergy.ui.screen.DashboardScreen
 import com.example.smartenergy.ui.screen.DetalleEdificioScreen
 import com.example.smartenergy.ui.screen.EdificiosScreen
+import com.example.smartenergy.ui.screen.GestionAlertasScreen
 import com.example.smartenergy.ui.screen.HorariosScreen
 import com.example.smartenergy.ui.screen.InfrastructureScreen
 import com.example.smartenergy.ui.screen.LoginScreen
+import com.example.smartenergy.ui.screen.ReportsScreen
 import com.example.smartenergy.ui.screen.SettingsScreen
 import com.example.smartenergy.ui.screen.listaEdificios
 
@@ -49,7 +51,11 @@ fun AppNavigation() {
             }
 
             composable<DashboardRuta> {
-                DashboardScreen(onVerEdificiosClick = { navController.navigate(EdificiosRuta) })
+                DashboardScreen(
+                    onVerReportesClick = { navController.navigate(ReportesRuta) },
+                    onVerEdificiosClick = { navController.navigate(EdificiosRuta) },
+                    onVerAlertasClick = { navController.navigate(AlertasRuta) }
+                )
             }
 
             composable<EdificiosRuta> {
@@ -83,6 +89,14 @@ fun AppNavigation() {
                     initialBuildingName = destino.edificioNombre,
                     onBack = { navController.popBackStack() }
                 )
+            }
+
+            composable<ReportesRuta> {
+                ReportsScreen()
+            }
+
+            composable<AlertasRuta> {
+                GestionAlertasScreen()
             }
 
             composable<AjustesRuta> {

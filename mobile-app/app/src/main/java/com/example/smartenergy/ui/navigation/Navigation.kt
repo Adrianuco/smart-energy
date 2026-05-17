@@ -14,6 +14,12 @@ import kotlinx.serialization.Serializable
 @Serializable object EdificiosRuta
 @Serializable object AjustesRuta
 @Serializable object HorariosRuta
+
+@Serializable
+object ReportesRuta{
+}
+
+@Serializable object AlertasRuta
 @Serializable data class InfraestructuraRuta(val edificioNombre: String? = null)
 
 @Serializable data class DetalleRuta(val edificioNombre: String)

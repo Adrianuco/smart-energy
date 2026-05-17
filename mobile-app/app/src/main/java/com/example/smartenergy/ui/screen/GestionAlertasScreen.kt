@@ -42,13 +42,7 @@ val listaAlertas = listOf(
 fun GestionAlertasScreen() {
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text("Gestión de Alertas")
-                }
-            )
-        }
+
     ) { paddingValues ->
 
         Column(

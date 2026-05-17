@@ -2,6 +2,7 @@ package com.example.smartenergy.ui.screen
 
 import android.R.attr.content
 import android.widget.ProgressBar
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,7 +43,7 @@ import androidx.compose.ui.unit.sp
 import com.example.smartenergy.ui.components.ConsumoGraph
 
 @Composable
-fun DashboardScreen(onVerEdificiosClick: () -> Unit) {
+fun DashboardScreen(onVerEdificiosClick: () -> Unit, onVerReportesClick: () -> Unit, onVerAlertasClick: () -> Unit) {
     var consumo by remember { mutableStateOf(250) }
     var eficiencia by remember { mutableStateOf(0.8f) }
     var alertas by remember { mutableStateOf(5) }
@@ -125,7 +126,8 @@ fun DashboardScreen(onVerEdificiosClick: () -> Unit) {
             ) {
                 Card(
                     shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFFFD8E4))
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFFFD8E4)),
+                    modifier = Modifier.clickable(onClick = onVerAlertasClick)
                 ) {
                     Row(
                         modifier = Modifier.padding(16.dp).fillMaxWidth(),
@@ -156,7 +158,12 @@ fun DashboardScreen(onVerEdificiosClick: () -> Unit) {
             }
 
             Card(
-                modifier = Modifier.weight(1f).height(200.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .height(200.dp)
+                    .clickable(
+                        onClick = onVerReportesClick
+                    ),
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
                 elevation = CardDefaults.cardElevation(2.dp)
@@ -164,6 +171,7 @@ fun DashboardScreen(onVerEdificiosClick: () -> Unit) {
                 Column(
                     modifier = Modifier
                         .padding(16.dp)
+
                 ) {
                     Text(
                         "Tendencia Hoy",
