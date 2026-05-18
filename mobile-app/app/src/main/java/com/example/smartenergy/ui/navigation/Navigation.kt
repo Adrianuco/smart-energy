@@ -22,6 +22,8 @@ object ReportesRuta{
 @Serializable object AlertasRuta
 @Serializable data class InfraestructuraRuta(val edificioNombre: String? = null)
 
+@Serializable object IncidenciaRuta
+
 @Serializable data class DetalleRuta(val edificioNombre: String)
 
 sealed class Tab(val route: Any, val icon: ImageVector, val label: String) {
