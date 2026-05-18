@@ -1,26 +1,15 @@
 package com.example.smartenergy.ui.screen
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.smartenergy.model.EquipoAC
-import com.example.smartenergy.model.listaEquiposAC
 import com.example.smartenergy.ui.components.ACSection
 import com.example.smartenergy.ui.components.AulaSection
-import com.example.smartenergy.ui.components.DynamicAulaForm
 import com.example.smartenergy.ui.components.EdificiosSection
-import com.example.smartenergy.ui.components.SingleAulaForm
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,22 +23,50 @@ fun InfrastructureScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Gestión de Infraestructura") },
+                title = {
+                    Text(
+                        "Gestión de Infraestructura",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = null)
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Volver",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
             )
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         Column(modifier = Modifier.padding(padding)) {
-            ScrollableTabRow(selectedTabIndex = selectedTab) {
+            ScrollableTabRow(
+                selectedTabIndex = selectedTab,
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.primary,
+                edgePadding = 16.dp
+            ) {
                 tabs.forEachIndexed { index, title ->
                     Tab(
                         selected = selectedTab == index,
                         onClick = { selectedTab = index },
-                        text = { Text(title) }
+                        text = {
+                            Text(
+                                title,
+                                style = MaterialTheme.typography.labelLarge,
+                                color = if (selectedTab == index)
+                                    MaterialTheme.colorScheme.primary
+                                else
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     )
                 }
             }
@@ -62,7 +79,3 @@ fun InfrastructureScreen(
         }
     }
 }
-
-
-
-

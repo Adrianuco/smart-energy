@@ -1,13 +1,15 @@
 package com.example.smartenergy.ui.navigation
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -20,10 +22,14 @@ fun BottomBar(navController: NavController) {
 
     val tabs = listOf(Tab.Home, Tab.Horarios, Tab.Settings)
 
-    NavigationBar {
+    NavigationBar(
+        containerColor = MaterialTheme.colorScheme.surface,
+        tonalElevation = 0.dp,
+        windowInsets = WindowInsets(0, 0, 0, 0)
+    ) {
         tabs.forEach { tab ->
             val routeClassName = tab.route::class.qualifiedName ?: ""
-            val isSelected = currentDestination?.route?.contains(routeClassName) == true || 
+            val isSelected = currentDestination?.route?.contains(routeClassName) == true ||
                              currentDestination?.route?.contains(tab.route::class.simpleName ?: "") == true
 
             NavigationBarItem(
@@ -36,11 +42,19 @@ fun BottomBar(navController: NavController) {
                         launchSingleTop = true
                     }
                 },
-                label = { Text(tab.label) },
-                icon = { Icon(tab.icon, contentDescription = null) },
+                label = {
+                    Text(
+                        tab.label,
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                },
+                icon = { Icon(tab.icon, contentDescription = tab.label) },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Color(0xFF6750A4),
-                    indicatorColor = Color(0xFFEADDFF)
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    indicatorColor = MaterialTheme.colorScheme.primaryContainer
                 )
             )
         }

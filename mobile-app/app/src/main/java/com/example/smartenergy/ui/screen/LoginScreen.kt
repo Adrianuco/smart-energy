@@ -4,16 +4,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Bolt
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @Composable
 fun LoginScreen(
@@ -26,39 +25,62 @@ fun LoginScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFBF8FD))
-            .padding(32.dp),
+            .background(MaterialTheme.colorScheme.background)
+            .padding(horizontal = 32.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "¡Bienvenido a SmartEnergy!",
-            fontSize = 26.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF1C1B1F)
-        )
+        // ── Branding ──
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = MaterialTheme.colorScheme.primaryContainer,
+            modifier = Modifier.size(64.dp)
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    Icons.Outlined.Bolt,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(36.dp)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Inicia sesión para continuar",
-            fontSize = 14.sp,
-            color = Color.Gray
+            text = "SmartEnergy",
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.primary
         )
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(4.dp))
 
+        Text(
+            text = "Monitoreo inteligente de energía",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
 
+        Spacer(modifier = Modifier.height(48.dp))
+
+        // ── Email Field ──
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
             label = { Text("Correo electrónico") },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
-            singleLine = true
+            singleLine = true,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline
+            )
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-
+        // ── Password Field ──
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
@@ -66,38 +88,41 @@ fun LoginScreen(
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
-            singleLine = true
+            singleLine = true,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline
+            )
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
-
+        // ── Login Button ──
         Button(
             onClick = { onLoginClick(email, password) },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp),
+                .height(52.dp),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF6750A4)
+                containerColor = MaterialTheme.colorScheme.primary
             )
         ) {
-            Text("Ingresar", fontSize = 16.sp)
+            Text(
+                "Ingresar",
+                style = MaterialTheme.typography.labelLarge
+            )
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-
+        // ── Guest Link ──
         Text(
             text = "Ingresar como invitado",
-            color = Color(0xFF6750A4),
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.labelLarge,
             textDecoration = TextDecoration.Underline,
-            modifier = Modifier
-                .clickable {
-                    onGuestClick()
-                }
+            modifier = Modifier.clickable { onGuestClick() }
         )
     }
 }

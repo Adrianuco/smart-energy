@@ -10,20 +10,24 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Logout
-import androidx.compose.material.icons.filled.NotificationsActive
-import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material.icons.filled.SettingsSystemDaydream
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Logout
+import androidx.compose.material.icons.outlined.NotificationsActive
+import androidx.compose.material.icons.outlined.Palette
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,7 +38,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.smartenergy.ui.components.SettingsGroup
 
 @Composable
 fun GeneralSettings() {
@@ -49,72 +52,119 @@ fun GeneralSettings() {
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
+            .padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         // seccion de alertas y notificaciones
-        SettingsGroup(title = "Alertas y Notificaciones", icon = Icons.Default.NotificationsActive) {
+        SettingsGroup(title = "Alertas y Notificaciones", icon = Icons.Outlined.NotificationsActive) {
             Column {
                 Text(
                     "Notificación de advertencia",
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
                     "Enviar aviso ${warningMinutes.toInt()} min antes de fin de clase",
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Slider(
                     value = warningMinutes,
                     onValueChange = { warningMinutes = it },
                     valueRange = 5f..30f,
-                    steps = 4
+                    steps = 4,
+                    colors = SliderDefaults.colors(
+                        thumbColor = MaterialTheme.colorScheme.primary,
+                        activeTrackColor = MaterialTheme.colorScheme.primary,
+                        inactiveTrackColor = MaterialTheme.colorScheme.outlineVariant
+                    )
                 )
             }
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(12.dp))
 
             Column {
-                Text("Margen de desperdicio", style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    "Margen de desperdicio",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
                 Text(
                     "Ignorar huecos menores a ${minWasteHours.toInt()}h para alertas",
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Slider(
                     value = minWasteHours,
                     onValueChange = { minWasteHours = it },
                     valueRange = 1f..5f,
-                    steps = 3
+                    steps = 3,
+                    colors = SliderDefaults.colors(
+                        thumbColor = MaterialTheme.colorScheme.primary,
+                        activeTrackColor = MaterialTheme.colorScheme.primary,
+                        inactiveTrackColor = MaterialTheme.colorScheme.outlineVariant
+                    )
                 )
             }
         }
 
-        // apartado relacionado a la apareriencia de la interfaz
-        SettingsGroup(title = "Apariencia", icon = Icons.Default.Palette) {
+        // apartado relacionado a la apariencia de la interfaz
+        SettingsGroup(title = "Apariencia", icon = Icons.Outlined.Palette) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column {
-                    Text("Modo Oscuro", style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        "Modo Oscuro",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
                     Text(
                         "Cambiar tema de la aplicación",
                         style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.secondary
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                Switch(checked = isDarkMode, onCheckedChange = { isDarkMode = it })
+                Switch(
+                    checked = isDarkMode,
+                    onCheckedChange = { isDarkMode = it },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                        checkedTrackColor = MaterialTheme.colorScheme.primary
+                    )
+                )
             }
         }
 
         // opciones del sistema
-        SettingsGroup(title = "Sistema", icon = Icons.Default.SettingsSystemDaydream) {
+        SettingsGroup(title = "Sistema", icon = Icons.Outlined.Settings) {
             ListItem(
-                headlineContent = { Text("Versión de la aplicación") },
-                supportingContent = { Text("v1.0 (SmartEnergy)") },
-                leadingContent = { Icon(Icons.Default.Info, contentDescription = null) }
+                headlineContent = {
+                    Text(
+                        "Versión de la aplicación",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                },
+                supportingContent = {
+                    Text(
+                        "v1.0 (SmartEnergy)",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
+                leadingContent = {
+                    Icon(
+                        Icons.Outlined.Info,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
+                colors = ListItemDefaults.colors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
             )
 
             Spacer(Modifier.height(8.dp))
@@ -122,11 +172,17 @@ fun GeneralSettings() {
             Button(
                 onClick = { /* TODO Logout */ },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                )
             ) {
-                Icon(Icons.Default.Logout, contentDescription = null)
+                Icon(Icons.Outlined.Logout, contentDescription = null)
                 Spacer(Modifier.width(8.dp))
-                Text("Cerrar Sesión")
+                Text(
+                    "Cerrar Sesión",
+                    style = MaterialTheme.typography.labelLarge
+                )
             }
         }
     }

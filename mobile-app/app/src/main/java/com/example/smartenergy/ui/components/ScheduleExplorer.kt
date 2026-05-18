@@ -4,12 +4,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,9 +23,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.smartenergy.ui.components.AulaCard
-import com.example.smartenergy.ui.components.EmptyExplorerState
-import kotlin.collections.indexOf
 
 @Composable
 fun ScheduleExplorer() {
@@ -42,14 +42,24 @@ fun ScheduleExplorer() {
             selectedTabIndex = buildings.indexOf(selectedBuilding).coerceAtLeast(0),
             edgePadding = 0.dp,
             containerColor = Color.Transparent,
-            divider = {}
+            divider = {},
+            indicator = {}
         ) {
             buildings.forEach { building ->
                 FilterChip(
                     selected = selectedBuilding == building,
                     onClick = { selectedBuilding = if (selectedBuilding == building) null else building },
-                    label = { Text(building) },
-                    modifier = Modifier.padding(horizontal = 4.dp)
+                    label = {
+                        Text(
+                            building,
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    },
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        selectedLabelColor = MaterialTheme.colorScheme.primary
+                    )
                 )
             }
         }
@@ -59,10 +69,26 @@ fun ScheduleExplorer() {
             value = searchQuery,
             onValueChange = { searchQuery = it },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Buscar aula específica...") },
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+            placeholder = {
+                Text(
+                    "Buscar aula específica...",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+            leadingIcon = {
+                Icon(
+                    Icons.Outlined.Search,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
             singleLine = true,
-            shape = MaterialTheme.shapes.medium
+            shape = RoundedCornerShape(12.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
+            )
         )
 
         if (selectedBuilding == null && searchQuery.isEmpty()) {

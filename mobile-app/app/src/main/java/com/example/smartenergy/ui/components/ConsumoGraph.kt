@@ -15,15 +15,10 @@ import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryModelOf
 
 @Composable
-fun ConsumoGraph (listConsumo: List<Float>) {
-
-    val entry = entryModelOf(*listConsumo.toTypedArray())
-    Chart(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp),
-        chart = lineChart(),
-        model = entry,
-        chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false)
+fun ConsumoGraph(listConsumo: List<Float>) {
+    SmartEnergyLineChart(
+        data = listConsumo,
+        chartHeight = 100.dp,
+        showAxis = false
     )
 }

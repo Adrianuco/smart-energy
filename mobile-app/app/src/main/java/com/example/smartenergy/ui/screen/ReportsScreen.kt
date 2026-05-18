@@ -5,28 +5,23 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.example.smartenergy.ui.theme.AppColors
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
@@ -35,7 +30,7 @@ import kotlin.math.roundToInt
 // DATA MODELS
 // =========================
 
-data class Edificio(
+data class EdificioReport(
     val id: String,
     val nombre: String,
     val consumoActual: Float,
@@ -53,12 +48,12 @@ data class ConsumoHistorico(
 // DATA
 // =========================
 
-val edificios = listOf(
-    Edificio("A", "Edificio A", 285f, 240f, 220f, 12.5f),
-    Edificio("B", "Edificio B", 365f, 310f, 280f, 8.2f),
-    Edificio("C", "Edificio C", 325f, 290f, 300f, -3.1f),
-    Edificio("D", "Edificio D", 245f, 210f, 200f, 15.7f),
-    Edificio("E", "Edificio E", 195f, 180f, 170f, -2.4f)
+val edificiosReport = listOf(
+    EdificioReport("A", "Edificio A", 285f, 240f, 220f, 12.5f),
+    EdificioReport("B", "Edificio B", 365f, 310f, 280f, 8.2f),
+    EdificioReport("C", "Edificio C", 325f, 290f, 300f, -3.1f),
+    EdificioReport("D", "Edificio D", 245f, 210f, 200f, 15.7f),
+    EdificioReport("E", "Edificio E", 195f, 180f, 170f, -2.4f)
 )
 
 // =========================
@@ -71,7 +66,6 @@ fun getHistorico(
 ): List<ConsumoHistorico> {
 
     val baseData = when (edificioId) {
-
         "A" -> listOf(120f, 180f, 220f, 190f, 250f, 210f, 260f)
         "B" -> listOf(200f, 240f, 280f, 260f, 320f, 290f, 340f)
         "C" -> listOf(180f, 210f, 240f, 220f, 270f, 250f, 300f)
@@ -80,7 +74,6 @@ fun getHistorico(
     }
 
     return when (periodo) {
-
         "Semana" -> {
             baseData.mapIndexed { index, value ->
                 ConsumoHistorico(
@@ -89,7 +82,6 @@ fun getHistorico(
                 )
             }
         }
-
         "Mes" -> {
             List(4) { index ->
                 ConsumoHistorico(
@@ -98,7 +90,6 @@ fun getHistorico(
                 )
             }
         }
-
         else -> {
             List(6) { index ->
                 ConsumoHistorico(
@@ -119,7 +110,7 @@ fun getHistorico(
 fun ReportsScreen() {
 
     var edificioSeleccionado by remember {
-        mutableStateOf(edificios[0])
+        mutableStateOf(edificiosReport[0])
     }
 
     var periodoSeleccionado by remember {
@@ -132,78 +123,55 @@ fun ReportsScreen() {
     )
 
     Scaffold(
-
         topBar = {
-
             TopAppBar(
-
                 title = {
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-
+                    Column {
                         Text(
-                            text = "⚡ SmartEnergy",
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 22.sp
+                            text = "Reportes",
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = MaterialTheme.colorScheme.onBackground
                         )
-
-                        Spacer(modifier = Modifier.width(12.dp))
-
                         Text(
                             text = LocalDate.now()
-                                .format(
-                                    DateTimeFormatter.ofPattern("dd/MM/yyyy")
-                                ),
-                            color = Color.White.copy(alpha = 0.8f),
-                            fontSize = 14.sp
+                                .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 },
-
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF1565C0)
+                    containerColor = MaterialTheme.colorScheme.background
                 )
             )
         },
-
-        containerColor = Color(0xFFF4F7FC)
-
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
 
         Column(
-
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(20.dp),
-
-            verticalArrangement = Arrangement.spacedBy(24.dp)
-
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-
-            // =========================
-            // TITLE
-            // =========================
-
-            Text(
-                text = "Seleccionar edificio",
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
+            Spacer(modifier = Modifier.height(4.dp))
 
             // =========================
             // CHIPS
             // =========================
 
+            Text(
+                text = "Seleccionar edificio",
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
             LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(14.dp)
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-
-                items(edificios) { edificio ->
-
+                items(edificiosReport) { edificio ->
                     EdificioChip(
                         edificio = edificio,
                         isSelected = edificio == edificioSeleccionado
@@ -225,9 +193,8 @@ fun ReportsScreen() {
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-
                 TiempoChip(
                     text = "Semana",
                     selected = periodoSeleccionado == "Semana"
@@ -255,30 +222,26 @@ fun ReportsScreen() {
             // =========================
 
             Card(
-                shape = RoundedCornerShape(28.dp),
-                elevation = CardDefaults.cardElevation(12.dp),
-                modifier = Modifier.shadow(
-                    20.dp,
-                    RoundedCornerShape(28.dp)
-                )
+                shape = RoundedCornerShape(16.dp),
+                elevation = CardDefaults.cardElevation(2.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
-
                 Column(
-                    modifier = Modifier.padding(24.dp)
+                    modifier = Modifier.padding(20.dp)
                 ) {
-
                     Text(
                         text = "Histórico $periodoSeleccionado",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1A1A1A)
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
                     GraficoLineasHistorico(historico)
                 }
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
@@ -288,68 +251,51 @@ fun ReportsScreen() {
 // =========================
 
 @Composable
-private fun CardPrincipal(edificio: Edificio) {
+private fun CardPrincipal(edificio: EdificioReport) {
 
     Card(
-        shape = RoundedCornerShape(28.dp),
-        elevation = CardDefaults.cardElevation(14.dp),
-        modifier = Modifier.shadow(
-            24.dp,
-            RoundedCornerShape(28.dp)
-        )
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(2.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(28.dp),
-
-            verticalArrangement = Arrangement.spacedBy(22.dp)
+                .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-
             // HEADER
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
                 Column {
-
                     Text(
                         text = edificio.nombre,
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1A1A1A)
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "${edificio.consumoActual.roundToInt()} kWh",
-                        fontSize = 40.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = Color(0xFF2196F3)
+                        style = MaterialTheme.typography.displayLarge,
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
 
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(18.dp))
-                        .background(
-                            Color(0xFF2196F3).copy(alpha = 0.12f)
-                        )
-                        .padding(
-                            horizontal = 18.dp,
-                            vertical = 14.dp
-                        )
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = if (edificio.tendencia > 0)
+                        AppColors.StatusErrorBackground
+                    else
+                        AppColors.StatusOkBackground
                 ) {
-
                     Text(
-                        text = "${edificio.tendencia.roundToInt()}%",
-                        color = Color(0xFF2196F3),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
+                        text = "${if (edificio.tendencia > 0) "+" else ""}${edificio.tendencia.roundToInt()}%",
+                        color = if (edificio.tendencia > 0) AppColors.StatusError else AppColors.StatusOk,
+                        style = MaterialTheme.typography.titleSmall,
+                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
                     )
                 }
             }
@@ -357,33 +303,34 @@ private fun CardPrincipal(edificio: Edificio) {
             // MINI STATS
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-
                 MiniStatCard(
+                    modifier = Modifier.weight(1f),
                     label = "Actual",
                     value = edificio.consumoActual.roundToInt().toString(),
-                    color = Color(0xFF2196F3)
+                    color = MaterialTheme.colorScheme.primary
                 )
 
                 MiniStatCard(
+                    modifier = Modifier.weight(1f),
                     label = "Promedio",
                     value = edificio.consumoPromedio.roundToInt().toString(),
-                    color = Color(0xFFFF9800)
+                    color = AppColors.StatusWarning
                 )
 
                 MiniStatCard(
+                    modifier = Modifier.weight(1f),
                     label = "Óptimo",
                     value = edificio.consumoOptimo.roundToInt().toString(),
-                    color = Color(0xFF4CAF50)
+                    color = AppColors.StatusOk
                 )
 
                 MiniStatCard(
+                    modifier = Modifier.weight(1f),
                     label = "Esperado",
-                    value = (edificio.consumoOptimo + 15)
-                        .roundToInt()
-                        .toString(),
-                    color = Color(0xFF9C27B0)
+                    value = (edificio.consumoOptimo + 15).roundToInt().toString(),
+                    color = AppColors.ChartQuaternary
                 )
             }
         }
@@ -396,42 +343,33 @@ private fun CardPrincipal(edificio: Edificio) {
 
 @Composable
 private fun MiniStatCard(
+    modifier: Modifier = Modifier,
     label: String,
     value: String,
-    color: Color
+    color: androidx.compose.ui.graphics.Color
 ) {
-
     Card(
-        shape = RoundedCornerShape(22.dp),
-        elevation = CardDefaults.cardElevation(8.dp),
-        modifier = Modifier
-            .width(82.dp)
-            .height(88.dp)
+        modifier = modifier,
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(1.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
-
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(12.dp),
-
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Text(
                 text = value,
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 18.sp,
+                style = MaterialTheme.typography.titleMedium,
                 color = color
             )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
+            Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = label,
-                fontSize = 11.sp,
-                color = Color.Gray,
-                fontWeight = FontWeight.Medium
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
@@ -447,55 +385,39 @@ private fun TiempoChip(
     selected: Boolean,
     onClick: () -> Unit
 ) {
-
     val backgroundColor by animateColorAsState(
         if (selected)
-            Color(0xFF2196F3)
+            MaterialTheme.colorScheme.primary
         else
-            Color.White,
+            MaterialTheme.colorScheme.surface,
         label = ""
     )
 
     val textColor by animateColorAsState(
         if (selected)
-            Color.White
+            MaterialTheme.colorScheme.onPrimary
         else
-            Color(0xFF64748B),
+            MaterialTheme.colorScheme.onSurfaceVariant,
         label = ""
     )
 
     Card(
-        modifier = Modifier
-            .clickable { onClick() }
-            .shadow(8.dp, RoundedCornerShape(22.dp)),
-
-        shape = RoundedCornerShape(22.dp),
-
-        colors = CardDefaults.cardColors(
-            containerColor = backgroundColor
-        ),
-
-        border = BorderStroke(
-            1.dp,
-            if (selected)
-                Color.Transparent
-            else
-                Color(0xFFE2E8F0)
-        )
+        modifier = Modifier.clickable { onClick() },
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = backgroundColor),
+        elevation = CardDefaults.cardElevation(if (selected) 0.dp else 1.dp),
+        border = if (!selected)
+            BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        else null
     ) {
-
         Box(
-            modifier = Modifier.padding(
-                horizontal = 24.dp,
-                vertical = 14.dp
-            ),
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
             contentAlignment = Alignment.Center
         ) {
-
             Text(
                 text = text,
                 color = textColor,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.labelLarge
             )
         }
     }
@@ -509,165 +431,12 @@ private fun TiempoChip(
 private fun GraficoLineasHistorico(
     historico: List<ConsumoHistorico>
 ) {
-
-    val maxConsumo = historico.maxOf { it.consumo }
-    val minConsumo = historico.minOf { it.consumo }
-    val range = maxConsumo - minConsumo
-
-    val animatedProgress by animateFloatAsState(
-        targetValue = 1f,
-        animationSpec = tween(1800),
-        label = "graphAnimation"
+    com.example.smartenergy.ui.components.SmartEnergyLineChart(
+        data = historico.map { it.consumo },
+        bottomLabels = historico.map { it.label },
+        chartHeight = 220.dp,
+        showAxis = true
     )
-
-    Column {
-
-        Canvas(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(260.dp)
-        ) {
-
-            val canvasWidth = size.width
-            val canvasHeight = size.height
-
-            val spacing =
-                canvasWidth / (historico.size - 1)
-
-            val points = historico.mapIndexed { index, item ->
-
-                val x = index * spacing
-
-                val normalized =
-                    (item.consumo - minConsumo) / range
-
-                val y =
-                    canvasHeight - (normalized * canvasHeight * 0.8f) - 40f
-
-                Offset(x, y)
-            }
-
-            // GRID
-            repeat(5) { i ->
-
-                val y = (canvasHeight / 5) * i
-
-                drawLine(
-                    color = Color(0xFFE2E8F0),
-                    start = Offset(0f, y),
-                    end = Offset(canvasWidth, y),
-                    strokeWidth = 1f
-                )
-            }
-
-            val strokePath = Path()
-            val fillPath = Path()
-
-            points.forEachIndexed { index, point ->
-
-                if (index == 0) {
-
-                    strokePath.moveTo(point.x, point.y)
-                    fillPath.moveTo(point.x, point.y)
-
-                } else {
-
-                    val previous = points[index - 1]
-
-                    val controlX1 =
-                        previous.x + (point.x - previous.x) / 2
-
-                    val controlX2 = controlX1
-
-                    strokePath.cubicTo(
-                        controlX1,
-                        previous.y,
-                        controlX2,
-                        point.y,
-                        point.x,
-                        point.y
-                    )
-
-                    fillPath.cubicTo(
-                        controlX1,
-                        previous.y,
-                        controlX2,
-                        point.y,
-                        point.x,
-                        point.y
-                    )
-                }
-            }
-
-            fillPath.lineTo(canvasWidth, canvasHeight)
-            fillPath.lineTo(0f, canvasHeight)
-            fillPath.close()
-
-            // GRADIENT
-            drawPath(
-                path = fillPath,
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF2196F3).copy(alpha = 0.35f),
-                        Color.Transparent
-                    )
-                )
-            )
-
-            // GLOW
-            drawPath(
-                path = strokePath,
-                color = Color(0xFF2196F3).copy(alpha = 0.15f),
-                style = Stroke(width = 12f)
-            )
-
-            // LINE
-            drawPath(
-                path = strokePath,
-                color = Color(0xFF2196F3),
-                style = Stroke(
-                    width = 5f,
-                    cap = StrokeCap.Round
-                ),
-                alpha = animatedProgress
-            )
-
-            // POINTS
-            points.forEach { point ->
-
-                drawCircle(
-                    color = Color.White,
-                    radius = 10f,
-                    center = point
-                )
-
-                drawCircle(
-                    color = Color(0xFF2196F3),
-                    radius = 6f,
-                    center = point
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // LABELS
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-
-            historico.forEach {
-
-                Text(
-                    text = it.label,
-                    color = Color.Gray,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium
-                )
-            }
-        }
-    }
 }
 
 // =========================
@@ -676,65 +445,53 @@ private fun GraficoLineasHistorico(
 
 @Composable
 private fun EdificioChip(
-    edificio: Edificio,
+    edificio: EdificioReport,
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-
     val borderColor by animateColorAsState(
         if (isSelected)
-            Color(0xFF2196F3)
+            MaterialTheme.colorScheme.primary
         else
-            Color(0xFFE2E8F0),
+            MaterialTheme.colorScheme.outlineVariant,
         label = ""
     )
 
     Card(
-        modifier = Modifier
-            .clickable { onClick() }
-            .shadow(10.dp, RoundedCornerShape(22.dp)),
-
-        shape = RoundedCornerShape(22.dp),
-
+        modifier = Modifier.clickable { onClick() },
+        shape = RoundedCornerShape(12.dp),
         border = BorderStroke(
-            2.dp,
+            if (isSelected) 2.dp else 1.dp,
             borderColor
         ),
-
         colors = CardDefaults.cardColors(
             containerColor =
                 if (isSelected)
-                    Color(0xFFF0F7FF)
+                    MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
                 else
-                    Color.White
-        )
+                    MaterialTheme.colorScheme.surface
+        ),
+        elevation = CardDefaults.cardElevation(if (isSelected) 0.dp else 1.dp)
     ) {
-
         Column(
             modifier = Modifier
-                .width(90.dp)
-                .padding(18.dp),
-
+                .width(80.dp)
+                .padding(14.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Text(
                 text = edificio.id,
-                fontWeight = FontWeight.Bold,
-                fontSize = 28.sp,
-                color =
-                    if (isSelected)
-                        Color(0xFF2196F3)
-                    else
-                        Color.Gray
+                style = MaterialTheme.typography.titleLarge,
+                color = if (isSelected)
+                    MaterialTheme.colorScheme.primary
+                else
+                    MaterialTheme.colorScheme.onSurfaceVariant
             )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
+            Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = "${edificio.consumoActual.roundToInt()}",
-                fontSize = 14.sp,
-                color = Color.Gray
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
@@ -744,7 +501,7 @@ private fun EdificioChip(
 // PREVIEW
 // =========================
 
-@Preview(showBackground = true)
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
 @Composable
 fun PreviewReports() {
     ReportsScreen()

@@ -12,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,16 +27,36 @@ import androidx.compose.ui.unit.dp
 fun AulaSection(initialBuildingName: String?) {
     var isDynamicMode by remember { mutableStateOf(true) }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState())) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(20.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Registro de Aulas", style = MaterialTheme.typography.titleMedium)
+            Text(
+                "Registro de Aulas",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground
+            )
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("Dinámico", style = MaterialTheme.typography.bodySmall)
-                Switch(checked = isDynamicMode, onCheckedChange = { isDynamicMode = it })
+                Text(
+                    "Dinámico",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Switch(
+                    checked = isDynamicMode,
+                    onCheckedChange = { isDynamicMode = it },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                        checkedTrackColor = MaterialTheme.colorScheme.primary
+                    )
+                )
             }
         }
 

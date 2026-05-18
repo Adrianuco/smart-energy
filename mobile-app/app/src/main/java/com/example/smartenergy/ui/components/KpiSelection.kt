@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MeetingRoom
-import androidx.compose.material.icons.filled.Timer
-import androidx.compose.material.icons.filled.Update
+import androidx.compose.material.icons.outlined.MeetingRoom
+import androidx.compose.material.icons.outlined.Schedule
+import androidx.compose.material.icons.outlined.Update
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,13 +33,13 @@ fun KpiSection() {
                 modifier = Modifier.weight(1f),
                 label = "Aulas con Horario",
                 value = "42",
-                icon = Icons.Default.MeetingRoom
+                icon = Icons.Outlined.MeetingRoom
             )
             KpiCard(
                 modifier = Modifier.weight(1f),
                 label = "Horas/Día",
                 value = "128h",
-                icon = Icons.Default.Timer
+                icon = Icons.Outlined.Schedule
             )
         }
         Spacer(Modifier.height(12.dp))
@@ -47,7 +47,7 @@ fun KpiSection() {
             modifier = Modifier.fillMaxWidth(),
             label = "Última actualización",
             value = "10 May 2026, 08:30 AM",
-            icon = Icons.Default.Update
+            icon = Icons.Outlined.Update
         )
     }
 }

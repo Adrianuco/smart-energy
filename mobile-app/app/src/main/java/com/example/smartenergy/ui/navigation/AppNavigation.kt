@@ -1,25 +1,23 @@
 package com.example.smartenergy.ui.navigation
 
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.example.smartenergy.model.Edificio
 import com.example.smartenergy.ui.screen.DashboardScreen
 import com.example.smartenergy.ui.screen.DetalleEdificioScreen
 import com.example.smartenergy.ui.screen.EdificiosScreen
 import com.example.smartenergy.ui.screen.GestionAlertasScreen
 import com.example.smartenergy.ui.screen.HorariosScreen
-import com.example.smartenergy.ui.screen.InfrastructureScreen
 import com.example.smartenergy.ui.screen.IncidenciaScreen
+import com.example.smartenergy.ui.screen.InfrastructureScreen
 import com.example.smartenergy.ui.screen.LoginScreen
 import com.example.smartenergy.ui.screen.ReportsScreen
 import com.example.smartenergy.ui.screen.SettingsScreen
@@ -32,6 +30,7 @@ fun AppNavigation() {
     val currentDestination = navBackStackEntry?.destination
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             val isLogin = currentDestination?.route?.contains("LoginRuta") == true
             if (currentDestination != null && !isLogin) {
@@ -115,5 +114,3 @@ fun AppNavigation() {
         }
     }
 }
-
-
