@@ -1,4 +1,4 @@
-package com.example.smartenergy.ui.navigation
+package com.example.smartenergy.navigation
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.Icon

@@ -1,4 +1,4 @@
-package com.example.smartenergy.ui.navigation
+package com.example.smartenergy.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
