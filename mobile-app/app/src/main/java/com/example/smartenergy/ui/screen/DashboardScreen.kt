@@ -77,19 +77,21 @@ fun DashboardScreen(
     onVerEdificiosClick: () -> Unit,
     onVerReportesClick: () -> Unit,
     onVerAlertasClick: () -> Unit,
+    onGestionIncidenciasClick: () -> Unit,
     onReportarClick: () -> Unit
 ) {
     var consumo by remember { mutableIntStateOf(250) }
-    var eficiencia by remember { mutableFloatStateOf(0.82f) }
+    var ahorroEnergia by remember { mutableFloatStateOf(0.35f) } // Representa 35% de ahorro
     var alertas by remember { mutableIntStateOf(5) }
+    var incidencias by remember { mutableIntStateOf(2) }
 
-    // Animate the efficiency ring on first load
+    // Animate the savings ring on first load
     var animationTriggered by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { animationTriggered = true }
-    val animatedEficiencia by animateFloatAsState(
-        targetValue = if (animationTriggered) eficiencia else 0f,
+    val animatedAhorro by animateFloatAsState(
+        targetValue = if (animationTriggered) ahorroEnergia else 0f,
         animationSpec = tween(1200),
-        label = "efficiencyAnim"
+        label = "savingsAnim"
     )
 
     val today = LocalDate.now()
@@ -177,7 +179,7 @@ fun DashboardScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             // ════════════════════════════════════════
-            // 1. HERO CARD — Main Focal Point
+            // 1. HERO CARD — Main Focal Point (Energy Savings)
             // ════════════════════════════════════════
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -229,7 +231,7 @@ fun DashboardScreen(
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    // Center: Consumption value + Efficiency ring
+                    // Center: Consumption value + Savings ring
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
@@ -281,7 +283,7 @@ fun DashboardScreen(
                             }
                         }
 
-                        // Right: Efficiency ring
+                        // Right: Savings ring
                         Box(
                             modifier = Modifier.size(110.dp),
                             contentAlignment = Alignment.Center
@@ -307,7 +309,7 @@ fun DashboardScreen(
                                 drawArc(
                                     color = ringColor,
                                     startAngle = -225f,
-                                    sweepAngle = 270f * animatedEficiencia,
+                                    sweepAngle = 270f * animatedAhorro,
                                     useCenter = false,
                                     style = Stroke(width = stroke, cap = StrokeCap.Round),
                                     topLeft = Offset(pad, pad),
@@ -320,14 +322,14 @@ fun DashboardScreen(
 
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
-                                    "${(animatedEficiencia * 100).toInt()}%",
+                                    "${(animatedAhorro * 100).toInt()}%",
                                     style = MaterialTheme.typography.titleLarge.copy(
                                         fontWeight = FontWeight.Bold
                                     ),
                                     color = Color.White
                                 )
                                 Text(
-                                    "Eficiencia",
+                                    "Ahorro",
                                     style = MaterialTheme.typography.labelSmall,
                                     color = Color.White.copy(alpha = 0.7f)
                                 )
@@ -390,10 +392,10 @@ fun DashboardScreen(
                     modifier = Modifier.weight(1f),
                     icon = Icons.Outlined.ErrorOutline,
                     label = "Incidencias",
-                    value = "2",
+                    value = "$incidencias",
                     iconTint = AppColors.StatusError,
                     iconBg = AppColors.StatusErrorBackground,
-                    onClick = onVerAlertasClick
+                    onClick = onGestionIncidenciasClick
                 )
             }
 
@@ -492,11 +494,11 @@ fun DashboardScreen(
                 )
                 QuickActionCard(
                     modifier = Modifier.weight(1f),
-                    icon = Icons.Outlined.Warning,
-                    label = "Gestionar\nAlertas",
+                    icon = Icons.Outlined.ErrorOutline,
+                    label = "Gestionar\nIncidencias",
                     color = AppColors.StatusWarning,
                     bg = AppColors.StatusWarningBackground,
-                    onClick = onVerAlertasClick
+                    onClick = onGestionIncidenciasClick
                 )
             }
 

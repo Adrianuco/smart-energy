@@ -9,7 +9,9 @@ import com.example.smartenergy.ui.components.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(
+    onAddUserClick: () -> Unit = {}
+) {
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("Configuración", "Usuarios")
 
@@ -55,8 +57,14 @@ fun SettingsScreen() {
             }
 
             when (selectedTab) {
-                0 -> GeneralSettings()
-                1 -> UsuariosSection()
+                0 -> {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        GeneralSettings()
+                    }
+                }
+                1 -> {
+                    UsuariosSection(onAddUserClick = onAddUserClick)
+                }
             }
         }
     }

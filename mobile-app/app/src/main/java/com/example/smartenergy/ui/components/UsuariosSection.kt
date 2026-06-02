@@ -32,7 +32,7 @@ import com.example.smartenergy.model.Rol
 import com.example.smartenergy.model.listaUsuarios
 
 @Composable
-fun UsuariosSection() {
+fun UsuariosSection(onAddUserClick: () -> Unit = {}) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -49,13 +49,13 @@ fun UsuariosSection() {
                 color = MaterialTheme.colorScheme.onBackground
             )
             FloatingActionButton(
-                onClick = { /* TODO */ },
+                onClick = onAddUserClick,
                 modifier = Modifier.size(40.dp),
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 contentColor = MaterialTheme.colorScheme.primary,
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Icon(Icons.Outlined.PersonAdd, contentDescription = null)
+                Icon(Icons.Outlined.PersonAdd, contentDescription = "Agregar Usuario")
             }
         }
         Spacer(Modifier.height(16.dp))
@@ -71,7 +71,7 @@ fun UsuariosSection() {
                     },
                     supportingContent = {
                         Text(
-                            usuario.email,
+                            usuario.cif,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -86,11 +86,11 @@ fun UsuariosSection() {
                                 )
                             },
                             colors = AssistChipDefaults.assistChipColors(
-                                containerColor = if (usuario.rol == Rol.ADMIN)
+                                containerColor = if (usuario.rol == Rol.ADMINISTRADOR)
                                     MaterialTheme.colorScheme.primaryContainer
                                 else
                                     MaterialTheme.colorScheme.secondaryContainer,
-                                labelColor = if (usuario.rol == Rol.ADMIN)
+                                labelColor = if (usuario.rol == Rol.ADMINISTRADOR)
                                     MaterialTheme.colorScheme.primary
                                 else
                                     MaterialTheme.colorScheme.secondary

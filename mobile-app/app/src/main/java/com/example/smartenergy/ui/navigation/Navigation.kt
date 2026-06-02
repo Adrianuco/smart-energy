@@ -1,7 +1,6 @@
 package com.example.smartenergy.ui.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Settings
@@ -14,17 +13,16 @@ import kotlinx.serialization.Serializable
 @Serializable object EdificiosRuta
 @Serializable object AjustesRuta
 @Serializable object HorariosRuta
-
-@Serializable
-object ReportesRuta{
-}
-
+@Serializable object ReportesRuta
 @Serializable object AlertasRuta
 @Serializable data class InfraestructuraRuta(val edificioNombre: String? = null)
-
 @Serializable object IncidenciaRuta
-
 @Serializable data class DetalleRuta(val edificioNombre: String)
+
+// Nuevas rutas
+@Serializable object RegistroEquipoACRuta
+@Serializable object RegistroUsuarioRuta
+@Serializable object GestionIncidenciasRuta
 
 sealed class Tab(val route: Any, val icon: ImageVector, val label: String) {
     object Home : Tab(DashboardRuta, Icons.Default.Home, "Inicio")

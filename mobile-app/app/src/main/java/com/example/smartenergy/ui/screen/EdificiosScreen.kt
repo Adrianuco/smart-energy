@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -36,29 +35,29 @@ import com.example.smartenergy.ui.components.EdificioCard
 import com.example.smartenergy.ui.components.FilterBar
 
 val listaAulasEdficioA = listOf(
-    Aula("Aula A-101", 1, 60f, EquipoAC("AC-A1", "LG", "ArtCool", 12000, "SEER 18")),
-    Aula("Aula A-104", 1, 80f, EquipoAC("AC-A2", "Samsung", "WindFree", 18000, "SEER 21")),
-    Aula("Aula A-202", 2, 40f, EquipoAC("AC-A3", "Panasonic", "Inverter", 12000, "SEER 16")),
+    Aula("Aula A-101", 1, 60f, EquipoAC("AC-A1", "LG", "Split", 12000, "A++", true, 0.5f, 2.5f)),
+    Aula("Aula A-104", 1, 80f, EquipoAC("AC-A2", "Samsung", "WindFree", 12000, "A+++", true, 0.4f, 2.2f)),
+    Aula("Aula A-202", 2, 40f, EquipoAC("AC-A3", "Panasonic", "Inverter", 9000, "A+", false, 0.6f, 3.0f)),
 )
 val listaAulasEdficioB = listOf(
-    Aula("Aula B-101", 1, 60f, EquipoAC("AC-B1", "Carrier", "Optima", 24000, "SEER 14")),
-    Aula("Aula B-104", 1, 80f, EquipoAC("AC-B2", "Daikin", "Fit", 18000, "SEER 17")),
-    Aula("Aula B-202", 2, 40f, EquipoAC("AC-B3", "Trane", "XR14", 12000, "SEER 14")),
+    Aula("Aula B-101", 1, 60f, EquipoAC("AC-B1", "Carrier", "Comfort", 18000, "A++", true, 0.8f, 3.5f)),
+    Aula("Aula B-104", 1, 80f, EquipoAC("AC-B2", "Daikin", "SkyAir", 12000, "A+++", true, 0.5f, 2.8f)),
+    Aula("Aula B-202", 2, 40f, EquipoAC("AC-B3", "Trane", "Voyager", 24000, "A", true, 0.9f, 4.0f)),
 )
 val listaAulasEdficioC = listOf(
-    Aula("Aula C-101", 1, 60f, EquipoAC("AC-C1", "York", "LX Series", 12000, "SEER 16")),
-    Aula("Aula C-104", 1, 80f, EquipoAC("AC-C2", "Lennox", "Elite", 18000, "SEER 18")),
-    Aula("Aula C-202", 2, 40f, EquipoAC("AC-C3", "Midea", "Mission", 12000, "SEER 15")),
+    Aula("Aula C-101", 1, 60f, EquipoAC("AC-C1", "York", "Affinity", 12000, "A++", true, 0.7f, 3.2f)),
+    Aula("Aula C-104", 1, 80f, EquipoAC("AC-C2", "Lennox", "Elite", 12000, "A+", true, 0.6f, 2.9f)),
+    Aula("Aula C-202", 2, 40f, EquipoAC("AC-C3", "Midea", "Mission II", 9000, "A++", true, 0.5f, 2.4f)),
 )
 val listaAulasEdficioD = listOf(
-    Aula("Aula D-101", 1, 60f, EquipoAC("AC-D1", "LG", "Dual Inverter", 12000, "SEER 19")),
-    Aula("Aula D-104", 1, 80f, EquipoAC("AC-D2", "Samsung", "Digital Inverter", 18000, "SEER 20")),
-    Aula("Aula D-202", 2, 40f, EquipoAC("AC-D3", "Panasonic", "Nanoe-G", 12000, "SEER 17")),
+    Aula("Aula D-101", 1, 60f, EquipoAC("AC-D1", "LG", "Dual Inverter", 12000, "A+++", true, 0.4f, 2.3f)),
+    Aula("Aula D-104", 1, 80f, EquipoAC("AC-D2", "Samsung", "Digital Inverter", 12000, "A++", true, 0.4f, 2.2f)),
+    Aula("Aula D-202", 2, 40f, EquipoAC("AC-D3", "Panasonic", "Nanoe", 9000, "A+++", true, 0.6f, 2.7f)),
 )
 val listaAulasEdficioE = listOf(
-    Aula("Aula E-101", 1, 60f, EquipoAC("AC-E1", "Carrier", "Comfort", 12000, "SEER 13")),
-    Aula("Aula E-104", 1, 80f, EquipoAC("AC-E2", "Daikin", "SkyAir", 24000, "SEER 15")),
-    Aula("Aula E-202", 2, 40f, EquipoAC("AC-E3", "York", "Affinity", 12000, "SEER 17")),
+    Aula("Aula E-101", 1, 60f, EquipoAC("AC-E1", "Carrier", "Extreme", 36000, "A", true, 1.0f, 4.5f)),
+    Aula("Aula E-104", 1, 80f, EquipoAC("AC-E2", "Daikin", "Ururu Sarara", 24000, "A+++", true, 0.8f, 3.8f)),
+    Aula("Aula E-202", 2, 40f, EquipoAC("AC-E3", "York", "LX Series", 12000, "A++", true, 0.7f, 3.2f)),
 )
 val listaEdificios = listOf(
     Edificio("Edificio A", 240f ,"OK", listaAulasEdficioA),

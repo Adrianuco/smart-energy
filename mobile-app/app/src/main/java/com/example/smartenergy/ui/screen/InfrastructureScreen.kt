@@ -15,6 +15,7 @@ import com.example.smartenergy.ui.components.EdificiosSection
 @Composable
 fun InfrastructureScreen(
     initialBuildingName: String? = null,
+    onAddACClick: () -> Unit = {},
     onBack: () -> Unit
 ) {
     var selectedTab by remember { mutableStateOf(if (initialBuildingName != null) 0 else 2) }
@@ -73,7 +74,7 @@ fun InfrastructureScreen(
 
             when (selectedTab) {
                 0 -> AulaSection(initialBuildingName)
-                1 -> ACSection()
+                1 -> ACSection(onAddACClick = onAddACClick)
                 2 -> EdificiosSection()
             }
         }

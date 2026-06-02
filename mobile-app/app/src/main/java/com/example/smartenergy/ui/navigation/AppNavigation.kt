@@ -11,23 +11,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.example.smartenergy.ui.screen.DashboardScreen
-import com.example.smartenergy.ui.screen.DetalleEdificioScreen
-import com.example.smartenergy.ui.screen.EdificiosScreen
-import com.example.smartenergy.ui.screen.GestionAlertasScreen
-import com.example.smartenergy.ui.screen.HorariosScreen
-import com.example.smartenergy.ui.screen.IncidenciaScreen
-import com.example.smartenergy.ui.screen.InfrastructureScreen
-import com.example.smartenergy.ui.screen.LoginScreen
-import com.example.smartenergy.ui.screen.ReportsScreen
-import com.example.smartenergy.ui.screen.SettingsScreen
-import com.example.smartenergy.ui.screen.listaEdificios
+import com.example.smartenergy.ui.screen.*
 
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
+    val navBackStackEntry = navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry.value?.destination
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -55,6 +45,7 @@ fun AppNavigation() {
                     onVerReportesClick = { navController.navigate(ReportesRuta) },
                     onVerEdificiosClick = { navController.navigate(EdificiosRuta) },
                     onVerAlertasClick = { navController.navigate(AlertasRuta) },
+                    onGestionIncidenciasClick = { navController.navigate(GestionIncidenciasRuta) },
                     onReportarClick = { navController.navigate(IncidenciaRuta) }
                 )
             }
@@ -71,7 +62,7 @@ fun AppNavigation() {
             }
 
             composable<IncidenciaRuta> {
-                IncidenciaScreen()
+                IncidenciaScreen(onEnviarClick = { navController.popBackStack() })
             }
 
             composable<DetalleRuta> { backStackEntry ->
@@ -83,6 +74,9 @@ fun AppNavigation() {
                         edificio = edificioSelected,
                         onAddAulasClick = { nombre ->
                             navController.navigate(InfraestructuraRuta(edificioNombre = nombre))
+                        },
+                        onGestionIncidenciasClick = {
+                            navController.navigate(GestionIncidenciasRuta)
                         }
                     )
                 }
@@ -92,6 +86,7 @@ fun AppNavigation() {
                 val destino = backStackEntry.toRoute<InfraestructuraRuta>()
                 InfrastructureScreen(
                     initialBuildingName = destino.edificioNombre,
+                    onAddACClick = { navController.navigate(RegistroEquipoACRuta) },
                     onBack = { navController.popBackStack() }
                 )
             }
@@ -105,11 +100,25 @@ fun AppNavigation() {
             }
 
             composable<AjustesRuta> {
-                SettingsScreen()
+                SettingsScreen(
+                    onAddUserClick = { navController.navigate(RegistroUsuarioRuta) }
+                )
             }
 
             composable<HorariosRuta> {
                 HorariosScreen()
+            }
+
+            composable<RegistroEquipoACRuta> {
+                RegistroEquipoACScreen(onRegistroSuccess = { navController.popBackStack() })
+            }
+
+            composable<RegistroUsuarioRuta> {
+                RegistroUsuarioScreen(onRegistroSuccess = { navController.popBackStack() })
+            }
+
+            composable<GestionIncidenciasRuta> {
+                GestionIncidenciasScreen()
             }
         }
     }

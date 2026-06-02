@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.example.smartenergy.model.listaEquiposAC
 
 @Composable
-fun ACSection() {
+fun ACSection(onAddACClick: () -> Unit = {}) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -43,7 +43,7 @@ fun ACSection() {
                 color = MaterialTheme.colorScheme.onBackground
             )
             Button(
-                onClick = { /* TODO */ },
+                onClick = onAddACClick,
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary

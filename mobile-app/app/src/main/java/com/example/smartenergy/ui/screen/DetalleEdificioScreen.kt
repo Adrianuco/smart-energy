@@ -1,7 +1,5 @@
 package com.example.smartenergy.ui.screen
 
-
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -10,13 +8,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Bolt
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.Warning
+import androidx.compose.material.icons.outlined.ReportProblem
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import com.example.smartenergy.model.Edificio
@@ -26,9 +22,10 @@ import com.example.smartenergy.ui.theme.AppColors
 @Composable
 fun DetalleEdificioScreen(
     edificio: Edificio,
-    onAddAulasClick: (String) -> Unit
+    onAddAulasClick: (String) -> Unit,
+    onGestionIncidenciasClick: () -> Unit
 ) {
-    val porcentaje = 80
+    val porcentajeAhorro = 35 // Ejemplo de ahorro vs peor escenario
     val consumo = edificio.consumo
 
     Scaffold(
@@ -84,7 +81,7 @@ fun DetalleEdificioScreen(
         ) {
             Spacer(modifier = Modifier.height(4.dp))
 
-            // ── Efficiency Ring ──
+            // ── Savings Ring ──
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -98,7 +95,7 @@ fun DetalleEdificioScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        "Eficiencia General",
+                        "Ahorro respecto al Peor Escenario",
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -110,9 +107,9 @@ fun DetalleEdificioScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator(
-                            progress = { porcentaje / 100f },
+                            progress = { porcentajeAhorro / 100f },
                             modifier = Modifier.fillMaxSize(),
-                            color = MaterialTheme.colorScheme.primary,
+                            color = AppColors.StatusOk,
                             strokeWidth = 10.dp,
                             trackColor = MaterialTheme.colorScheme.outlineVariant,
                             strokeCap = StrokeCap.Round,
@@ -120,119 +117,91 @@ fun DetalleEdificioScreen(
 
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = "$porcentaje%",
+                                text = "$porcentajeAhorro%",
                                 style = MaterialTheme.typography.headlineMedium,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                            Text(
-                                "Óptimo",
-                                style = MaterialTheme.typography.labelSmall,
                                 color = AppColors.StatusOk
                             )
+                            Text(
+                                "Ahorrado",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
+                    }
+                }
+            }
+
+            // ── Incidencias Card (New approach instead of warnings) ──
+            Card(
+                onClick = onGestionIncidenciasClick,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f)),
+                elevation = CardDefaults.cardElevation(0.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(20.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Icon(
+                        Icons.Outlined.ReportProblem,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.size(32.dp)
+                    )
+                    Column {
+                        Text(
+                            "Gestionar Incidencias",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                        Text(
+                            "Ver y resolver reportes de este edificio",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
+                        )
                     }
                 }
             }
 
             // ── Stats Cards ──
-            Row(
+            Card(
+                shape = RoundedCornerShape(16.dp),
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                elevation = CardDefaults.cardElevation(2.dp)
             ) {
-                // Consumo Card
-                Card(
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.weight(1f),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                    elevation = CardDefaults.cardElevation(2.dp)
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                    Surface(
+                        modifier = Modifier.size(40.dp),
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.primaryContainer
                     ) {
-                        Surface(
-                            modifier = Modifier.size(40.dp),
-                            shape = CircleShape,
-                            color = AppColors.StatusOkBackground
-                        ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    Icons.Outlined.Bolt,
-                                    contentDescription = null,
-                                    tint = AppColors.StatusOk,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.width(12.dp))
-
-                        Column {
-                            Text(
-                                "Consumo",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Text(
-                                "$consumo kWh",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onBackground
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                Icons.Outlined.Bolt,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(20.dp)
                             )
                         }
                     }
-                }
-            }
 
-            // Warnings & Alerts Row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Card(
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.weight(1f),
-                    colors = CardDefaults.cardColors(containerColor = AppColors.StatusWarningBackground),
-                    elevation = CardDefaults.cardElevation(0.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            Icons.Outlined.Warning,
-                            contentDescription = null,
-                            tint = AppColors.StatusWarning,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            "Advertencias",
-                            style = MaterialTheme.typography.titleSmall,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                }
+                    Spacer(modifier = Modifier.width(12.dp))
 
-                Card(
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.weight(1f),
-                    colors = CardDefaults.cardColors(containerColor = AppColors.StatusErrorBackground),
-                    elevation = CardDefaults.cardElevation(0.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            Icons.Outlined.Info,
-                            contentDescription = null,
-                            tint = AppColors.StatusError,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
+                    Column {
                         Text(
-                            "Alertas",
-                            style = MaterialTheme.typography.titleSmall,
+                            "Consumo Actual",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            "$consumo kWh",
+                            style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onBackground
                         )
                     }
@@ -241,7 +210,7 @@ fun DetalleEdificioScreen(
 
             // ── Aulas List ──
             Text(
-                "Aulas",
+                "Eficiencia por Aula",
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onBackground
             )
