@@ -23,6 +23,9 @@ import kotlinx.serialization.Serializable
 @Serializable object RegistroEquipoACRuta
 @Serializable object RegistroUsuarioRuta
 @Serializable object GestionIncidenciasRuta
+@Serializable object EquiposRegistradosRuta
+@Serializable data class AtenderAlertaRuta(val alertaId: String)
+@Serializable data class AtenderIncidenciaRuta(val incidenciaId: String)
 
 sealed class Tab(val route: Any, val icon: ImageVector, val label: String) {
     object Home : Tab(DashboardRuta, Icons.Default.Home, "Inicio")

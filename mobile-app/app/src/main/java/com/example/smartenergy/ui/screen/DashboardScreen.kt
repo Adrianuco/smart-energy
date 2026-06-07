@@ -78,7 +78,8 @@ fun DashboardScreen(
     onVerReportesClick: () -> Unit,
     onVerAlertasClick: () -> Unit,
     onGestionIncidenciasClick: () -> Unit,
-    onReportarClick: () -> Unit
+    onReportarClick: () -> Unit,
+    onVerEquiposClick: () -> Unit
 ) {
     var consumo by remember { mutableIntStateOf(250) }
     var ahorroEnergia by remember { mutableFloatStateOf(0.35f) } // Representa 35% de ahorro
@@ -386,7 +387,8 @@ fun DashboardScreen(
                     label = "Equipos Activos",
                     value = "18",
                     iconTint = MaterialTheme.colorScheme.secondary,
-                    iconBg = MaterialTheme.colorScheme.secondaryContainer
+                    iconBg = MaterialTheme.colorScheme.secondaryContainer,
+                    onClick = onVerEquiposClick
                 )
                 MetricCard(
                     modifier = Modifier.weight(1f),

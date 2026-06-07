@@ -55,8 +55,7 @@ fun GeneralSettings() {
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        // seccion de alertas y notificaciones
-        SettingsGroup(title = "Alertas y Notificaciones", icon = Icons.Outlined.NotificationsActive) {
+        SettingsGroup(title = "Configuración de Tolerancia", icon = Icons.Outlined.NotificationsActive) {
             Column {
                 Text(
                     "Notificación de advertencia",

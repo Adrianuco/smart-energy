@@ -36,7 +36,9 @@ val listaIncidenciasMock = listOf(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GestionIncidenciasScreen() {
+fun GestionIncidenciasScreen(
+    onAtenderIncidencia: (String) -> Unit = {}
+) {
     var filtroEstado by remember { mutableStateOf<EstadoIncidencia?>(null) }
 
     Scaffold(
@@ -80,7 +82,7 @@ fun GestionIncidenciasScreen() {
             ) {
                 val filtradas = if (filtroEstado == null) listaIncidenciasMock else listaIncidenciasMock.filter { it.estado == filtroEstado }
                 items(filtradas) { incidencia ->
-                    IncidenciaItem(incidencia)
+                    IncidenciaItem(incidencia, onGestionarClick = { onAtenderIncidencia(incidencia.id) })
                 }
             }
         }
@@ -88,7 +90,7 @@ fun GestionIncidenciasScreen() {
 }
 
 @Composable
-fun IncidenciaItem(incidencia: Incidencia) {
+fun IncidenciaItem(incidencia: Incidencia, onGestionarClick: () -> Unit) {
     Card(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -138,7 +140,7 @@ fun IncidenciaItem(incidencia: Incidencia) {
                 }
 
                 if (incidencia.estado != EstadoIncidencia.RESUELTA) {
-                    TextButton(onClick = { /* Gestionar */ }) {
+                    TextButton(onClick = onGestionarClick) {
                         Text("Gestionar")
                         Icon(Icons.Outlined.ChevronRight, null, modifier = Modifier.size(16.dp))
                     }

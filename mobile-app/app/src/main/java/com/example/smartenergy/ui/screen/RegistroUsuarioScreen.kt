@@ -23,7 +23,7 @@ fun RegistroUsuarioScreen(
     var id by remember { mutableStateOf("") }
     var nombre by remember { mutableStateOf("") }
     var apellido by remember { mutableStateOf("") }
-    var cifra by remember { mutableStateOf("") }
+    var cif by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var rol by remember { mutableStateOf(Rol.APOYO_LOGISTICO) }
     var activo by remember { mutableStateOf(true) }
@@ -52,13 +52,6 @@ fun RegistroUsuarioScreen(
                 fontWeight = FontWeight.Bold
             )
 
-            OutlinedTextField(
-                value = id,
-                onValueChange = { id = it },
-                label = { Text("ID / Cédula") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
-            )
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(
@@ -78,9 +71,9 @@ fun RegistroUsuarioScreen(
             }
 
             OutlinedTextField(
-                value = cifra,
-                onValueChange = { cifra = it },
-                label = { Text("Cifra / Código") },
+                value = cif,
+                onValueChange = { cif = it },
+                label = { Text("CIF") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp)
             )
@@ -132,18 +125,6 @@ fun RegistroUsuarioScreen(
                     label = { Text("Nivel de Acceso (1-5)") },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp)
-                )
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text("Usuario Activo")
-                Switch(
-                    checked = activo,
-                    onCheckedChange = { activo = it }
                 )
             }
 

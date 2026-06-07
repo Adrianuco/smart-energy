@@ -58,7 +58,7 @@ fun ImportModule() {
                 Spacer(Modifier.width(16.dp))
                 Column {
                     Text(
-                        "Importación Masiva",
+                        "Importación",
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onBackground
                     )
@@ -82,7 +82,7 @@ fun ImportModule() {
                 Icon(Icons.Outlined.FileUpload, contentDescription = null)
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    "Importar Programación Académica",
+                    "Importar Horarios Académica",
                     style = MaterialTheme.typography.labelLarge
                 )
             }

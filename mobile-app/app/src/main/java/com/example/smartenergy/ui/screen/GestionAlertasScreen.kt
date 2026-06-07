@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import com.example.smartenergy.ui.theme.AppColors
 
 data class Alerta(
+    val id: String = "", // Added ID
     val aula: String,
     val edificio: String,
     val tipo: String,
@@ -48,16 +49,18 @@ data class Alerta(
 )
 
 val listaAlertas = listOf(
-    Alerta("Aula B-104", "Edificio B", "Apagar AC", "2:30 PM", "Pendiente"),
-    Alerta("Aula C-202", "Edificio C", "Revisar consumo", "3:15 PM", "Advertencia"),
-    Alerta("Aula E-101", "Edificio E", "Apagar AC", "5:00 PM", "Pendiente"),
-    Alerta("Aula A-104", "Edificio A", "Todo correcto", "1:00 PM", "Resuelta"),
-    Alerta("Aula D-202", "Edificio D", "Encender AC", "7:45 AM", "Pendiente")
+    Alerta("1", "Aula B-104", "Edificio B", "Apagar AC", "2:30 PM", "Pendiente"),
+    Alerta("2", "Aula C-202", "Edificio C", "Revisar consumo", "3:15 PM", "Advertencia"),
+    Alerta("3", "Aula E-101", "Edificio E", "Apagar AC", "5:00 PM", "Pendiente"),
+    Alerta("4", "Aula A-104", "Edificio A", "Todo correcto", "1:00 PM", "Resuelta"),
+    Alerta("5", "Aula D-202", "Edificio D", "Encender AC", "7:45 AM", "Pendiente")
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GestionAlertasScreen() {
+fun GestionAlertasScreen(
+    onAtenderAlerta: (String) -> Unit = {}
+) {
 
     Scaffold(
         topBar = {
@@ -93,14 +96,14 @@ fun GestionAlertasScreen() {
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(listaAlertas) { alerta ->
-                AlertaCard(alerta)
+                AlertaCard(alerta, onAtenderClick = { onAtenderAlerta(alerta.id) })
             }
         }
     }
 }
 
 @Composable
-private fun AlertaCard(alerta: Alerta) {
+private fun AlertaCard(alerta: Alerta, onAtenderClick: () -> Unit) {
     val statusConfig = getAlertStatusConfig(alerta.estado)
 
     Card(
@@ -191,7 +194,7 @@ private fun AlertaCard(alerta: Alerta) {
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Button(
-                    onClick = { },
+                    onClick = onAtenderClick,
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(

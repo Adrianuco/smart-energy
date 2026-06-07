@@ -2,6 +2,7 @@ package com.example.smartenergy.ui.screen
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -10,15 +11,24 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ShowChart
+import androidx.compose.material.icons.automirrored.outlined.TrendingDown
 import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.outlined.Bolt
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.smartenergy.ui.theme.AppColors
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 import kotlin.math.roundToInt
 
 // =========================
@@ -29,7 +39,7 @@ data class EdificioReport(
     val id: String,
     val nombre: String,
     val consumoActual: Float,
-    val consumoPeorEscenario: Float, // AC encendido todo el tiempo de clase
+    val consumoPeorEscenario: Float,
     val ahorroLogrado: Float,
     val tendencia: Float
 )
@@ -101,23 +111,34 @@ fun ReportsScreen() {
                     Column {
                         Text(
                             text = "Reportes de Ahorro",
-                            style = MaterialTheme.typography.headlineSmall
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.Bold
                         )
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.clickable { showDatePicker = true }
                         ) {
-                            Icon(Icons.Default.CalendarToday, contentDescription = null, modifier = Modifier.size(14.dp))
-                            Spacer(modifier = Modifier.width(4.dp))
+                            Icon(
+                                Icons.Default.CalendarToday,
+                                contentDescription = null,
+                                modifier = Modifier.size(12.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = fechaSeleccionada.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-                                style = MaterialTheme.typography.bodySmall
+                                text = fechaSeleccionada.format(DateTimeFormatter.ofPattern("d 'de' MMMM, yyyy", Locale.forLanguageTag("es-MX"))),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
             )
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         Column(
             modifier = Modifier
@@ -125,102 +146,199 @@ fun ReportsScreen() {
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            Text(text = "Seleccionar edificio", style = MaterialTheme.typography.titleSmall)
+            Spacer(modifier = Modifier.height(4.dp))
 
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                items(edificiosReport) { edificio ->
-                    EdificioChip(edificio = edificio, isSelected = edificio == edificioSeleccionado) {
-                        edificioSeleccionado = edificio
+            // Building Selector
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text(
+                    text = "Seleccionar Edificio",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold
+                )
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    contentPadding = PaddingValues(bottom = 4.dp)
+                ) {
+                    items(edificiosReport) { edificio ->
+                        EdificioChip(edificio = edificio, isSelected = edificio == edificioSeleccionado) {
+                            edificioSeleccionado = edificio
+                        }
                     }
                 }
             }
 
-            CardAhorro(edificioSeleccionado)
+            // Main Saving Card (Inspired by Dashboard Hero)
+            Card(
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
+                elevation = CardDefaults.cardElevation(4.dp)
+            ) {
+                Column(modifier = Modifier.padding(24.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = edificioSeleccionado.nombre,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color.White.copy(alpha = 0.8f)
+                        )
+                        Surface(
+                            shape = RoundedCornerShape(12.dp),
+                            color = Color.White.copy(alpha = 0.2f)
+                        ) {
+                            Text(
+                                text = "Eficiente",
+                                color = Color.White,
+                                style = MaterialTheme.typography.labelSmall,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                            )
+                        }
+                    }
 
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                TiempoChip("Hoy", periodoSeleccionado == "Hoy") { periodoSeleccionado = "Hoy" }
-                TiempoChip("Semana", periodoSeleccionado == "Semana") { periodoSeleccionado = "Semana" }
-                TiempoChip("Mes", periodoSeleccionado == "Mes") { periodoSeleccionado = "Mes" }
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(verticalAlignment = Alignment.Bottom) {
+                        Text(
+                            text = "${edificioSeleccionado.ahorroLogrado.roundToInt()}",
+                            style = MaterialTheme.typography.displayMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "kWh ahorrados",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color.White.copy(alpha = 0.7f),
+                            modifier = Modifier.padding(bottom = 12.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        ReportMiniStat(
+                            Modifier.weight(1f),
+                            "Consumo Real",
+                            "${edificioSeleccionado.consumoActual.toInt()} kWh",
+                            Icons.Outlined.Bolt
+                        )
+                        ReportMiniStat(
+                            Modifier.weight(1f),
+                            "Escenario Base",
+                            "${edificioSeleccionado.consumoPeorEscenario.toInt()} kWh",
+                            Icons.AutoMirrored.Outlined.ShowChart
+                        )
+                    }
+                }
             }
 
+            // Time Period Selection
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                    .padding(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                listOf("Hoy", "Semana", "Mes").forEach { periodo ->
+                    val isSelected = periodoSeleccionado == periodo
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(if (isSelected) MaterialTheme.colorScheme.background else Color.Transparent)
+                            .clickable { periodoSeleccionado = periodo }
+                            .padding(vertical = 8.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = periodo,
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+
+            // Historical Chart Card
             Card(
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(2.dp)
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
-                    Text(text = "Histórico de Consumo", style = MaterialTheme.typography.titleMedium)
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Histórico de Consumo",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Icon(
+                            Icons.AutoMirrored.Outlined.TrendingDown,
+                            contentDescription = null,
+                            tint = AppColors.StatusOk
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(24.dp))
                     GraficoLineasHistorico(getHistorico(edificioSeleccionado.id, periodoSeleccionado))
                 }
             }
+            
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
 
 @Composable
-private fun CardAhorro(edificio: EdificioReport) {
-    Card(
+private fun ReportMiniStat(modifier: Modifier, label: String, value: String, icon: ImageVector) {
+    Column(
+        modifier = modifier
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color.White.copy(alpha = 0.1f))
+            .padding(12.dp)
+    ) {
+        Icon(icon, contentDescription = null, tint = Color.White.copy(alpha = 0.7f), modifier = Modifier.size(16.dp))
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(text = value, style = MaterialTheme.typography.titleSmall, color = Color.White, fontWeight = FontWeight.Bold)
+        Text(text = label, style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.6f))
+    }
+}
+
+@Composable
+private fun EdificioChip(edificio: EdificioReport, isSelected: Boolean, onClick: () -> Unit) {
+    val backgroundColor by animateColorAsState(
+        if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,
+        label = "chipBg"
+    )
+    val borderColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
+
+    Surface(
+        onClick = onClick,
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(2.dp)
+        color = backgroundColor,
+        border = BorderStroke(1.dp, borderColor),
+        modifier = Modifier.size(width = 90.dp, height = 50.dp)
     ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Column {
-                    Text(text = edificio.nombre, style = MaterialTheme.typography.titleLarge)
-                    Text(
-                        text = "Ahorro: ${edificio.ahorroLogrado.roundToInt()} kWh",
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = AppColors.StatusOk
-                    )
-                }
-                Surface(
-                    shape = RoundedCornerShape(12.dp),
-                    color = AppColors.StatusOkBackground
-                ) {
-                    Text(
-                        text = "Eficiente",
-                        color = AppColors.StatusOk,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-                    )
-                }
-            }
-
-            Divider()
-
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                MiniStat(Modifier.weight(1f), "Consumo Real", "${edificio.consumoActual.toInt()}", MaterialTheme.colorScheme.primary)
-                MiniStat(Modifier.weight(1f), "Peor Escenario", "${edificio.consumoPeorEscenario.toInt()}", AppColors.StatusError)
-                MiniStat(Modifier.weight(1f), "Ahorro %", "${((edificio.ahorroLogrado/edificio.consumoPeorEscenario)*100).toInt()}%", AppColors.StatusOk)
-            }
-        }
-    }
-}
-
-@Composable
-private fun MiniStat(modifier: Modifier, label: String, value: String, color: androidx.compose.ui.graphics.Color) {
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = value, style = MaterialTheme.typography.titleMedium, color = color)
-        Text(text = label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-    }
-}
-
-@Composable
-private fun TiempoChip(text: String, selected: Boolean, onClick: () -> Unit) {
-    val backgroundColor by animateColorAsState(if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface)
-    val textColor by animateColorAsState(if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant)
-
-    Card(
-        modifier = Modifier.clickable { onClick() },
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = backgroundColor),
-        border = if (!selected) BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant) else null
-    ) {
-        Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
-            Text(text = text, color = textColor, style = MaterialTheme.typography.labelLarge)
+        Box(contentAlignment = Alignment.Center) {
+            Text(
+                text = edificio.id,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+            )
         }
     }
 }
@@ -233,18 +351,4 @@ private fun GraficoLineasHistorico(historico: List<ConsumoHistorico>) {
         chartHeight = 200.dp,
         showAxis = true
     )
-}
-
-@Composable
-private fun EdificioChip(edificio: EdificioReport, isSelected: Boolean, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier.clickable { onClick() },
-        shape = RoundedCornerShape(12.dp),
-        border = BorderStroke(if (isSelected) 2.dp else 1.dp, if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant),
-        colors = CardDefaults.cardColors(containerColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f) else MaterialTheme.colorScheme.surface)
-    ) {
-        Column(modifier = Modifier.width(80.dp).padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(text = edificio.id, style = MaterialTheme.typography.titleMedium)
-        }
-    }
 }

@@ -45,7 +45,8 @@ fun AppNavigation() {
                     onVerEdificiosClick = { navController.navigate(EdificiosRuta) },
                     onVerAlertasClick = { navController.navigate(AlertasRuta) },
                     onGestionIncidenciasClick = { navController.navigate(GestionIncidenciasRuta) },
-                    onReportarClick = { navController.navigate(IncidenciaRuta) }
+                    onReportarClick = { navController.navigate(IncidenciaRuta) },
+                    onVerEquiposClick = { navController.navigate(EquiposRegistradosRuta) }
                 )
             }
 
@@ -95,7 +96,9 @@ fun AppNavigation() {
             }
 
             composable<AlertasRuta> {
-                GestionAlertasScreen()
+                GestionAlertasScreen(
+                    onAtenderAlerta = { id -> navController.navigate(AtenderAlertaRuta(id)) }
+                )
             }
 
             composable<AjustesRuta> {
@@ -117,7 +120,32 @@ fun AppNavigation() {
             }
 
             composable<GestionIncidenciasRuta> {
-                GestionIncidenciasScreen()
+                GestionIncidenciasScreen(
+                    onAtenderIncidencia = { id -> navController.navigate(AtenderIncidenciaRuta(id)) }
+                )
+            }
+
+            composable<EquiposRegistradosRuta> {
+                EquiposRegistradosScreen(
+                    onAddACClick = { navController.navigate(RegistroEquipoACRuta) },
+                    onBack = { navController.popBackStack() }
+                )
+            }
+
+            composable<AtenderAlertaRuta> { backStackEntry ->
+                val destino = backStackEntry.toRoute<AtenderAlertaRuta>()
+                AtenderAlertaScreen(
+                    alertaId = destino.alertaId,
+                    onBack = { navController.popBackStack() }
+                )
+            }
+
+            composable<AtenderIncidenciaRuta> { backStackEntry ->
+                val destino = backStackEntry.toRoute<AtenderIncidenciaRuta>()
+                AtenderIncidenciaScreen(
+                    incidenciaId = destino.incidenciaId,
+                    onBack = { navController.popBackStack() }
+                )
             }
         }
     }
