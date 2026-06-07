@@ -31,8 +31,8 @@ import androidx.compose.ui.unit.dp
 import com.example.smartenergy.model.Aula
 import com.example.smartenergy.model.Edificio
 import com.example.smartenergy.model.EquipoAC
-import com.example.smartenergy.ui.components.EdificioCard
-import com.example.smartenergy.ui.components.FilterBar
+import com.example.smartenergy.ui.components.edificios.EdificioCard
+import com.example.smartenergy.ui.components.edificios.FilterBar
 
 val listaAulasEdficioA = listOf(
     Aula("Aula A-101", 1, 60f, EquipoAC("AC-A1", "LG", "Split", 12000, "A++", true, 0.5f, 2.5f)),

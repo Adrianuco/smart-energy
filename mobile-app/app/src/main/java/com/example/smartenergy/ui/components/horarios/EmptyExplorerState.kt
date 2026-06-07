@@ -1,4 +1,4 @@
-package com.example.smartenergy.ui.components
+package com.example.smartenergy.ui.components.horarios
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

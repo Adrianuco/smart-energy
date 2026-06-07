@@ -7,9 +7,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.smartenergy.ui.components.ACSection
-import com.example.smartenergy.ui.components.AulaSection
-import com.example.smartenergy.ui.components.EdificiosSection
+import com.example.smartenergy.ui.components.infrastructure.ACSection
+import com.example.smartenergy.ui.components.infrastructure.AulaSection
+import com.example.smartenergy.ui.components.infrastructure.EdificiosSection
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

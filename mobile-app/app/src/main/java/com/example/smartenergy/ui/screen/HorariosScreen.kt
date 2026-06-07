@@ -7,9 +7,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.smartenergy.ui.components.ImportModule
-import com.example.smartenergy.ui.components.KpiSection
-import com.example.smartenergy.ui.components.ScheduleExplorer
+import com.example.smartenergy.ui.components.horarios.ImportModule
+import com.example.smartenergy.ui.components.horarios.KpiSection
+import com.example.smartenergy.ui.components.horarios.ScheduleExplorer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -1,4 +1,4 @@
-package com.example.smartenergy.ui.components
+package com.example.smartenergy.ui.components.infrastructure
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

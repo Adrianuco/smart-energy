@@ -25,6 +25,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.smartenergy.ui.components.reports.EdificioChip
+import com.example.smartenergy.ui.components.reports.GraficoLineasHistorico
+import com.example.smartenergy.ui.components.reports.ReportMiniStat
 import com.example.smartenergy.ui.theme.AppColors
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -300,55 +303,4 @@ fun ReportsScreen() {
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
-}
-
-@Composable
-private fun ReportMiniStat(modifier: Modifier, label: String, value: String, icon: ImageVector) {
-    Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(Color.White.copy(alpha = 0.1f))
-            .padding(12.dp)
-    ) {
-        Icon(icon, contentDescription = null, tint = Color.White.copy(alpha = 0.7f), modifier = Modifier.size(16.dp))
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(text = value, style = MaterialTheme.typography.titleSmall, color = Color.White, fontWeight = FontWeight.Bold)
-        Text(text = label, style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.6f))
-    }
-}
-
-@Composable
-private fun EdificioChip(edificio: EdificioReport, isSelected: Boolean, onClick: () -> Unit) {
-    val backgroundColor by animateColorAsState(
-        if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,
-        label = "chipBg"
-    )
-    val borderColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
-
-    Surface(
-        onClick = onClick,
-        shape = RoundedCornerShape(16.dp),
-        color = backgroundColor,
-        border = BorderStroke(1.dp, borderColor),
-        modifier = Modifier.size(width = 90.dp, height = 50.dp)
-    ) {
-        Box(contentAlignment = Alignment.Center) {
-            Text(
-                text = edificio.id,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-            )
-        }
-    }
-}
-
-@Composable
-private fun GraficoLineasHistorico(historico: List<ConsumoHistorico>) {
-    com.example.smartenergy.ui.components.SmartEnergyLineChart(
-        data = historico.map { it.consumo },
-        bottomLabels = historico.map { it.label },
-        chartHeight = 200.dp,
-        showAxis = true
-    )
 }

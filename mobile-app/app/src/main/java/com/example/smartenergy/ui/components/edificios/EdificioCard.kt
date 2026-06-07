@@ -1,5 +1,4 @@
-package com.example.smartenergy.ui.components
-
+package com.example.smartenergy.ui.components.edificios
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

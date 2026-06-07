@@ -1,4 +1,4 @@
-package com.example.smartenergy.ui.components
+package com.example.smartenergy.ui.components.shared
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height

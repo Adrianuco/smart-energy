@@ -66,6 +66,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.smartenergy.ui.components.dashboard.DashboardTrendChart
+import com.example.smartenergy.ui.components.dashboard.MetricCard
+import com.example.smartenergy.ui.components.dashboard.QuickActionCard
 import com.example.smartenergy.ui.theme.AppColors
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -507,130 +510,4 @@ fun DashboardScreen(
             Spacer(modifier = Modifier.height(8.dp))
         }
     }
-}
-
-
-
-@Composable
-private fun MetricCard(
-    modifier: Modifier = Modifier,
-    icon: ImageVector,
-    label: String,
-    value: String,
-    iconTint: Color,
-    iconBg: Color,
-    onClick: (() -> Unit)? = null
-) {
-    Card(
-        modifier = modifier
-            .height(88.dp)
-            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        elevation = CardDefaults.cardElevation(1.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(14.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Surface(
-                modifier = Modifier.size(40.dp),
-                shape = RoundedCornerShape(12.dp),
-                color = iconBg
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        icon,
-                        contentDescription = null,
-                        tint = iconTint,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.width(12.dp))
-            Column {
-                Text(
-                    value,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    label,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1
-                )
-            }
-        }
-    }
-}
-
-
-
-@Composable
-private fun QuickActionCard(
-    modifier: Modifier = Modifier,
-    icon: ImageVector,
-    label: String,
-    color: Color,
-    bg: Color,
-    onClick: () -> Unit
-) {
-    Card(
-        modifier = modifier
-            .height(110.dp)
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        elevation = CardDefaults.cardElevation(1.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(14.dp),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Surface(
-                modifier = Modifier.size(36.dp),
-                shape = RoundedCornerShape(10.dp),
-                color = bg
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        icon,
-                        contentDescription = null,
-                        tint = color,
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
-            }
-            Text(
-                label,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onBackground,
-                maxLines = 2
-            )
-        }
-    }
-}
-
-
-
-@Composable
-private fun DashboardTrendChart(
-    data: List<Float>,
-    labels: List<String>
-) {
-    com.example.smartenergy.ui.components.SmartEnergyLineChart(
-        data = data,
-        bottomLabels = labels,
-        chartHeight = 160.dp,
-        showAxis = true
-    )
 }

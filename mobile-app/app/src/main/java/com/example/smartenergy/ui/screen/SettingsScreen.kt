@@ -5,7 +5,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.smartenergy.ui.components.*
+import com.example.smartenergy.ui.components.settings.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

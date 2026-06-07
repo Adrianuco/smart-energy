@@ -13,6 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.smartenergy.ui.components.atenderincidencia.EstadoChip
+import com.example.smartenergy.ui.components.gestionincidencias.StatusBadge
 import com.example.smartenergy.ui.theme.AppColors
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -111,17 +113,4 @@ fun AtenderIncidenciaScreen(
             Spacer(modifier = Modifier.height(20.dp))
         }
     }
-}
-
-@Composable
-fun EstadoChip(label: String, selected: Boolean, color: androidx.compose.ui.graphics.Color, onClick: () -> Unit) {
-    FilterChip(
-        selected = selected,
-        onClick = onClick,
-        label = { Text(label) },
-        colors = FilterChipDefaults.filterChipColors(
-            selectedContainerColor = color.copy(alpha = 0.2f),
-            selectedLabelColor = color
-        )
-    )
 }
