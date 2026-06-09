@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/aulas")
+@RequestMapping("/aulas")
 public class AulaController {
     private final AulaService service;
 

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/incidencias")
+@RequestMapping("/incidencias")
 public class IncidenciaController {
     private final IncidenciaService service;
 
