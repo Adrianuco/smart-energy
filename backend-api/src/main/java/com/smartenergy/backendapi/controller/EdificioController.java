@@ -29,7 +29,6 @@ public class EdificioController {
     @PutMapping("/update")
     public ResponseEntity<Edificio> update(@RequestBody Edificio edificio) {
         Edificio i = service.findById(edificio.getId());
-        i.setAulas(edificio.getAulas());
         i.setNombre(edificio.getNombre());
 
         return ResponseEntity.ok(service.save(i));

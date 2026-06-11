@@ -17,6 +17,5 @@ public class Aula extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "edificio_id")
     public Edificio edificio;
-    public List<HorarioAcademico> horarios;
     public String nombre;
 }

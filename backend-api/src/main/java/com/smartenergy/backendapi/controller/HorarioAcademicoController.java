@@ -33,6 +33,7 @@ public class HorarioAcademicoController {
         i.setDiaSemana(horarioAcademico.getDiaSemana());
         i.setHoraFin(horarioAcademico.getHoraFin());
         i.setHoraInicio(horarioAcademico.getHoraInicio());
+        i.setAula(horarioAcademico.getAula());
 
         return ResponseEntity.ok(service.save(i));
     }
