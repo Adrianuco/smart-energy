@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ApoyoLogisticaService extends BaseService<ApoyoLogistica, IApoyoLogisticaRepository>{
-    protected ApoyoLogisticaService(IApoyoLogisticaRepository repo) {
+    public ApoyoLogisticaService(IApoyoLogisticaRepository repo) {
         super(repo);
     }
 }
