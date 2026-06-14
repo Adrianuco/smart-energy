@@ -33,6 +33,7 @@ public class RegistroConsumoController {
         i.setFecha(registroConsumo.getFecha());
         i.setHoraFin(registroConsumo.getHoraFin());
         i.setHoraInicio(registroConsumo.getHoraInicio());
+        i.setEquipo(registroConsumo.getEquipo());
 
         return ResponseEntity.ok(service.save(i));
     }

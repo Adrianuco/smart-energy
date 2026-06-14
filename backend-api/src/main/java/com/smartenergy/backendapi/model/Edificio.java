@@ -12,5 +12,5 @@ import java.util.List;
 @Entity
 @Table(name = "Edificio")
 public class Edificio extends BaseEntity {
-    public String nombre;
+    private String nombre;
 }

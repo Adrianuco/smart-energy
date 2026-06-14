@@ -33,6 +33,7 @@ public class EquipoController {
         i.setOperativo(equipo.getOperativo());
         i.setPotenciaMinima(equipo.getPotenciaMinima());
         i.setPotenciaNominal(equipo.getPotenciaNominal());
+        i.setAula(equipo.getAula());
 
         return ResponseEntity.ok(service.save(i));
     }

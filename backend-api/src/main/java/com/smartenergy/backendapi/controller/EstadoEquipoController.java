@@ -33,6 +33,7 @@ public class EstadoEquipoController {
         i.setFecha(estadoEquipo.getFecha());
         i.setHoraFin(estadoEquipo.getHoraFin());
         i.setHoraInicio(estadoEquipo.getHoraInicio());
+        i.setEquipo(estadoEquipo.getEquipo());
 
         return ResponseEntity.ok(service.save(i));
     }

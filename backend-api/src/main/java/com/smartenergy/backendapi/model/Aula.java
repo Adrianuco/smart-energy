@@ -1,9 +1,6 @@
 package com.smartenergy.backendapi.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +13,7 @@ import java.util.List;
 public class Aula extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "edificio_id")
-    public Edificio edificio;
-    public String codigo;
+    private Edificio edificio;
+    private String codigo;
+
 }

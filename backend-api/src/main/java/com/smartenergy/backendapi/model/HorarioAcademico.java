@@ -14,10 +14,10 @@ import java.time.LocalTime;
 @Entity
 @Table(name = "HorarioAcademico")
 public class HorarioAcademico extends BaseEntity {
-    public String asignatura;
-    public int diaSemana;
-    public LocalTime horaFin;
-    public LocalTime horaInicio;
+    private String asignatura;
+    private int diaSemana;
+    private LocalTime horaFin;
+    private LocalTime horaInicio;
 
     @ManyToOne
     @JoinColumn(name = "aula_id")
