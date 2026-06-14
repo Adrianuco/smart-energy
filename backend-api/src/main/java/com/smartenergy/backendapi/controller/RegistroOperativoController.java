@@ -30,9 +30,9 @@ public class RegistroOperativoController {
     public ResponseEntity<RegistroOperativo> update(@RequestBody RegistroOperativo registroOperativo) {
         RegistroOperativo i = service.findById(registroOperativo.getId());
         i.setConsumo(registroOperativo.getConsumo());
-        i.setFecha(registroOperativo.getFecha());
-        i.setHoraFin(registroOperativo.getHoraFin());
-        i.setHoraInicio(registroOperativo.getHoraInicio());
+        i.setInicio(registroOperativo.getInicio());
+        i.setFin(registroOperativo.getInicio());
+        i.setEstado(registroOperativo.getEstado());
         i.setEquipo(registroOperativo.getEquipo());
 
         return ResponseEntity.ok(service.save(i));

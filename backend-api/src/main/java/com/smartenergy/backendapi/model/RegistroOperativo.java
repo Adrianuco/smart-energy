@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
@@ -17,9 +18,8 @@ public class RegistroOperativo extends BaseEntity {
     private Estado estado;
 
     private double consumo;
-    private LocalDate fecha;
-    private LocalTime horaFin;
-    private LocalTime horaInicio;
+    private LocalDateTime inicio;
+    private LocalDateTime fin;
 
     @ManyToOne
     @JoinColumn(name = "equipo_id")
