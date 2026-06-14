@@ -31,7 +31,7 @@ public class AulaController {
     public ResponseEntity<Aula> update(@RequestBody Aula aula) {
         Aula i = service.findById(aula.getId());
         i.setEdificio(aula.getEdificio());
-        i.setNombre(aula.getNombre());
+        i.setCodigo(aula.getCodigo());
 
         return ResponseEntity.ok(service.save(i));
     }

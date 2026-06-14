@@ -4,6 +4,8 @@ import com.smartenergy.backendapi.model.HorarioAcademico;
 import com.smartenergy.backendapi.service.HorarioAcademicoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.UUID;
@@ -42,5 +44,11 @@ public class HorarioAcademicoController {
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file) {
+        service.importar(file);
+        return ResponseEntity.ok("Horarios Importados");
     }
 }

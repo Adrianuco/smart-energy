@@ -17,5 +17,5 @@ public class Aula extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "edificio_id")
     public Edificio edificio;
-    public String nombre;
+    public String codigo;
 }
