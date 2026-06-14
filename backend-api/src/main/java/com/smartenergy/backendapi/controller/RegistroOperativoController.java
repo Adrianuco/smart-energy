@@ -1,6 +1,9 @@
 package com.smartenergy.backendapi.controller;
 
+import com.smartenergy.backendapi.model.Equipo;
+import com.smartenergy.backendapi.model.Estado;
 import com.smartenergy.backendapi.model.RegistroOperativo;
+import com.smartenergy.backendapi.service.EquipoService;
 import com.smartenergy.backendapi.service.RegistroOperativoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,9 +15,11 @@ import java.util.UUID;
 @RequestMapping("/registro")
 public class RegistroOperativoController {
     private final RegistroOperativoService service;
+    private final EquipoService equipoService;
 
-    public RegistroOperativoController(RegistroOperativoService service) {
+    public RegistroOperativoController(RegistroOperativoService service, EquipoService equipoService) {
         this.service = service;
+        this.equipoService = equipoService;
     }
 
     @GetMapping("/all")
@@ -42,5 +47,15 @@ public class RegistroOperativoController {
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+
+    @PostMapping("/cambiar-estado/{equipoId}")
+    public ResponseEntity<String> cambiarEstado(@PathVariable UUID equipoId, @RequestBody Estado estado){
+        Equipo equipo = equipoService.findById(equipoId);
+
+        service.cambiarEstado(equipo, estado);
+
+        return ResponseEntity.ok("Estado Actualizado");
     }
 }
