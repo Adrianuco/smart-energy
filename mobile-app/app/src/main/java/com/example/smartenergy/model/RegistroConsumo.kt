@@ -10,3 +10,4 @@ data class RegistroConsumo(
     val horaInicio: LocalTime,
     val horaFin: LocalTime
 )
+

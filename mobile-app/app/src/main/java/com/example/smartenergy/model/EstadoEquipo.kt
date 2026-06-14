@@ -9,15 +9,3 @@ data class EstadoEquipo(
     val horaInicio: LocalTime,
     val horaFin: LocalTime
 )
-
-
-
-
-
-
-
-
-
-
-
-
