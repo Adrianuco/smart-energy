@@ -35,34 +35,39 @@ val listaHorarios = listOf(
 )
 
 val listaAulasEdficioA = listOf(
-    Aula("Aula A-101", 1, 60f, EquipoAC("AC-A1", "LG", "Split", 12000, "A++", true, 0.5f, 2.5f)),
-    Aula("Aula A-104", 1, 80f, EquipoAC("AC-A2", "Samsung", "WindFree", 12000, "A+++", true, 0.4f, 2.2f)),
-    Aula("Aula A-202", 2, 40f, EquipoAC("AC-A3", "Panasonic", "Inverter", 9000, "A+", false, 0.6f, 3.0f)),
+    Aula(id = "A-101", nombre = "Aula A-101"),
+    Aula(id = "A-104", nombre = "Aula A-104"),
+    Aula(id = "A-202", nombre = "Aula A-202")
 )
+
 val listaAulasEdficioB = listOf(
-    Aula("Aula B-101", 1, 60f, EquipoAC("AC-B1", "Carrier", "Comfort", 18000, "A++", true, 0.8f, 3.5f)),
-    Aula("Aula B-104", 1, 80f, EquipoAC("AC-B2", "Daikin", "SkyAir", 12000, "A+++", true, 0.5f, 2.8f)),
-    Aula("Aula B-202", 2, 40f, EquipoAC("AC-B3", "Trane", "Voyager", 24000, "A", true, 0.9f, 4.0f)),
+    Aula(id = "B-101", nombre = "Aula B-101"),
+    Aula(id = "B-104", nombre = "Aula B-104"),
+    Aula(id = "B-202", nombre = "Aula B-202")
 )
+
 val listaAulasEdficioC = listOf(
-    Aula("Aula C-101", 1, 60f, EquipoAC("AC-C1", "York", "Affinity", 12000, "A++", true, 0.7f, 3.2f)),
-    Aula("Aula C-104", 1, 80f, EquipoAC("AC-C2", "Lennox", "Elite", 12000, "A+", true, 0.6f, 2.9f)),
-    Aula("Aula C-202", 2, 40f, EquipoAC("AC-C3", "Midea", "Mission II", 9000, "A++", true, 0.5f, 2.4f)),
+    Aula(id = "C-101", nombre = "Aula C-101"),
+    Aula(id = "C-104", nombre = "Aula C-104"),
+    Aula(id = "C-202", nombre = "Aula C-202")
 )
+
 val listaAulasEdficioD = listOf(
-    Aula("Aula D-101", 1, 60f, EquipoAC("AC-D1", "LG", "Dual Inverter", 12000, "A+++", true, 0.4f, 2.3f)),
-    Aula("Aula D-104", 1, 80f, EquipoAC("AC-D2", "Samsung", "Digital Inverter", 12000, "A++", true, 0.4f, 2.2f)),
-    Aula("Aula D-202", 2, 40f, EquipoAC("AC-D3", "Panasonic", "Nanoe", 9000, "A+++", true, 0.6f, 2.7f)),
+    Aula(id = "D-101", nombre = "Aula D-101"),
+    Aula(id = "D-104", nombre = "Aula D-104"),
+    Aula(id = "D-202", nombre = "Aula D-202")
 )
+
 val listaAulasEdficioE = listOf(
-    Aula("Aula E-101", 1, 60f, EquipoAC("AC-E1", "Carrier", "Extreme", 36000, "A", true, 1.0f, 4.5f)),
-    Aula("Aula E-104", 1, 80f, EquipoAC("AC-E2", "Daikin", "Ururu Sarara", 24000, "A+++", true, 0.8f, 3.8f)),
-    Aula("Aula E-202", 2, 40f, EquipoAC("AC-E3", "York", "LX Series", 12000, "A++", true, 0.7f, 3.2f)),
+    Aula(id = "E-101", nombre = "Aula E-101"),
+    Aula(id = "E-104", nombre = "Aula E-104"),
+    Aula(id = "E-202", nombre = "Aula E-202")
 )
+
 val listaEdificios = listOf(
-    Edificio("Edificio A", 240f ,"OK", listaAulasEdficioA),
+    Edificio("Edificio A", 240f, "OK", listaAulasEdficioA),
     Edificio("Edificio B", 240f, "Problemas", listaAulasEdficioB),
     Edificio("Edificio C", 240f, "Advertencias", listaAulasEdficioC),
     Edificio("Edificio D", 240f, "OK", listaAulasEdficioD),
-    Edificio("Edificio E", 240f, "Problemas", listaAulasEdficioE),
+    Edificio("Edificio E", 240f, "Problemas", listaAulasEdficioE)
 )
