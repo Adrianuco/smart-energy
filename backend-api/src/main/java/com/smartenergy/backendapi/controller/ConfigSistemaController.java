@@ -32,6 +32,7 @@ public class ConfigSistemaController {
         ConfigSistema i = service.findById(configSistema.getId());
         i.setMargenEncendido(configSistema.getMargenEncendido());
         i.setTiempoMinimoDesperdicio(configSistema.getTiempoMinimoDesperdicio());
+        i.setActivo(configSistema.isActivo());
 
         return ResponseEntity.ok(service.save(i));
     }

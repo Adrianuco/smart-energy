@@ -16,4 +16,6 @@ public class Aula extends BaseEntity {
     private Edificio edificio;
     private String codigo;
 
+    @OneToOne(mappedBy = "aula")
+    private Equipo equipo;
 }

@@ -29,7 +29,6 @@ public class AlertaController {
     @PutMapping("/update")
     public ResponseEntity<Alerta> update(@RequestBody Alerta alerta) {
         Alerta a = service.findById(alerta.getId());
-        a.setAtendida(alerta.isAtendida());
         a.setEstado(alerta.getEstado());
         a.setAula(alerta.getAula());
         a.setFechaHora(alerta.getFechaHora());

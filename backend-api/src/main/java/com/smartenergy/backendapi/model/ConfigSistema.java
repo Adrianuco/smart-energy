@@ -10,6 +10,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "ConfigSistema")
 public class ConfigSistema extends BaseEntity {
-    private double margenEncendido;
-    private double tiempoMinimoDesperdicio;
+    private int margenEncendido;
+    private int tiempoMinimoDesperdicio;
+    private boolean activo;
 }
