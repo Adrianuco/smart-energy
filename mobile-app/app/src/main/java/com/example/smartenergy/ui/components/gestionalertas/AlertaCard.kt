@@ -14,7 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.example.smartenergy.ui.screen.Alerta
+import com.example.smartenergy.model.Alerta
+import com.example.smartenergy.model.EstadoAlerta
 import com.example.smartenergy.ui.theme.AppColors
 
 @Composable
@@ -35,7 +36,7 @@ fun AlertaCard(alerta: Alerta, onAtenderClick: () -> Unit) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "${alerta.aula} · ${alerta.edificio}",
+                    text = "${alerta.aula?.codigo ?: ""} · ${alerta.aula?.edificio?.nombre ?: ""}",
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onBackground
                 )
@@ -56,7 +57,7 @@ fun AlertaCard(alerta: Alerta, onAtenderClick: () -> Unit) {
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            alerta.estado,
+                            if (alerta.estado == EstadoAlerta.PENDIENTE) "Pendiente" else "Resuelta",
                             style = MaterialTheme.typography.labelSmall,
                             color = statusConfig.color
                         )
@@ -105,7 +106,7 @@ fun AlertaCard(alerta: Alerta, onAtenderClick: () -> Unit) {
                 }
             }
 
-            if (alerta.estado != "Resuelta") {
+            if (alerta.estado != EstadoAlerta.ATENDIDA) {
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Button(
@@ -132,27 +133,17 @@ private data class AlertStatusConfig(
     val backgroundColor: Color
 )
 
-private fun getAlertStatusConfig(estado: String): AlertStatusConfig {
+private fun getAlertStatusConfig(estado: EstadoAlerta): AlertStatusConfig {
     return when (estado) {
-        "Pendiente" -> AlertStatusConfig(
+        EstadoAlerta.PENDIENTE -> AlertStatusConfig(
             icon = Icons.Outlined.Error,
             color = AppColors.StatusError,
             backgroundColor = AppColors.StatusErrorBackground
         )
-        "Advertencia" -> AlertStatusConfig(
-            icon = Icons.Outlined.Warning,
-            color = AppColors.StatusWarning,
-            backgroundColor = AppColors.StatusWarningBackground
-        )
-        "Resuelta" -> AlertStatusConfig(
+        EstadoAlerta.ATENDIDA -> AlertStatusConfig(
             icon = Icons.Outlined.CheckCircle,
             color = AppColors.StatusOk,
             backgroundColor = AppColors.StatusOkBackground
-        )
-        else -> AlertStatusConfig(
-            icon = Icons.Outlined.Error,
-            color = AppColors.StatusError,
-            backgroundColor = AppColors.StatusErrorBackground
         )
     }
 }

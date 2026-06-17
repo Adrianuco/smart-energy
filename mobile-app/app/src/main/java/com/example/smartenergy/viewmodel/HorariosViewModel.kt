@@ -27,7 +27,7 @@ class HorariosViewModel : ViewModel() {
         cargarHorarios()
     }
 
-    fun buscarHorarioPorId(id: Int): HorarioAcademico? {
+    fun buscarHorarioPorId(id: String): HorarioAcademico? {
         return repository.buscarHorarioPorId(id)
     }
 
@@ -36,7 +36,7 @@ class HorariosViewModel : ViewModel() {
         cargarHorarios()
     }
 
-    fun eliminarHorario(id: Int) {
+    fun eliminarHorario(id: String) {
         repository.eliminarHorario(id)
         cargarHorarios()
     }

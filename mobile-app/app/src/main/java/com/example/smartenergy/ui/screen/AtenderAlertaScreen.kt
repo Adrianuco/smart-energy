@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.smartenergy.ui.components.atenderalerta.DetailRow
 import com.example.smartenergy.ui.theme.AppColors
+import com.example.smartenergy.model.Alerta
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -99,9 +100,9 @@ fun AtenderAlertaScreen(
                 elevation = CardDefaults.cardElevation(2.dp)
             ) {
                 Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    DetailRow(icon = Icons.Outlined.Business, label = "Edificio", value = alerta.edificio)
+                    DetailRow(icon = Icons.Outlined.Business, label = "Edificio", value = alerta.aula?.edificio?.nombre ?: "")
                     HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                    DetailRow(icon = Icons.Outlined.Room, label = "Aula", value = alerta.aula)
+                    DetailRow(icon = Icons.Outlined.Room, label = "Aula", value = alerta.aula?.codigo ?: "")
                     HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     DetailRow(icon = Icons.Outlined.NotificationsActive, label = "Tipo de Alerta", value = alerta.tipo)
                     HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))

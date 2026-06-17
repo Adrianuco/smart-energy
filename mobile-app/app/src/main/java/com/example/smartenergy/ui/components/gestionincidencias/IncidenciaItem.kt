@@ -11,8 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.smartenergy.ui.screen.EstadoIncidencia
-import com.example.smartenergy.ui.screen.Incidencia
+import com.example.smartenergy.model.EstadoIncidencia
+import com.example.smartenergy.model.Incidencia
 
 @Composable
 fun IncidenciaItem(incidencia: Incidencia, onGestionarClick: () -> Unit) {
@@ -28,7 +28,7 @@ fun IncidenciaItem(incidencia: Incidencia, onGestionarClick: () -> Unit) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "${incidencia.aula} - ${incidencia.edificio}",
+                    text = "${incidencia.aula?.codigo ?: ""} - ${incidencia.aula?.edificio?.nombre ?: ""}",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary
                 )

@@ -12,7 +12,7 @@ class HorarioAcademicoRepository {
         horarios.add(horario)
     }
 
-    fun buscarHorarioPorId(id: Int): HorarioAcademico? {
+    fun buscarHorarioPorId(id: String): HorarioAcademico? {
         return horarios.find { it.id == id }
     }
 
@@ -23,7 +23,7 @@ class HorarioAcademicoRepository {
         }
     }
 
-    fun eliminarHorario(id: Int) {
+    fun eliminarHorario(id: String) {
         horarios.removeIf { it.id == id }
     }
 }

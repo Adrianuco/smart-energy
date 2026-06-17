@@ -14,7 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.smartenergy.model.listaEquiposAC
+import com.example.smartenergy.model.listaEquipos
 import com.example.smartenergy.model.listaEdificios
 import com.example.smartenergy.ui.components.equiposregistrados.ACModelCard
 
@@ -61,7 +61,7 @@ fun EquiposRegistradosScreen(
             contentPadding = PaddingValues(top = 16.dp, bottom = 80.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(listaEquiposAC) { equipo ->
+            items(listaEquipos) { equipo ->
                 val unidades = conteoUnidades[equipo.modelo] ?: 0
                 ACModelCard(equipo.marca, equipo.modelo, unidades, equipo.btu, equipo.eficiencia)
             }

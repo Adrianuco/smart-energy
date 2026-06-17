@@ -24,7 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.smartenergy.model.listaEquiposAC
+import com.example.smartenergy.model.listaEquipos
 import com.example.smartenergy.ui.screen.listaEdificios
 
 @Composable
@@ -32,7 +32,7 @@ fun SingleAulaForm(initialBuildingName: String?) {
     var aulaNombre by remember { mutableStateOf("") }
     var floor by remember { mutableStateOf("1") }
     var selectedBuilding by remember { mutableStateOf(initialBuildingName ?: listaEdificios.firstOrNull()?.nombre ?: "") }
-    var selectedAC by remember { mutableStateOf(listaEquiposAC.firstOrNull()) }
+    var selectedAC by remember { mutableStateOf(listaEquipos.firstOrNull()) }
 
     val textFieldColors = OutlinedTextFieldDefaults.colors(
         focusedBorderColor = MaterialTheme.colorScheme.primary,

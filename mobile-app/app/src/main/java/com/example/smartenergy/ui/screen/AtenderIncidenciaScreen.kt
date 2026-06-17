@@ -16,6 +16,8 @@ import androidx.compose.ui.unit.dp
 import com.example.smartenergy.ui.components.atenderincidencia.EstadoChip
 import com.example.smartenergy.ui.components.gestionincidencias.StatusBadge
 import com.example.smartenergy.ui.theme.AppColors
+import com.example.smartenergy.model.Incidencia
+import com.example.smartenergy.model.EstadoIncidencia
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,7 +66,7 @@ fun AtenderIncidenciaScreen(
                     }
                     
                     Text(text = incidencia.tipo, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                    Text(text = "${incidencia.aula} · ${incidencia.edificio}", style = MaterialTheme.typography.bodyMedium)
+                    Text(text = "${incidencia.aula?.codigo ?: ""} · ${incidencia.aula?.edificio?.nombre ?: ""}", style = MaterialTheme.typography.bodyMedium)
                     
                     HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
                     

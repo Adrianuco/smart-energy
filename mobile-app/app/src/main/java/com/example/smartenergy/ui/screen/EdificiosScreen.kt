@@ -30,34 +30,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.smartenergy.model.Aula
 import com.example.smartenergy.model.Edificio
-import com.example.smartenergy.model.EquipoAC
+import com.example.smartenergy.model.Equipo
 import com.example.smartenergy.ui.components.edificios.EdificioCard
 import com.example.smartenergy.ui.components.edificios.FilterBar
 
 val listaAulasEdficioA = listOf(
-    Aula("Aula A-101", 1, 60f, EquipoAC("AC-A1", "LG", "Split", 12000, "A++", true, 0.5f, 2.5f)),
-    Aula("Aula A-104", 1, 80f, EquipoAC("AC-A2", "Samsung", "WindFree", 12000, "A+++", true, 0.4f, 2.2f)),
-    Aula("Aula A-202", 2, 40f, EquipoAC("AC-A3", "Panasonic", "Inverter", 9000, "A+", false, 0.6f, 3.0f)),
+    Aula("Aula A-101", 1, 60f, Equipo("AC-A1", "LG", "Split", 12000, "A++", true, 0.5, 2.5)),
+    Aula("Aula A-104", 1, 80f, Equipo("AC-A2", "Samsung", "WindFree", 12000, "A+++", true, 0.4, 2.2)),
+    Aula("Aula A-202", 2, 40f, Equipo("AC-A3", "Panasonic", "Inverter", 9000, "A+", false, 0.6, 3.0)),
 )
 val listaAulasEdficioB = listOf(
-    Aula("Aula B-101", 1, 60f, EquipoAC("AC-B1", "Carrier", "Comfort", 18000, "A++", true, 0.8f, 3.5f)),
-    Aula("Aula B-104", 1, 80f, EquipoAC("AC-B2", "Daikin", "SkyAir", 12000, "A+++", true, 0.5f, 2.8f)),
-    Aula("Aula B-202", 2, 40f, EquipoAC("AC-B3", "Trane", "Voyager", 24000, "A", true, 0.9f, 4.0f)),
+    Aula("Aula B-101", 1, 60f, Equipo("AC-B1", "Carrier", "Comfort", 18000, "A++", true, 0.8, 3.5)),
+    Aula("Aula B-104", 1, 80f, Equipo("AC-B2", "Daikin", "SkyAir", 12000, "A+++", true, 0.5, 2.8)),
+    Aula("Aula B-202", 2, 40f, Equipo("AC-B3", "Trane", "Voyager", 24000, "A", true, 0.9, 4.0)),
 )
 val listaAulasEdficioC = listOf(
-    Aula("Aula C-101", 1, 60f, EquipoAC("AC-C1", "York", "Affinity", 12000, "A++", true, 0.7f, 3.2f)),
-    Aula("Aula C-104", 1, 80f, EquipoAC("AC-C2", "Lennox", "Elite", 12000, "A+", true, 0.6f, 2.9f)),
-    Aula("Aula C-202", 2, 40f, EquipoAC("AC-C3", "Midea", "Mission II", 9000, "A++", true, 0.5f, 2.4f)),
+    Aula("Aula C-101", 1, 60f, Equipo("AC-C1", "York", "Affinity", 12000, "A++", true, 0.7, 3.2)),
+    Aula("Aula C-104", 1, 80f, Equipo("AC-C2", "Lennox", "Elite", 12000, "A+", true, 0.6, 2.9)),
+    Aula("Aula C-202", 2, 40f, Equipo("AC-C3", "Midea", "Mission II", 9000, "A++", true, 0.5, 2.4)),
 )
 val listaAulasEdficioD = listOf(
-    Aula("Aula D-101", 1, 60f, EquipoAC("AC-D1", "LG", "Dual Inverter", 12000, "A+++", true, 0.4f, 2.3f)),
-    Aula("Aula D-104", 1, 80f, EquipoAC("AC-D2", "Samsung", "Digital Inverter", 12000, "A++", true, 0.4f, 2.2f)),
-    Aula("Aula D-202", 2, 40f, EquipoAC("AC-D3", "Panasonic", "Nanoe", 9000, "A+++", true, 0.6f, 2.7f)),
+    Aula("Aula D-101", 1, 60f, Equipo("AC-D1", "LG", "Dual Inverter", 12000, "A+++", true, 0.4, 2.3)),
+    Aula("Aula D-104", 1, 80f, Equipo("AC-D2", "Samsung", "Digital Inverter", 12000, "A++", true, 0.4, 2.2)),
+    Aula("Aula D-202", 2, 40f, Equipo("AC-D3", "Panasonic", "Nanoe", 9000, "A+++", true, 0.6, 2.7)),
 )
 val listaAulasEdficioE = listOf(
-    Aula("Aula E-101", 1, 60f, EquipoAC("AC-E1", "Carrier", "Extreme", 36000, "A", true, 1.0f, 4.5f)),
-    Aula("Aula E-104", 1, 80f, EquipoAC("AC-E2", "Daikin", "Ururu Sarara", 24000, "A+++", true, 0.8f, 3.8f)),
-    Aula("Aula E-202", 2, 40f, EquipoAC("AC-E3", "York", "LX Series", 12000, "A++", true, 0.7f, 3.2f)),
+    Aula("Aula E-101", 1, 60f, Equipo("AC-E1", "Carrier", "Extreme", 36000, "A", true, 1.0, 4.5)),
+    Aula("Aula E-104", 1, 80f, Equipo("AC-E2", "Daikin", "Ururu Sarara", 24000, "A+++", true, 0.8, 3.8)),
+    Aula("Aula E-202", 2, 40f, Equipo("AC-E3", "York", "LX Series", 12000, "A++", true, 0.7, 3.2)),
 )
 val listaEdificios = listOf(
     Edificio("Edificio A", 240f ,"OK", listaAulasEdficioA),

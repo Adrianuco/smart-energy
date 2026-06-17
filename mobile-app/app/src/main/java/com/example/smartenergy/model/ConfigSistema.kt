@@ -1,7 +1,10 @@
 package com.example.smartenergy.model
 
+import java.util.UUID
+
 data class ConfigSistema(
-    val eficienciaMinimaAceptable: Double,
-    val margenEncendido: Double,
-    val tiempoMinimoDesperdicio: Double
+    val id: String = UUID.randomUUID().toString(),
+    val margenEncendido: Int,
+    val tiempoMinimoDesperdicio: Int,
+    val activo: Boolean
 )

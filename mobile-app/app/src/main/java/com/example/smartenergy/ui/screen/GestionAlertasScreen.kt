@@ -38,23 +38,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.example.smartenergy.ui.components.gestionalertas.AlertaCard
-import com.example.smartenergy.ui.theme.AppColors
-
-data class Alerta(
-    val id: String = "", // Added ID
-    val aula: String,
-    val edificio: String,
-    val tipo: String,
-    val hora: String,
-    val estado: String
-)
+import com.example.smartenergy.model.Alerta
+import com.example.smartenergy.model.EstadoAlerta
+import com.example.smartenergy.model.listaAulasEdficioA
+import com.example.smartenergy.model.listaAulasEdficioB
+import com.example.smartenergy.model.listaAulasEdficioC
+import com.example.smartenergy.model.listaAulasEdficioD
+import com.example.smartenergy.model.listaAulasEdficioE
+import java.time.LocalDateTime
 
 val listaAlertas = listOf(
-    Alerta("1", "Aula B-104", "Edificio B", "Apagar AC", "2:30 PM", "Pendiente"),
-    Alerta("2", "Aula C-202", "Edificio C", "Revisar consumo", "3:15 PM", "Advertencia"),
-    Alerta("3", "Aula E-101", "Edificio E", "Apagar AC", "5:00 PM", "Pendiente"),
-    Alerta("4", "Aula A-104", "Edificio A", "Todo correcto", "1:00 PM", "Resuelta"),
-    Alerta("5", "Aula D-202", "Edificio D", "Encender AC", "7:45 AM", "Pendiente")
+    Alerta("1", "Apagar AC", EstadoAlerta.PENDIENTE, listaAulasEdficioB[1], LocalDateTime.now()), // Aula B-104
+    Alerta("2", "Revisar consumo", EstadoAlerta.PENDIENTE, listaAulasEdficioC[2], LocalDateTime.now()), // Aula C-202
+    Alerta("3", "Apagar AC", EstadoAlerta.PENDIENTE, listaAulasEdficioE[0], LocalDateTime.now()), // Aula E-101
+    Alerta("4", "Todo correcto", EstadoAlerta.ATENDIDA, listaAulasEdficioA[1], LocalDateTime.now()), // Aula A-104
+    Alerta("5", "Encender AC", EstadoAlerta.PENDIENTE, listaAulasEdficioD[2], LocalDateTime.now()) // Aula D-202
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,7 +72,7 @@ fun GestionAlertasScreen(
                             color = MaterialTheme.colorScheme.onBackground
                         )
                         Text(
-                            "${listaAlertas.count { it.estado != "Resuelta" }} activas",
+                            "${listaAlertas.count { it.estado != EstadoAlerta.ATENDIDA }} activas",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

@@ -30,5 +30,5 @@ data class Administrador(
     override val cif: String,
     override val password: String,
     override val activo: Boolean,
-    val nivelAcceso: Int
+    val nivelAcceso: String
 ) : Usuario(id, nombre, apellido, cif, password, Rol.ADMINISTRADOR, activo)

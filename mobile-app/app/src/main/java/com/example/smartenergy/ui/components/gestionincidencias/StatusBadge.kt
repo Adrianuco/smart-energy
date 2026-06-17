@@ -8,7 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.smartenergy.ui.screen.EstadoIncidencia
+import com.example.smartenergy.model.EstadoIncidencia
 import com.example.smartenergy.ui.theme.AppColors
 
 @Composable

@@ -12,7 +12,7 @@ class EquipoRepository {
         equipos.add(equipo)
     }
 
-    fun buscarEquipoPorId(id: Int): Equipo? {
+    fun buscarEquipoPorId(id: String): Equipo? {
         return equipos.find { it.id == id }
     }
 
@@ -23,7 +23,7 @@ class EquipoRepository {
         }
     }
 
-    fun eliminarEquipo(id: Int) {
+    fun eliminarEquipo(id: String) {
         equipos.removeIf { it.id == id }
     }
 }

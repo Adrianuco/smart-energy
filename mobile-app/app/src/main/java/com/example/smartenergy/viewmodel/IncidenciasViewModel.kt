@@ -1,21 +1,21 @@
 package com.example.smartenergy.viewmodel
 
-import com.example.smartenergy.model.ReporteIncidencia
-import com.example.smartenergy.repository.ReporteIncidenciaRepository
+import com.example.smartenergy.model.Incidencia
+import com.example.smartenergy.repository.IncidenciaRepository
 
 class IncidenciasViewModel(
-    private val repository: ReporteIncidenciaRepository = ReporteIncidenciaRepository()
+    private val repository: IncidenciaRepository = IncidenciaRepository()
 ) {
 
-    fun obtenerIncidencias(): List<ReporteIncidencia> {
-        return repository.obtenerTodos()
+    fun obtenerIncidencias(): List<Incidencia> {
+        return repository.obtenerTodas()
     }
 
-    fun agregarIncidencia(reporte: ReporteIncidencia) {
-        repository.agregar(reporte)
+    fun agregarIncidencia(incidencia: Incidencia) {
+        repository.agregar(incidencia)
     }
 
-    fun eliminarIncidencia(reporte: ReporteIncidencia) {
-        repository.eliminar(reporte)
+    fun eliminarIncidencia(incidencia: Incidencia) {
+        repository.eliminar(incidencia)
     }
 }

@@ -34,8 +34,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.smartenergy.model.EquipoAC
-import com.example.smartenergy.model.listaEquiposAC
+import com.example.smartenergy.model.Equipo
+import com.example.smartenergy.model.listaEquipos
 import com.example.smartenergy.ui.screen.listaEdificios
 
 data class FloorRange(
@@ -49,7 +49,7 @@ data class FloorRange(
 fun DynamicAulaForm(initialBuildingName: String?) {
     var prefix by remember { mutableStateOf("B-") }
     var selectedBuilding by remember { mutableStateOf(initialBuildingName ?: listaEdificios.firstOrNull()?.nombre ?: "") }
-    var selectedAC by remember { mutableStateOf(listaEquiposAC.firstOrNull()) }
+    var selectedAC by remember { mutableStateOf(listaEquipos.firstOrNull()) }
 
     val floorRanges = remember { mutableStateListOf(FloorRange(id = 0, floor = "1", startRange = "101", endRange = "111")) }
     var nextId by remember { mutableStateOf(1) }

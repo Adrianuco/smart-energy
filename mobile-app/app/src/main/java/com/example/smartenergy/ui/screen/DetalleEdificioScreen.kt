@@ -241,7 +241,7 @@ fun DetalleEdificioScreen(
                                 ) {}
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Text(
-                                    aula.nombre,
+                                    aula.codigo,
                                     style = MaterialTheme.typography.bodyLarge,
                                     color = MaterialTheme.colorScheme.onBackground
                                 )

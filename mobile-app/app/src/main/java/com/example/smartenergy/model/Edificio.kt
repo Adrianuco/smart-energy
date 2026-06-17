@@ -1,8 +1,11 @@
 package com.example.smartenergy.model
 
+import java.util.UUID
+
 data class Edificio(
     val nombre: String,
-    val consumo: Float,
-    val estado: String,
-    val aulas: List<Aula>
+    val consumo: Float = 0f,
+    val estado: String = "OK",
+    val aulas: List<Aula> = emptyList(),
+    val id: String = UUID.randomUUID().toString()
 )

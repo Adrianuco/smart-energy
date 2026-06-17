@@ -16,24 +16,17 @@ import com.example.smartenergy.ui.components.gestionincidencias.IncidenciaItem
 import com.example.smartenergy.ui.components.gestionincidencias.StatusBadge
 import com.example.smartenergy.ui.theme.AppColors
 
-data class Incidencia(
-    val id: String,
-    val aula: String,
-    val edificio: String,
-    val descripcion: String,
-    val tipo: String,
-    val fecha: String,
-    val estado: EstadoIncidencia
-)
-
-enum class EstadoIncidencia {
-    PENDIENTE, EN_REVISION, RESUELTA
-}
+import com.example.smartenergy.model.Incidencia
+import com.example.smartenergy.model.EstadoIncidencia
+import com.example.smartenergy.model.listaAulasEdficioA
+import com.example.smartenergy.model.listaAulasEdficioB
+import com.example.smartenergy.model.listaAulasEdficioC
+import java.time.LocalDateTime
 
 val listaIncidenciasMock = listOf(
-    Incidencia("1", "Aula B-104", "Edificio B", "El aire acondicionado hace un ruido extraño y no enfría bien.", "Falla Técnica", "12/10/2023", EstadoIncidencia.PENDIENTE),
-    Incidencia("2", "Aula C-202", "Edificio C", "Ventana rota, se escapa el aire.", "Infraestructura", "11/10/2023", EstadoIncidencia.EN_REVISION),
-    Incidencia("3", "Aula A-101", "Edificio A", "Consumo excesivo detectado fuera de horario.", "Desperdicio Energético", "10/10/2023", EstadoIncidencia.RESUELTA),
+    Incidencia("1", "El aire acondicionado hace un ruido extraño y no enfría bien.", LocalDateTime.now(), "Falla Técnica", listaAulasEdficioB[1], EstadoIncidencia.PENDIENTE),
+    Incidencia("2", "Ventana rota, se escapa el aire.", LocalDateTime.now(), "Infraestructura", listaAulasEdficioC[2], EstadoIncidencia.EN_REVISION),
+    Incidencia("3", "Consumo excesivo detectado fuera de horario.", LocalDateTime.now(), "Desperdicio Energético", listaAulasEdficioA[0], EstadoIncidencia.RESUELTA)
 )
 
 @OptIn(ExperimentalMaterial3Api::class)

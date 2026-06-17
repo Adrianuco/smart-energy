@@ -27,7 +27,7 @@ class EquiposViewModel : ViewModel() {
         cargarEquipos()
     }
 
-    fun buscarEquipoPorId(id: Int): Equipo? {
+    fun buscarEquipoPorId(id: String): Equipo? {
         return repository.buscarEquipoPorId(id)
     }
 
@@ -36,7 +36,7 @@ class EquiposViewModel : ViewModel() {
         cargarEquipos()
     }
 
-    fun eliminarEquipo(id: Int) {
+    fun eliminarEquipo(id: String) {
         repository.eliminarEquipo(id)
         cargarEquipos()
     }
