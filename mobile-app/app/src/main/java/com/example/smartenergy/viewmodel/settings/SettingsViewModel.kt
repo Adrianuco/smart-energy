@@ -1,9 +1,9 @@
-package com.example.smartenergy.viewmodel
+package com.example.smartenergy.viewmodel.settings
 
 import com.example.smartenergy.model.ConfigSistema
 import com.example.smartenergy.repository.ConfigSistemaRepository
 
-class ConfiguracionViewModel(
+class SettingsViewModel(
     private val repository: ConfigSistemaRepository = ConfigSistemaRepository()
 ) {
 

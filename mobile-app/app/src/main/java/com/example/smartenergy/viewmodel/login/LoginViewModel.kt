@@ -1,4 +1,4 @@
-package com.example.smartenergy.viewmodel
+package com.example.smartenergy.viewmodel.login
 
 import com.example.smartenergy.model.Usuario
 

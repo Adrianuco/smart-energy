@@ -1,4 +1,4 @@
-package com.example.smartenergy.viewmodel
+package com.example.smartenergy.viewmodel.edificio
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

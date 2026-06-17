@@ -1,4 +1,4 @@
-package com.example.smartenergy.viewmodel
+package com.example.smartenergy.viewmodel.reports
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,7 +9,7 @@ import com.example.smartenergy.model.RegistroConsumo
 import com.example.smartenergy.repository.EstadoEquipoRepository
 import com.example.smartenergy.repository.RegistroConsumoRepository
 
-class ReportesViewModel : ViewModel() {
+class ReportsViewModel : ViewModel() {
 
     private val registroRepository = RegistroConsumoRepository()
     private val estadoRepository = EstadoEquipoRepository()

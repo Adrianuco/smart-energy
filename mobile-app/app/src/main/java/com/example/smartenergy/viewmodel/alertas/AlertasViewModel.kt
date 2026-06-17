@@ -1,4 +1,4 @@
-package com.example.smartenergy.viewmodel
+package com.example.smartenergy.viewmodel.alertas
 
 import com.example.smartenergy.model.Alerta
 import com.example.smartenergy.repository.AlertaRepository

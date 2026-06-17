@@ -1,4 +1,4 @@
-package com.example.smartenergy.viewmodel
+package com.example.smartenergy.viewmodel.incidencias
 
 import com.example.smartenergy.model.Incidencia
 import com.example.smartenergy.repository.IncidenciaRepository
