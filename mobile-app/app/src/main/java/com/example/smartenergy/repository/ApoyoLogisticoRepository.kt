@@ -1,15 +1,14 @@
 package com.example.smartenergy.repository
 
-import com.example.smartenergy.model.Edificio
+import com.example.smartenergy.model.ApoyoLogistico
 import com.example.smartenergy.service.ApiResult
-import com.example.smartenergy.service.EdificioApiService
+import com.example.smartenergy.service.ApoyoLogisticaApiService
 import java.util.UUID
 
-class EdificioRepository(private val apiService: EdificioApiService) {
-
-    suspend fun findAll(): ApiResult<List<Edificio>> {
+class ApoyoLogisticoRepository(private val apiService: ApoyoLogisticaApiService) {
+    suspend fun findAll(): ApiResult<List<ApoyoLogistico>> {
         return try {
-            val response = apiService.obtenerEdificios()
+            val response = apiService.obtenerApoyoLogisticos()
             if (response.isSuccessful) {
                 ApiResult.Success(response.body() ?: emptyList())
             } else {
@@ -20,9 +19,9 @@ class EdificioRepository(private val apiService: EdificioApiService) {
         }
     }
 
-    suspend fun findById(id: UUID): ApiResult<Edificio> {
+    suspend fun findById(id: UUID): ApiResult<ApoyoLogistico> {
         return try {
-            val response = apiService.obtenerEdificioPorId(id)
+            val response = apiService.obtenerApoyoLogisticoPorId(id)
             if (response.isSuccessful) {
                 ApiResult.Success(response.body()!!)
             } else {
@@ -32,9 +31,9 @@ class EdificioRepository(private val apiService: EdificioApiService) {
             ApiResult.Error("Error: ${ex.message}")
         }
     }
-    suspend fun save(edificio: Edificio): ApiResult<Edificio> {
+    suspend fun save(apoyoLogistico: ApoyoLogistico): ApiResult<ApoyoLogistico> {
         return try {
-            val response = apiService.guardarEdificio(edificio)
+            val response = apiService.guardarApoyoLogistico(apoyoLogistico)
             if (response.isSuccessful) {
                 ApiResult.Success(response.body()!!)
             } else {
@@ -45,9 +44,9 @@ class EdificioRepository(private val apiService: EdificioApiService) {
         }
     }
 
-    suspend fun update(edificio: Edificio): ApiResult<Edificio> {
+    suspend fun update(apoyoLogistico: ApoyoLogistico): ApiResult<ApoyoLogistico> {
         return try {
-            val response = apiService.actualizarEdificio(edificio)
+            val response = apiService.actualizarApoyoLogistico(apoyoLogistico)
             if (response.isSuccessful) {
                 ApiResult.Success(response.body()!!)
             } else {

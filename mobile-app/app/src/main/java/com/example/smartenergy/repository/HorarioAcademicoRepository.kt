@@ -1,29 +1,61 @@
 package com.example.smartenergy.repository
 
 import com.example.smartenergy.model.HorarioAcademico
+import com.example.smartenergy.service.ApiResult
+import com.example.smartenergy.service.EquipoApiService
+import com.example.smartenergy.service.HorarioAcademicoApiService
+import java.util.UUID
 
-class HorarioAcademicoRepository {
+class HorarioAcademicoRepository(private val apiService: HorarioAcademicoApiService) {
 
-    private val horarios = mutableListOf<HorarioAcademico>()
-
-    fun obtenerHorarios(): List<HorarioAcademico> = horarios
-
-    fun agregarHorario(horario: HorarioAcademico) {
-        horarios.add(horario)
-    }
-
-    fun buscarHorarioPorId(id: String): HorarioAcademico? {
-        return horarios.find { it.id == id }
-    }
-
-    fun actualizarHorario(horario: HorarioAcademico) {
-        val index = horarios.indexOfFirst { it.id == horario.id }
-        if (index != -1) {
-            horarios[index] = horario
+    suspend fun findAll(): ApiResult<List<HorarioAcademico>> {
+        return try {
+            val response = apiService.obtenerHorarioAcademicos()
+            if (response.isSuccessful) {
+                ApiResult.Success(response.body() ?: emptyList())
+            } else {
+                ApiResult.Error("Error HTTP: ${response.code()}")
+            }
+        } catch (ex: Exception) {
+            ApiResult.Error("Error: ${ex.message}")
         }
     }
 
-    fun eliminarHorario(id: String) {
-        horarios.removeIf { it.id == id }
+    suspend fun findById(id: UUID): ApiResult<HorarioAcademico> {
+        return try {
+            val response = apiService.obtenerHorarioAcademicoPorId(id)
+            if (response.isSuccessful) {
+                ApiResult.Success(response.body()!!)
+            } else {
+                ApiResult.Error("Error HTTP: ${response.code()}")
+            }
+        } catch (ex: Exception) {
+            ApiResult.Error("Error: ${ex.message}")
+        }
+    }
+    suspend fun save(horarioAcademico: HorarioAcademico): ApiResult<HorarioAcademico> {
+        return try {
+            val response = apiService.guardarHorarioAcademico(horarioAcademico)
+            if (response.isSuccessful) {
+                ApiResult.Success(response.body()!!)
+            } else {
+                ApiResult.Error("Error HTTP: ${response.code()}")
+            }
+        } catch (ex: Exception) {
+            ApiResult.Error("Error: ${ex.message}")
+        }
+    }
+
+    suspend fun update(horarioAcademico: HorarioAcademico): ApiResult<HorarioAcademico> {
+        return try {
+            val response = apiService.actualizarHorarioAcademico(horarioAcademico)
+            if (response.isSuccessful) {
+                ApiResult.Success(response.body()!!)
+            } else {
+                ApiResult.Error("Error HTTP: ${response.code()}")
+            }
+        } catch (ex: Exception) {
+            ApiResult.Error("Error: ${ex.message}")
+        }
     }
 }

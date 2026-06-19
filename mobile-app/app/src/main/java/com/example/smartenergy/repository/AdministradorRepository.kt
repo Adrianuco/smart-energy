@@ -1,15 +1,14 @@
 package com.example.smartenergy.repository
 
-import com.example.smartenergy.model.Edificio
+import com.example.smartenergy.model.Administrador
+import com.example.smartenergy.service.AdministradorApiService
 import com.example.smartenergy.service.ApiResult
-import com.example.smartenergy.service.EdificioApiService
 import java.util.UUID
 
-class EdificioRepository(private val apiService: EdificioApiService) {
-
-    suspend fun findAll(): ApiResult<List<Edificio>> {
+class AdministradorRepository(private val apiService: AdministradorApiService) {
+    suspend fun findAll(): ApiResult<List<Administrador>> {
         return try {
-            val response = apiService.obtenerEdificios()
+            val response = apiService.obtenerAdministradors()
             if (response.isSuccessful) {
                 ApiResult.Success(response.body() ?: emptyList())
             } else {
@@ -20,9 +19,9 @@ class EdificioRepository(private val apiService: EdificioApiService) {
         }
     }
 
-    suspend fun findById(id: UUID): ApiResult<Edificio> {
+    suspend fun findById(id: UUID): ApiResult<Administrador> {
         return try {
-            val response = apiService.obtenerEdificioPorId(id)
+            val response = apiService.obtenerAdministradorPorId(id)
             if (response.isSuccessful) {
                 ApiResult.Success(response.body()!!)
             } else {
@@ -32,9 +31,9 @@ class EdificioRepository(private val apiService: EdificioApiService) {
             ApiResult.Error("Error: ${ex.message}")
         }
     }
-    suspend fun save(edificio: Edificio): ApiResult<Edificio> {
+    suspend fun save(administrador: Administrador): ApiResult<Administrador> {
         return try {
-            val response = apiService.guardarEdificio(edificio)
+            val response = apiService.guardarAdministrador(administrador)
             if (response.isSuccessful) {
                 ApiResult.Success(response.body()!!)
             } else {
@@ -45,9 +44,9 @@ class EdificioRepository(private val apiService: EdificioApiService) {
         }
     }
 
-    suspend fun update(edificio: Edificio): ApiResult<Edificio> {
+    suspend fun update(administrador: Administrador): ApiResult<Administrador> {
         return try {
-            val response = apiService.actualizarEdificio(edificio)
+            val response = apiService.actualizarAdministrador(administrador)
             if (response.isSuccessful) {
                 ApiResult.Success(response.body()!!)
             } else {

@@ -182,9 +182,6 @@ fun DashboardScreen(
         ) {
             Spacer(modifier = Modifier.height(8.dp))
 
-            // ════════════════════════════════════════
-            // 1. HERO CARD — Main Focal Point (Energy Savings)
-            // ════════════════════════════════════════
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),

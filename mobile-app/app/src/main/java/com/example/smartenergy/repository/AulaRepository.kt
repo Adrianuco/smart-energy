@@ -1,29 +1,60 @@
 package com.example.smartenergy.repository
 
 import com.example.smartenergy.model.Aula
+import com.example.smartenergy.service.ApiResult
+import com.example.smartenergy.service.AulaApiService
+import java.util.UUID
 
-class AulaRepository {
+class AulaRepository(private val apiService: AulaApiService) {
 
-    private val aulas = mutableListOf<Aula>()
-
-    fun obtenerAulas(): List<Aula> = aulas
-
-    fun agregarAula(aula: Aula) {
-        aulas.add(aula)
-    }
-
-    fun buscarAulaPorId(id: String): Aula? {
-        return aulas.find { it.id == id }
-    }
-
-    fun actualizarAula(aula: Aula) {
-        val index = aulas.indexOfFirst { it.id == aula.id }
-        if (index != -1) {
-            aulas[index] = aula
+    suspend fun findAll(): ApiResult<List<Aula>> {
+        return try {
+            val response = apiService.obtenerAulas()
+            if (response.isSuccessful) {
+                ApiResult.Success(response.body() ?: emptyList())
+            } else {
+                ApiResult.Error("Error HTTP: ${response.code()}")
+            }
+        } catch (ex: Exception) {
+            ApiResult.Error("Error: ${ex.message}")
         }
     }
 
-    fun eliminarAula(id: String) {
-        aulas.removeIf { it.id == id }
+    suspend fun findById(id: UUID): ApiResult<Aula> {
+        return try {
+            val response = apiService.obtenerAulaPorId(id)
+            if (response.isSuccessful) {
+                ApiResult.Success(response.body()!!)
+            } else {
+                ApiResult.Error("Error HTTP: ${response.code()}")
+            }
+        } catch (ex: Exception) {
+            ApiResult.Error("Error: ${ex.message}")
+        }
+    }
+    suspend fun save(aula: Aula): ApiResult<Aula> {
+        return try {
+            val response = apiService.guardarAula(aula)
+            if (response.isSuccessful) {
+                ApiResult.Success(response.body()!!)
+            } else {
+                ApiResult.Error("Error HTTP: ${response.code()}")
+            }
+        } catch (ex: Exception) {
+            ApiResult.Error("Error: ${ex.message}")
+        }
+    }
+
+    suspend fun update(aula: Aula): ApiResult<Aula> {
+        return try {
+            val response = apiService.actualizarAula(aula)
+            if (response.isSuccessful) {
+                ApiResult.Success(response.body()!!)
+            } else {
+                ApiResult.Error("Error HTTP: ${response.code()}")
+            }
+        } catch (ex: Exception) {
+            ApiResult.Error("Error: ${ex.message}")
+        }
     }
 }

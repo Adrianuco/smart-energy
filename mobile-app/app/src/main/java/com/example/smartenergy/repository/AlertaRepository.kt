@@ -1,15 +1,15 @@
 package com.example.smartenergy.repository
 
-import com.example.smartenergy.model.Edificio
+import com.example.smartenergy.model.Alerta
+import com.example.smartenergy.service.AlertaApiService
 import com.example.smartenergy.service.ApiResult
-import com.example.smartenergy.service.EdificioApiService
 import java.util.UUID
 
-class EdificioRepository(private val apiService: EdificioApiService) {
+class AlertaRepository(private val apiService: AlertaApiService) {
 
-    suspend fun findAll(): ApiResult<List<Edificio>> {
+    suspend fun findAll(): ApiResult<List<Alerta>> {
         return try {
-            val response = apiService.obtenerEdificios()
+            val response = apiService.obtenerAlertas()
             if (response.isSuccessful) {
                 ApiResult.Success(response.body() ?: emptyList())
             } else {
@@ -20,9 +20,9 @@ class EdificioRepository(private val apiService: EdificioApiService) {
         }
     }
 
-    suspend fun findById(id: UUID): ApiResult<Edificio> {
+    suspend fun findById(id: UUID): ApiResult<Alerta> {
         return try {
-            val response = apiService.obtenerEdificioPorId(id)
+            val response = apiService.obtenerAlertaPorId(id)
             if (response.isSuccessful) {
                 ApiResult.Success(response.body()!!)
             } else {
@@ -32,9 +32,9 @@ class EdificioRepository(private val apiService: EdificioApiService) {
             ApiResult.Error("Error: ${ex.message}")
         }
     }
-    suspend fun save(edificio: Edificio): ApiResult<Edificio> {
+    suspend fun save(alerta: Alerta): ApiResult<Alerta> {
         return try {
-            val response = apiService.guardarEdificio(edificio)
+            val response = apiService.guardarAlerta(alerta)
             if (response.isSuccessful) {
                 ApiResult.Success(response.body()!!)
             } else {
@@ -45,9 +45,9 @@ class EdificioRepository(private val apiService: EdificioApiService) {
         }
     }
 
-    suspend fun update(edificio: Edificio): ApiResult<Edificio> {
+    suspend fun update(alerta: Alerta): ApiResult<Alerta> {
         return try {
-            val response = apiService.actualizarEdificio(edificio)
+            val response = apiService.actualizarAlerta(alerta)
             if (response.isSuccessful) {
                 ApiResult.Success(response.body()!!)
             } else {

@@ -1,13 +1,61 @@
 package com.example.smartenergy.repository
 
-class EstadoEquipoRepository {
+import com.example.smartenergy.model.RegistroOperativo
+import com.example.smartenergy.service.ApiResult
+import com.example.smartenergy.service.RegistroOperativoApiService
+import java.util.UUID
 
-    private val estados = mutableListOf<EstadoEquipo>()
+class RegistroOperativoRepository(private val apiService: RegistroOperativoApiService) {
 
-    fun obtenerEstados(): List<EstadoEquipo> = estados
+    suspend fun findAll(): ApiResult<List<RegistroOperativo>> {
+        return try {
+            val response = apiService.obtenerRegistroOperativos()
+            if (response.isSuccessful) {
+                ApiResult.Success(response.body() ?: emptyList())
+            } else {
+                ApiResult.Error("Error HTTP: ${response.code()}")
+            }
+        } catch (ex: Exception) {
+            ApiResult.Error("Error: ${ex.message}")
+        }
+    }
 
-    fun agregarEstado(estado: EstadoEquipo) {
-        estados.add(estado)
+    suspend fun findById(id: UUID): ApiResult<RegistroOperativo> {
+        return try {
+            val response = apiService.obtenerRegistroOperativoPorId(id)
+            if (response.isSuccessful) {
+                ApiResult.Success(response.body()!!)
+            } else {
+                ApiResult.Error("Error HTTP: ${response.code()}")
+            }
+        } catch (ex: Exception) {
+            ApiResult.Error("Error: ${ex.message}")
+        }
+    }
+    suspend fun save(registroOperativo: RegistroOperativo): ApiResult<RegistroOperativo> {
+        return try {
+            val response = apiService.guardarRegistroOperativo(registroOperativo)
+            if (response.isSuccessful) {
+                ApiResult.Success(response.body()!!)
+            } else {
+                ApiResult.Error("Error HTTP: ${response.code()}")
+            }
+        } catch (ex: Exception) {
+            ApiResult.Error("Error: ${ex.message}")
+        }
+    }
+
+    suspend fun update(registroOperativo: RegistroOperativo): ApiResult<RegistroOperativo> {
+        return try {
+            val response = apiService.actualizarRegistroOperativo(registroOperativo)
+            if (response.isSuccessful) {
+                ApiResult.Success(response.body()!!)
+            } else {
+                ApiResult.Error("Error HTTP: ${response.code()}")
+            }
+        } catch (ex: Exception) {
+            ApiResult.Error("Error: ${ex.message}")
+        }
     }
 }
 
