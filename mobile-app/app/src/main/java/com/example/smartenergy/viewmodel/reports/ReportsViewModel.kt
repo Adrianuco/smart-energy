@@ -4,15 +4,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.example.smartenergy.model.EstadoEquipo
-import com.example.smartenergy.model.RegistroConsumo
-import com.example.smartenergy.repository.EstadoEquipoRepository
+import com.example.smartenergy.repository.RegistroOperativoRepository
 import com.example.smartenergy.repository.RegistroConsumoRepository
 
 class ReportsViewModel : ViewModel() {
 
     private val registroRepository = RegistroConsumoRepository()
-    private val estadoRepository = EstadoEquipoRepository()
+    private val estadoRepository = RegistroOperativoRepository()
 
     var registrosConsumo by mutableStateOf(listOf<RegistroConsumo>())
         private set
