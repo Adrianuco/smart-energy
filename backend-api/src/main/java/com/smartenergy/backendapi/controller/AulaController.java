@@ -42,4 +42,7 @@ public class AulaController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/edificio/{id}")
+    public ResponseEntity<List<Aula>> findByEdificioId(@PathVariable UUID id) {return ResponseEntity.ok(service.findByEdificioId(id));}
 }
