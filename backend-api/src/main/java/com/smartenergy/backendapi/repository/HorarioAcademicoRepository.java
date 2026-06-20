@@ -7,11 +7,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface HorarioAcademicoRepository extends JpaRepository<HorarioAcademico, UUID> {
+
+    List<HorarioAcademico> findByAulaId(UUID id);
 
     @Query("""
         SELECT COUNT(h) > 0 FROM HorarioAcademico h

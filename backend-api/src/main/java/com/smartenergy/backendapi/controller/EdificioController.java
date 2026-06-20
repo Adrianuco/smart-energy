@@ -1,5 +1,6 @@
 package com.smartenergy.backendapi.controller;
 
+import com.smartenergy.backendapi.dto.DetalleEdificioDTO;
 import com.smartenergy.backendapi.model.Edificio;
 import com.smartenergy.backendapi.service.EdificioService;
 import org.springframework.http.ResponseEntity;
@@ -38,5 +39,10 @@ public class EdificioController {
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/detalle/{id}")
+    public ResponseEntity<DetalleEdificioDTO> findDetalle(@PathVariable UUID id) {
+        return ResponseEntity.ok(service.findDetalle(id));
     }
 }

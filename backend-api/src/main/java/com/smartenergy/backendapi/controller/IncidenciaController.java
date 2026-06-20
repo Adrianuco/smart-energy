@@ -34,6 +34,7 @@ public class IncidenciaController {
         i.setAula(incidencia.getAula());
         i.setFechaHora(incidencia.getFechaHora());
         i.setTipoIncidencia(incidencia.getTipoIncidencia());
+        i.setEstado(incidencia.getEstado());
 
         return ResponseEntity.ok(service.save(i));
     }

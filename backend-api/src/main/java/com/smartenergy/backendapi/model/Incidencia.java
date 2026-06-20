@@ -16,6 +16,7 @@ public class Incidencia extends BaseEntity{
     private String descripcion;
     private LocalDateTime fechaHora;
     private String tipoIncidencia;
+    private EstadoAlerta estado;
     @ManyToOne
     @JoinColumn(name = "aula_id")
     private Aula aula;

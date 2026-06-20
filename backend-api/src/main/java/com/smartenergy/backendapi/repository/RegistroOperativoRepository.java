@@ -5,6 +5,8 @@ import com.smartenergy.backendapi.model.RegistroOperativo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,4 +14,7 @@ import java.util.UUID;
 public interface RegistroOperativoRepository extends JpaRepository<RegistroOperativo, UUID> {
 
     Optional<RegistroOperativo> findByEquipoAndFinIsNull(Equipo equipo);
+
+    List<RegistroOperativo> findByInicioBetween(LocalDateTime inicio, LocalDateTime fin);
+
 }

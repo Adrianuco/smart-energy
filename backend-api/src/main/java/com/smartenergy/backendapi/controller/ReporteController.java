@@ -72,7 +72,6 @@ public class ReporteController {
     public ResponseEntity<Map<Integer, Double>> consumoMensual(
             @PathVariable UUID id
     ) {
-
         Map<Integer, Double> resultado =
                 registroRepository.findAll()
                         .stream()
