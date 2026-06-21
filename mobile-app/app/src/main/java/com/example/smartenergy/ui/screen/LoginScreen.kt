@@ -14,13 +14,25 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 
+import com.example.smartenergy.viewmodel.login.LoginState
+import com.example.smartenergy.viewmodel.login.LoginViewModel
+
 @Composable
 fun LoginScreen(
     onLoginClick: (String, String) -> Unit,
-    onGuestClick: () -> Unit
+    onGuestClick: () -> Unit,
+    viewModel: LoginViewModel
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    val state by viewModel.state.collectAsState()
+
+    LaunchedEffect(state) {
+        if (state is LoginState.Success && (state as LoginState.Success).inicio) {
+            onLoginClick(email, password)
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -68,7 +80,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Correo electrónico") },
+            label = { Text("CIF / Correo electrónico") },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             singleLine = true,
@@ -95,11 +107,21 @@ fun LoginScreen(
             )
         )
 
+        if (state is LoginState.Error) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = (state as LoginState.Error).message,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+
         Spacer(modifier = Modifier.height(32.dp))
 
         // ── Login Button ──
         Button(
-            onClick = { onLoginClick(email, password) },
+            onClick = { viewModel.iniciarSesion(email, password) },
+            enabled = state !is LoginState.Loading,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
@@ -108,10 +130,17 @@ fun LoginScreen(
                 containerColor = MaterialTheme.colorScheme.primary
             )
         ) {
-            Text(
-                "Ingresar",
-                style = MaterialTheme.typography.labelLarge
-            )
+            if (state is LoginState.Loading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            } else {
+                Text(
+                    "Ingresar",
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(24.dp))

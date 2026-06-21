@@ -24,10 +24,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.smartenergy.model.listaEquipos
+import com.example.smartenergy.model.Equipo
 
 @Composable
-fun ACSection(onAddACClick: () -> Unit = {}) {
+fun ACSection(
+    onAddACClick: () -> Unit = {},
+    equipos: List<Equipo>
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -57,7 +60,7 @@ fun ACSection(onAddACClick: () -> Unit = {}) {
         }
         Spacer(Modifier.height(16.dp))
         LazyColumn {
-            items(listaEquipos) { equipo ->
+            items(equipos) { equipo ->
                 ListItem(
                     headlineContent = {
                         Text(

@@ -19,10 +19,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
+import com.example.smartenergy.model.Aula
+import com.example.smartenergy.model.HorarioAcademico
 import com.example.smartenergy.ui.theme.AppColors
+import java.time.LocalTime
 
 @Composable
-fun AulaCard(roomName: String) {
+fun AulaCard(aula: Aula, horarios: List<HorarioAcademico>) {
+    val now = LocalTime.now()
+    val aulaHorarios = horarios.filter { it.aula?.id == aula.id }
+
+    val currentClass = aulaHorarios.find {
+        now.isAfter(it.horaInicio) && now.isBefore(it.horaFin)
+    } ?: aulaHorarios.firstOrNull()
+
+    val nextClass = aulaHorarios.filter {
+        it.horaInicio.isAfter(now)
+    }.minByOrNull { it.horaInicio } ?: if (aulaHorarios.size > 1 && currentClass == aulaHorarios.firstOrNull()) {
+        aulaHorarios[1]
+    } else {
+        null
+    }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -31,7 +49,7 @@ fun AulaCard(roomName: String) {
     ) {
         Column(modifier = Modifier.padding(14.dp)) {
             Text(
-                text = "Aula $roomName",
+                text = "Aula ${aula.codigo}",
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onBackground
             )
@@ -44,47 +62,57 @@ fun AulaCard(roomName: String) {
             Spacer(Modifier.height(8.dp))
 
             // Clase Actual
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Surface(
-                    color = AppColors.TagCurrentBg,
-                    shape = RoundedCornerShape(4.dp)
-                ) {
+            if (currentClass != null) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Surface(
+                        color = AppColors.TagCurrentBg,
+                        shape = RoundedCornerShape(4.dp)
+                    ) {
+                        Text(
+                            "ACTUAL",
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = AppColors.TagCurrentText
+                        )
+                    }
+                    Spacer(Modifier.width(8.dp))
                     Text(
-                        "ACTUAL",
-                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = AppColors.TagCurrentText
+                        text = "${currentClass.asignatura} (${currentClass.horaInicio} - ${currentClass.horaFin})",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
-                Spacer(Modifier.width(8.dp))
+            } else {
                 Text(
-                    text = "Programación III (08:00 - 09:40)",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
-
-            Spacer(Modifier.height(8.dp))
-
-            // Clase Próxima
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Surface(
-                    color = AppColors.TagNextBg,
-                    shape = RoundedCornerShape(4.dp)
-                ) {
-                    Text(
-                        "PRÓXIMA",
-                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = AppColors.TagNextText
-                    )
-                }
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    text = "Bases de Datos I (10:00 - 11:40)",
+                    text = "No hay clase en curso",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+            }
+
+            if (nextClass != null) {
+                Spacer(Modifier.height(8.dp))
+
+                // Clase Próxima
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Surface(
+                        color = AppColors.TagNextBg,
+                        shape = RoundedCornerShape(4.dp)
+                    ) {
+                        Text(
+                            "PRÓXIMA",
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = AppColors.TagNextText
+                        )
+                    }
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = "${nextClass.asignatura} (${nextClass.horaInicio} - ${nextClass.horaFin})",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
     }

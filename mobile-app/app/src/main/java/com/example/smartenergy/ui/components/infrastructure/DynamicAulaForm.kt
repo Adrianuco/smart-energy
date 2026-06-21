@@ -34,22 +34,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.example.smartenergy.model.Aula
+import com.example.smartenergy.model.Edificio
 import com.example.smartenergy.model.Equipo
-import com.example.smartenergy.model.listaEquipos
-import com.example.smartenergy.ui.screen.listaEdificios
+import com.example.smartenergy.viewmodel.infrastructure.InfrastructureViewModel
 
 data class FloorRange(
     val id: Int,
-    var floor: String = "",
-    var startRange: String = "",
-    var endRange: String = ""
+    val floor: String = "",
+    val startRange: String = "",
+    val endRange: String = ""
 )
 
 @Composable
-fun DynamicAulaForm(initialBuildingName: String?) {
+fun DynamicAulaForm(
+    initialBuildingName: String?,
+    viewModel: InfrastructureViewModel,
+    equipos: List<Equipo>,
+    edificios: List<Edificio>
+) {
     var prefix by remember { mutableStateOf("B-") }
-    var selectedBuilding by remember { mutableStateOf(initialBuildingName ?: listaEdificios.firstOrNull()?.nombre ?: "") }
-    var selectedAC by remember { mutableStateOf(listaEquipos.firstOrNull()) }
+    var selectedBuilding by remember { mutableStateOf(initialBuildingName ?: edificios.firstOrNull()?.nombre ?: "") }
+    var selectedAC by remember { mutableStateOf(equipos.firstOrNull()) }
+    var isSaving by remember { mutableStateOf(false) }
 
     val floorRanges = remember { mutableStateListOf(FloorRange(id = 0, floor = "1", startRange = "101", endRange = "111")) }
     var nextId by remember { mutableStateOf(1) }
@@ -155,10 +162,34 @@ fun DynamicAulaForm(initialBuildingName: String?) {
             )
         }
 
-        ACSelector(selectedAC) { selectedAC = it }
+        ACSelector(selectedAC, equipos) { selectedAC = it }
 
         Button(
-            onClick = { /* TODO: Lógica para iterar sobre floorRanges y generar aulas */ },
+            onClick = {
+                isSaving = true
+                val edificioObj = edificios.find { it.nombre == selectedBuilding }
+                floorRanges.forEach { range ->
+                    val start = range.startRange.toIntOrNull() ?: 0
+                    val end = range.endRange.toIntOrNull() ?: 0
+                    val floorNum = range.floor.toIntOrNull() ?: 1
+                    if (start > 0 && end >= start) {
+                        for (i in start..end) {
+                            val code = "$prefix$i"
+                            val aula = Aula(
+                                id = null,
+                                codigo = code,
+                                piso = floorNum,
+                                eficiencia = 100f,
+                                equipo = selectedAC,
+                                edificio = edificioObj
+                            )
+                            viewModel.guardarAula(aula) { }
+                        }
+                    }
+                }
+                isSaving = false
+            },
+            enabled = !isSaving,
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(

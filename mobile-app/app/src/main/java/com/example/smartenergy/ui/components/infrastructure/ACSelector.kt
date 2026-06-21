@@ -10,23 +10,27 @@ import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.smartenergy.model.Equipo
-import com.example.smartenergy.model.listaEquipos
 
 @Composable
-fun ACSelector(selectedAC: Equipo?, onACSelected: (Equipo) -> Unit) {
+fun ACSelector(
+    selectedAC: Equipo?,
+    equipos: List<Equipo>,
+    onACSelected: (Equipo) -> Unit
+) {
     Column {
         Text(
             "Equipo AC a asignar:",
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onBackground
         )
-        Spacer(modifier = androidx.compose.ui.Modifier.height(8.dp))
-        listaEquipos.forEach { equipo ->
+        Spacer(modifier = Modifier.height(8.dp))
+        equipos.forEach { equipo ->
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
-                    selected = (selectedAC == equipo),
+                    selected = (selectedAC?.id == equipo.id),
                     onClick = { onACSelected(equipo) },
                     colors = RadioButtonDefaults.colors(
                         selectedColor = MaterialTheme.colorScheme.primary

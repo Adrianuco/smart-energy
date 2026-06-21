@@ -14,21 +14,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.smartenergy.model.listaEquipos
-import com.example.smartenergy.model.listaEdificios
 import com.example.smartenergy.ui.components.equiposregistrados.ACModelCard
+
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import com.example.smartenergy.viewmodel.equipo.EquiposState
+import com.example.smartenergy.viewmodel.equipo.EquiposViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EquiposRegistradosScreen(
     onAddACClick: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    viewModel: EquiposViewModel
 ) {
-    // Calcular unidades por modelo
-    val todasLasAulas = listaEdificios.flatMap { it.aulas }
-    val conteoUnidades = todasLasAulas.mapNotNull { it.equipo }
-        .groupingBy { it.modelo }
-        .eachCount()
+    val state by viewModel.state.collectAsState()
 
     Scaffold(
         topBar = {
@@ -53,17 +53,40 @@ fun EquiposRegistradosScreen(
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = 20.dp),
-            contentPadding = PaddingValues(top = 16.dp, bottom = 80.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(listaEquipos) { equipo ->
-                val unidades = conteoUnidades[equipo.modelo] ?: 0
-                ACModelCard(equipo.marca, equipo.modelo, unidades, equipo.btu, equipo.eficiencia)
+        when (val currentState = state) {
+            EquiposState.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize().padding(padding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+            is EquiposState.Error -> {
+                Box(
+                    modifier = Modifier.fillMaxSize().padding(padding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "Error: ${currentState.message}", color = MaterialTheme.colorScheme.error)
+                }
+            }
+            is EquiposState.Success -> {
+                val equiposUnicos = currentState.equipos.distinctBy { it.modelo }
+                val conteoUnidades = currentState.equipos.groupingBy { it.modelo }.eachCount()
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding)
+                        .padding(horizontal = 20.dp),
+                    contentPadding = PaddingValues(top = 16.dp, bottom = 80.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(equiposUnicos) { equipo ->
+                        val unidades = conteoUnidades[equipo.modelo] ?: 0
+                        ACModelCard(equipo.marca, equipo.modelo, unidades, equipo.btu, equipo.eficiencia)
+                    }
+                }
             }
         }
     }

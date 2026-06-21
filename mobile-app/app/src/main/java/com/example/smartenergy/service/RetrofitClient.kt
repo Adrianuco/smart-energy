@@ -1,17 +1,49 @@
 package com.example.smartenergy.service
 
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonSerializer
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.LocalTime
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 object RetrofitClient {
 
     private const val BASE_URL = "http://10.0.2.2:8181/api/"
 
+    private val gson by lazy {
+        GsonBuilder()
+            .registerTypeAdapter(LocalTime::class.java, JsonSerializer<LocalTime> { src, _, _ ->
+                com.google.gson.JsonPrimitive(src.format(DateTimeFormatter.ISO_LOCAL_TIME))
+            })
+            .registerTypeAdapter(LocalTime::class.java, JsonDeserializer<LocalTime> { json, _, _ ->
+                val str = json.asString
+                try {
+                    LocalTime.parse(str)
+                } catch (e: Exception) {
+                    if (str.length == 5) {
+                        LocalTime.parse(str, DateTimeFormatter.ofPattern("HH:mm"))
+                    } else {
+                        throw e
+                    }
+                }
+            })
+            .registerTypeAdapter(LocalDateTime::class.java, JsonSerializer<LocalDateTime> { src, _, _ ->
+                com.google.gson.JsonPrimitive(src.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+            })
+            .registerTypeAdapter(LocalDateTime::class.java, JsonDeserializer<LocalDateTime> { json, _, _ ->
+                LocalDateTime.parse(json.asString)
+            })
+            .create()
+    }
+
     private val retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(
-                GsonConverterFactory.create()
+                GsonConverterFactory.create(gson)
             )
             .build()
     }

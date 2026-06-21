@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.smartenergy.model.EstadoIncidencia
+import com.example.smartenergy.model.EstadoAlerta
 import com.example.smartenergy.model.Incidencia
 
 @Composable
@@ -64,7 +64,7 @@ fun IncidenciaItem(incidencia: Incidencia, onGestionarClick: () -> Unit) {
                     Text(incidencia.fecha, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
                 }
 
-                if (incidencia.estado != EstadoIncidencia.RESUELTA) {
+                if (incidencia.estado != EstadoAlerta.ATENDIDA) {
                     TextButton(onClick = onGestionarClick) {
                         Text("Gestionar")
                         Icon(Icons.Outlined.ChevronRight, null, modifier = Modifier.size(16.dp))

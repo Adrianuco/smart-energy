@@ -28,11 +28,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.smartenergy.ui.screen.listaEdificios
+import com.example.smartenergy.model.Edificio
+import com.example.smartenergy.viewmodel.infrastructure.InfrastructureViewModel
 
 @Composable
-fun EdificiosSection() {
+fun EdificiosSection(
+    viewModel: InfrastructureViewModel,
+    edificios: List<Edificio>
+) {
     var buildingName by remember { mutableStateOf("") }
+    var isSaving by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -58,7 +63,25 @@ fun EdificiosSection() {
         )
         Spacer(Modifier.height(12.dp))
         Button(
-            onClick = { /* TODO */ },
+            onClick = {
+                if (buildingName.isNotBlank()) {
+                    isSaving = true
+                    val nuevoEdificio = Edificio(
+                        id = null,
+                        nombre = buildingName,
+                        consumo = 0f,
+                        estado = "OK",
+                        aulas = emptyList()
+                    )
+                    viewModel.guardarEdificio(nuevoEdificio) { success ->
+                        isSaving = false
+                        if (success) {
+                            buildingName = ""
+                        }
+                    }
+                }
+            },
+            enabled = !isSaving && buildingName.isNotBlank(),
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
@@ -79,7 +102,7 @@ fun EdificiosSection() {
         )
         Spacer(Modifier.height(8.dp))
         LazyColumn {
-            items(listaEdificios) { edificio ->
+            items(edificios) { edificio ->
                 ListItem(
                     headlineContent = {
                         Text(
@@ -90,7 +113,7 @@ fun EdificiosSection() {
                     },
                     supportingContent = {
                         Text(
-                            "${edificio.aulas.size} aulas registradas",
+                            "${edificio.aulas?.size ?: 0} aulas registradas",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

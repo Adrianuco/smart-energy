@@ -10,15 +10,15 @@ import retrofit2.http.Path
 import java.util.UUID
 
 interface IncidenciaApiService {
-    @GET("incidencia/all")
+    @GET("incidencias/all")
     suspend fun obtenerIncidencias(): Response<List<Incidencia>>
 
-    @GET("incidencia/{id}")
+    @GET("incidencias/{id}")
     suspend fun obtenerIncidenciaPorId(@Path("id") id: UUID): Response<Incidencia>
 
-    @POST("incidencia/save")
+    @POST("incidencias/save")
     suspend fun guardarIncidencia(@Body incidencia: Incidencia): Response<Incidencia>
 
-    @PUT("incidencia/update")
+    @PUT("incidencias/update")
     suspend fun actualizarIncidencia(@Body incidencia: Incidencia): Response<Incidencia>
 }

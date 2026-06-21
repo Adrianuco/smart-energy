@@ -22,11 +22,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 
+import androidx.compose.runtime.collectAsState
+import com.example.smartenergy.model.Aula
+import com.example.smartenergy.model.EstadoAlerta
+import com.example.smartenergy.model.Incidencia
+import com.example.smartenergy.viewmodel.incidencias.AtenderIncidenciaState
+import com.example.smartenergy.viewmodel.incidencias.CrearIncidenciaViewModel
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IncidenciaScreen(
-    onEnviarClick: () -> Unit = {}
+    onEnviarClick: () -> Unit = {},
+    viewModel: CrearIncidenciaViewModel
 ) {
+    val state by viewModel.state.collectAsState()
+
+    LaunchedEffect(state) {
+        if (state is AtenderIncidenciaState.Success) {
+            onEnviarClick()
+        }
+    }
 
     val tiposIncidencia = listOf(
         "Desperdicio Energético",
@@ -35,14 +50,20 @@ fun IncidenciaScreen(
         "Otro"
     )
 
-    val aulas = listOf(
-        "A-101",
-        "A-102",
-        "B-201",
-        "B-202",
-        "C-301",
-        "C-302"
-    )
+    val dbAulas by viewModel.aulas.collectAsState()
+
+    val aulas = if (dbAulas.isNotEmpty()) {
+        dbAulas.map { it.codigo.removePrefix("Aula ").trim() }.distinct().sorted()
+    } else {
+        listOf(
+            "A-101",
+            "A-102",
+            "B-201",
+            "B-202",
+            "C-301",
+            "C-302"
+        )
+    }
 
     var descripcion by remember { mutableStateOf("") }
 
@@ -280,21 +301,52 @@ fun IncidenciaScreen(
             )
         }
 
+        if (state is AtenderIncidenciaState.Error) {
+            Text(
+                text = (state as AtenderIncidenciaState.Error).message,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+
         Button(
             onClick = {
-                onEnviarClick()
+                val selectedAula = if (aulaSeleccionada != "Seleccionar aula") {
+                    dbAulas.find { it.codigo.removePrefix("Aula ").trim() == aulaSeleccionada || it.codigo == aulaSeleccionada }
+                        ?: Aula(
+                            id = null,
+                            codigo = "Aula $aulaSeleccionada",
+                            piso = 1,
+                            eficiencia = 100f,
+                            equipo = null
+                        )
+                } else null
+                val incidencia = Incidencia(
+                    descripcion = descripcion,
+                    tipoIncidencia = if (incidenciaSeleccionada != "Seleccionar incidencia") incidenciaSeleccionada else "Otro",
+                    aula = selectedAula,
+                    estado = EstadoAlerta.PENDIENTE
+                )
+                viewModel.save(incidencia)
             },
+            enabled = state !is AtenderIncidenciaState.Loading,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
             shape = RoundedCornerShape(16.dp)
         ) {
-
-            Text(
-                text = "Enviar Incidencia",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
-            )
+            if (state is AtenderIncidenciaState.Loading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            } else {
+                Text(
+                    text = "Enviar Incidencia",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(30.dp))

@@ -22,9 +22,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.smartenergy.model.Aula
+import com.example.smartenergy.model.Edificio
+import com.example.smartenergy.model.Equipo
+import com.example.smartenergy.viewmodel.infrastructure.InfrastructureViewModel
 
 @Composable
-fun AulaSection(initialBuildingName: String?) {
+fun AulaSection(
+    initialBuildingName: String?,
+    viewModel: InfrastructureViewModel,
+    equipos: List<Equipo>,
+    edificios: List<Edificio>
+) {
     var isDynamicMode by remember { mutableStateOf(true) }
 
     Column(
@@ -63,9 +72,9 @@ fun AulaSection(initialBuildingName: String?) {
         Spacer(Modifier.height(16.dp))
 
         if (isDynamicMode) {
-            DynamicAulaForm(initialBuildingName)
+            DynamicAulaForm(initialBuildingName, viewModel, equipos, edificios)
         } else {
-            SingleAulaForm(initialBuildingName)
+            SingleAulaForm(initialBuildingName, viewModel, equipos, edificios)
         }
     }
 }

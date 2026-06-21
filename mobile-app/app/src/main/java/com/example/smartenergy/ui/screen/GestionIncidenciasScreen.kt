@@ -1,40 +1,47 @@
 package com.example.smartenergy.ui.screen
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.smartenergy.ui.components.gestionincidencias.IncidenciaItem
-import com.example.smartenergy.ui.components.gestionincidencias.StatusBadge
-import com.example.smartenergy.ui.theme.AppColors
-
+import com.example.smartenergy.model.EstadoAlerta
 import com.example.smartenergy.model.Incidencia
-import com.example.smartenergy.model.EstadoIncidencia
-import com.example.smartenergy.model.listaAulasEdficioA
-import com.example.smartenergy.model.listaAulasEdficioB
-import com.example.smartenergy.model.listaAulasEdficioC
-import java.time.LocalDateTime
-
-val listaIncidenciasMock = listOf(
-    Incidencia("1", "El aire acondicionado hace un ruido extraño y no enfría bien.", LocalDateTime.now(), "Falla Técnica", listaAulasEdficioB[1], EstadoIncidencia.PENDIENTE),
-    Incidencia("2", "Ventana rota, se escapa el aire.", LocalDateTime.now(), "Infraestructura", listaAulasEdficioC[2], EstadoIncidencia.EN_REVISION),
-    Incidencia("3", "Consumo excesivo detectado fuera de horario.", LocalDateTime.now(), "Desperdicio Energético", listaAulasEdficioA[0], EstadoIncidencia.RESUELTA)
-)
+import com.example.smartenergy.ui.components.gestionincidencias.IncidenciaItem
+import com.example.smartenergy.viewmodel.incidencias.IncidenciasState
+import com.example.smartenergy.viewmodel.incidencias.IncidenciasViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GestionIncidenciasScreen(
-    onAtenderIncidencia: (String) -> Unit = {}
+    onAtenderIncidencia: (String) -> Unit = {},
+    viewModel: IncidenciasViewModel
 ) {
-    var filtroEstado by remember { mutableStateOf<EstadoIncidencia?>(null) }
+    var filtroEstado by remember { mutableStateOf<EstadoAlerta?>(null) }
+    val state by viewModel.state.collectAsState()
 
     Scaffold(
         topBar = {
@@ -42,42 +49,70 @@ fun GestionIncidenciasScreen(
                 title = {
                     Column {
                         Text("Gestión de Incidencias", style = MaterialTheme.typography.headlineSmall)
-                        Text("${listaIncidenciasMock.size} reportes en total", style = MaterialTheme.typography.bodySmall)
+                        val subText = when (val currentState = state) {
+                            is IncidenciasState.Success -> "${currentState.incidencias.size} reportes en total"
+                            else -> "Cargando..."
+                        }
+                        Text(subText, style = MaterialTheme.typography.bodySmall)
                     }
                 }
             )
         }
     ) { padding ->
-        Column(modifier = Modifier.padding(padding).padding(horizontal = 20.dp)) {
-            // Filtros rápidos
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                FilterChip(
-                    selected = filtroEstado == null,
-                    onClick = { filtroEstado = null },
-                    label = { Text("Todas") }
-                )
-                FilterChip(
-                    selected = filtroEstado == EstadoIncidencia.PENDIENTE,
-                    onClick = { filtroEstado = EstadoIncidencia.PENDIENTE },
-                    label = { Text("Pendientes") }
-                )
-                FilterChip(
-                    selected = filtroEstado == EstadoIncidencia.RESUELTA,
-                    onClick = { filtroEstado = EstadoIncidencia.RESUELTA },
-                    label = { Text("Resueltas") }
-                )
+        when (val currentState = state) {
+            IncidenciasState.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize().padding(padding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
             }
+            is IncidenciasState.Error -> {
+                Box(
+                    modifier = Modifier.fillMaxSize().padding(padding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "Error: ${currentState.message}", color = MaterialTheme.colorScheme.error)
+                }
+            }
+            is IncidenciasState.Success -> {
+                Column(modifier = Modifier.padding(padding).padding(horizontal = 20.dp)) {
+                    // Filtros rápidos
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        FilterChip(
+                            selected = filtroEstado == null,
+                            onClick = { filtroEstado = null },
+                            label = { Text("Todas") }
+                        )
+                        FilterChip(
+                            selected = filtroEstado == EstadoAlerta.PENDIENTE,
+                            onClick = { filtroEstado = EstadoAlerta.PENDIENTE },
+                            label = { Text("Pendientes") }
+                        )
+                        FilterChip(
+                            selected = filtroEstado == EstadoAlerta.ATENDIDA,
+                            onClick = { filtroEstado = EstadoAlerta.ATENDIDA },
+                            label = { Text("Resueltas") }
+                        )
+                    }
 
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(bottom = 20.dp)
-            ) {
-                val filtradas = if (filtroEstado == null) listaIncidenciasMock else listaIncidenciasMock.filter { it.estado == filtroEstado }
-                items(filtradas) { incidencia ->
-                    IncidenciaItem(incidencia, onGestionarClick = { onAtenderIncidencia(incidencia.id) })
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        contentPadding = PaddingValues(bottom = 20.dp)
+                    ) {
+                        val filtradas = if (filtroEstado == null) {
+                            currentState.incidencias
+                        } else {
+                            currentState.incidencias.filter { it.estado == filtroEstado }
+                        }
+                        items(filtradas) { incidencia ->
+                            IncidenciaItem(incidencia, onGestionarClick = { onAtenderIncidencia(incidencia.id ?: "") })
+                        }
+                    }
                 }
             }
         }

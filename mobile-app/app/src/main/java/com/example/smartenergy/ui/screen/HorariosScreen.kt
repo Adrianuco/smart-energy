@@ -11,9 +11,19 @@ import com.example.smartenergy.ui.components.horarios.ImportModule
 import com.example.smartenergy.ui.components.horarios.KpiSection
 import com.example.smartenergy.ui.components.horarios.ScheduleExplorer
 
+import androidx.compose.ui.Alignment
+import androidx.compose.runtime.collectAsState
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.CircularProgressIndicator
+import com.example.smartenergy.viewmodel.horarios.HorariosState
+import com.example.smartenergy.viewmodel.horarios.HorariosViewModel
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HorariosScreen() {
+fun HorariosScreen(
+    viewModel: HorariosViewModel
+) {
+    val state by viewModel.state.collectAsState()
     val scrollState = rememberScrollState()
 
     Scaffold(
@@ -40,24 +50,44 @@ fun HorariosScreen() {
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .padding(horizontal = 20.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
-        ) {
-            // 1. Resumen Estadístico (KPIs)
-            KpiSection()
+        when (val currentState = state) {
+            HorariosState.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize().padding(padding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+            is HorariosState.Error -> {
+                Box(
+                    modifier = Modifier.fillMaxSize().padding(padding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "Error: ${currentState.message}", color = MaterialTheme.colorScheme.error)
+                }
+            }
+            is HorariosState.Success -> {
+                Column(
+                    modifier = Modifier
+                        .padding(padding)
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
+                        .padding(horizontal = 20.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                ) {
+                    // 1. Resumen Estadístico (KPIs)
+                    KpiSection()
 
-            // 2. Módulo de Carga Excel
-            ImportModule()
+                    // 2. Módulo de Carga Excel
+                    ImportModule()
 
-            // 3. Explorador de Horarios Real-Time
-            ScheduleExplorer()
+                    // 3. Explorador de Horarios Real-Time
+                    ScheduleExplorer(horarios = currentState.horarios)
 
-            Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
         }
     }
 }

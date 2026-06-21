@@ -23,12 +23,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.smartenergy.model.HorarioAcademico
 
 @Composable
-fun ScheduleExplorer() {
-    var selectedBuilding by remember { mutableStateOf<String?>(null) }
+fun ScheduleExplorer(
+    horarios: List<HorarioAcademico>
+) {
+    // Extraer edificios dinámicamente o usar default si no hay asignados
+    val buildings = horarios.mapNotNull { it.aula?.edificio?.nombre }.distinct().sorted()
+        .ifEmpty { listOf("Edificio A", "Edificio B", "Edificio C", "Edificio D") }
+
+    var selectedBuilding by remember(buildings) { mutableStateOf<String?>(buildings.firstOrNull()) }
     var searchQuery by remember { mutableStateOf("") }
-    val buildings = listOf("Edificio A", "Edificio B", "Edificio C", "Edificio D")
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Text(
@@ -94,14 +100,23 @@ fun ScheduleExplorer() {
         if (selectedBuilding == null && searchQuery.isEmpty()) {
             EmptyExplorerState()
         } else {
-            // Lista de aulas (Mock)
-            val classrooms = listOf("101", "102", "103", "104", "105", "201", "202")
+            // Extraer aulas del edificio seleccionado
+            val classrooms = horarios.mapNotNull { it.aula }
+                .filter { selectedBuilding == null || it.edificio?.nombre == selectedBuilding }
+                .distinctBy { it.id }
 
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                classrooms.forEach { classroomNumber ->
-                    val fullRoomName = "${selectedBuilding?.last() ?: "B"}-$classroomNumber"
-                    if (searchQuery.isEmpty() || fullRoomName.contains(searchQuery, ignoreCase = true)) {
-                        AulaCard(fullRoomName)
+            val filteredClassrooms = if (searchQuery.isBlank()) {
+                classrooms
+            } else {
+                classrooms.filter { it.codigo.contains(searchQuery, ignoreCase = true) }
+            }
+
+            if (filteredClassrooms.isEmpty()) {
+                EmptyExplorerState()
+            } else {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    filteredClassrooms.forEach { aula ->
+                        AulaCard(aula = aula, horarios = horarios)
                     }
                 }
             }

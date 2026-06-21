@@ -6,11 +6,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.smartenergy.ui.components.settings.*
+import com.example.smartenergy.viewmodel.settings.SettingsViewModel
+import com.example.smartenergy.viewmodel.usuarios.UsuariosViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    onAddUserClick: () -> Unit = {}
+    onAddUserClick: () -> Unit = {},
+    settingsViewModel: SettingsViewModel,
+    usuariosViewModel: UsuariosViewModel
 ) {
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("Configuración", "Usuarios")
@@ -58,12 +62,10 @@ fun SettingsScreen(
 
             when (selectedTab) {
                 0 -> {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        GeneralSettings()
-                    }
+                    GeneralSettings(viewModel = settingsViewModel)
                 }
                 1 -> {
-                    UsuariosSection(onAddUserClick = onAddUserClick)
+                    UsuariosSection(onAddUserClick = onAddUserClick, viewModel = usuariosViewModel)
                 }
             }
         }

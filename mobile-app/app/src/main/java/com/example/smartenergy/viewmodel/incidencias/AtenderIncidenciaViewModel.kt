@@ -17,6 +17,16 @@ class AtenderIncidenciaViewModel(
     val state = _state.asStateFlow()
 
 
+    fun findById(id: java.util.UUID) {
+        viewModelScope.launch {
+            _state.value = AtenderIncidenciaState.Loading
+            when (val result = repository.findById(id)) {
+                is ApiResult.Success -> _state.value = AtenderIncidenciaState.Success(result.data)
+                is ApiResult.Error -> _state.value = AtenderIncidenciaState.Error(result.message)
+            }
+        }
+    }
+
     fun update(incidencia: Incidencia) {
         viewModelScope.launch{
             _state.value = AtenderIncidenciaState.Loading

@@ -18,14 +18,21 @@ import com.example.smartenergy.ui.components.atenderalerta.DetailRow
 import com.example.smartenergy.ui.theme.AppColors
 import com.example.smartenergy.model.Alerta
 
+import com.example.smartenergy.viewmodel.alertas.AtenderAlertaState
+import com.example.smartenergy.viewmodel.alertas.AtenderAlertaViewModel
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AtenderAlertaScreen(
     alertaId: String,
+    viewModel: AtenderAlertaViewModel,
     onBack: () -> Unit
 ) {
-    // Simulamos obtener la alerta por ID o usar la primera si no se encuentra
-    val alerta = listaAlertas.find {it.id == alertaId} ?: listaAlertas[0]
+    LaunchedEffect(alertaId) {
+        viewModel.findById(java.util.UUID.fromString(alertaId))
+    }
+
+    val state = viewModel.state.collectAsState()
 
     Scaffold(
         topBar = {
@@ -43,92 +50,118 @@ fun AtenderAlertaScreen(
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            // Cabecera de Estado Informativa
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f)
-                ),
-                elevation = CardDefaults.cardElevation(0.dp)
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+        when (val currentState = state.value) {
+            AtenderAlertaState.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize().padding(padding),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        Icons.Outlined.Info,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(32.dp)
+                    CircularProgressIndicator()
+                }
+            }
+            is AtenderAlertaState.Error -> {
+                Box(
+                    modifier = Modifier.fillMaxSize().padding(padding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("Error: ${currentState.message}")
+                }
+            }
+            is AtenderAlertaState.Success -> {
+                val alerta = currentState.alerta
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding)
+                        .verticalScroll(rememberScrollState())
+                        .padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    // Cabecera de Estado Informativa
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f)
+                        ),
+                        elevation = CardDefaults.cardElevation(0.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Outlined.Info,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(32.dp)
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Column {
+                                Text(
+                                    text = "Acción Recomendada",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                                Text(
+                                    text = "Verifique el estado del equipo en el aula y confirme la resolución.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+
+                    // Detalles de la Alerta
+                    Text(
+                        "Información de la Alerta",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
                     )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Column {
-                        Text(
-                            text = "Acción Recomendada",
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Text(
-                            text = "Verifique el estado del equipo en el aula y confirme la resolución.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+
+                    Card(
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        elevation = CardDefaults.cardElevation(2.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            DetailRow(icon = Icons.Outlined.Business, label = "Edificio", value = alerta.aula?.edificio?.nombre ?: "")
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                            DetailRow(icon = Icons.Outlined.Room, label = "Aula", value = alerta.aula?.codigo ?: "")
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                            DetailRow(icon = Icons.Outlined.NotificationsActive, label = "Tipo de Alerta", value = alerta.tipoAlerta)
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                            DetailRow(icon = Icons.Outlined.Schedule, label = "Hora Detectada", value = alerta.fechaHora.toString())
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Button(
+                        onClick = {
+                            viewModel.atenderAlerta(alerta) { success ->
+                                if (success) {
+                                    onBack()
+                                }
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = AppColors.StatusOk)
+                    ) {
+                        Icon(Icons.Outlined.Check, contentDescription = null)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Confirmar Resuelta", fontWeight = FontWeight.Bold)
+                    }
+
+                    TextButton(
+                        onClick = onBack,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Descartar", color = MaterialTheme.colorScheme.error)
                     }
                 }
-            }
-
-            // Detalles de la Alerta
-            Text(
-                "Información de la Alerta",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            
-            Card(
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(2.dp)
-            ) {
-                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    DetailRow(icon = Icons.Outlined.Business, label = "Edificio", value = alerta.aula?.edificio?.nombre ?: "")
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                    DetailRow(icon = Icons.Outlined.Room, label = "Aula", value = alerta.aula?.codigo ?: "")
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                    DetailRow(icon = Icons.Outlined.NotificationsActive, label = "Tipo de Alerta", value = alerta.tipo)
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                    DetailRow(icon = Icons.Outlined.Schedule, label = "Hora Detectada", value = alerta.hora)
-                }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Button(
-                onClick = { onBack() },
-                modifier = Modifier.fillMaxWidth().height(56.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = AppColors.StatusOk)
-            ) {
-                Icon(Icons.Outlined.Check, contentDescription = null)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Confirmar Resuelta", fontWeight = FontWeight.Bold)
-            }
-
-
-            TextButton(
-                onClick = onBack,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Descartar", color = MaterialTheme.colorScheme.error)
             }
         }
     }

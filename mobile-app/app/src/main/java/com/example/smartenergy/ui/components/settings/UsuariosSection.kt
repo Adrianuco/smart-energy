@@ -1,4 +1,5 @@
 package com.example.smartenergy.ui.components.settings
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.PersonAdd
 import androidx.compose.material.icons.outlined.Shield
@@ -23,15 +25,24 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.smartenergy.model.Rol
-import com.example.smartenergy.model.listaUsuarios
+import com.example.smartenergy.viewmodel.usuarios.UsuariosState
+import com.example.smartenergy.viewmodel.usuarios.UsuariosViewModel
 
 @Composable
-fun UsuariosSection(onAddUserClick: () -> Unit = {}) {
+fun UsuariosSection(
+    onAddUserClick: () -> Unit = {},
+    viewModel: UsuariosViewModel
+) {
+    val state by viewModel.state.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -58,56 +69,80 @@ fun UsuariosSection(onAddUserClick: () -> Unit = {}) {
             }
         }
         Spacer(Modifier.height(16.dp))
-        LazyColumn {
-            items(listaUsuarios) { usuario ->
-                ListItem(
-                    headlineContent = {
-                        Text(
-                            usuario.nombre,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    },
-                    supportingContent = {
-                        Text(
-                            usuario.cif,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    },
-                    trailingContent = {
-                        AssistChip(
-                            onClick = { },
-                            label = {
+
+        when (val currentState = state) {
+            UsuariosState.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+            is UsuariosState.Error -> {
+                Box(
+                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "Error: ${currentState.message}", color = MaterialTheme.colorScheme.error)
+                }
+            }
+            is UsuariosState.Success -> {
+                val allUsers = currentState.administradores + currentState.usuariosLogistica
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth().weight(1f)
+                ) {
+                    items(allUsers) { usuario ->
+                        ListItem(
+                            headlineContent = {
                                 Text(
-                                    usuario.rol.name,
-                                    style = MaterialTheme.typography.labelSmall
+                                    usuario.nombre + " " + usuario.apellido,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = MaterialTheme.colorScheme.onBackground
                                 )
                             },
-                            colors = AssistChipDefaults.assistChipColors(
-                                containerColor = if (usuario.rol == Rol.ADMINISTRADOR)
-                                    MaterialTheme.colorScheme.primaryContainer
-                                else
-                                    MaterialTheme.colorScheme.secondaryContainer,
-                                labelColor = if (usuario.rol == Rol.ADMINISTRADOR)
-                                    MaterialTheme.colorScheme.primary
-                                else
-                                    MaterialTheme.colorScheme.secondary
+                            supportingContent = {
+                                Text(
+                                    usuario.cif,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            },
+                            trailingContent = {
+                                AssistChip(
+                                    onClick = { },
+                                    label = {
+                                        Text(
+                                            usuario.rol.name,
+                                            style = MaterialTheme.typography.labelSmall
+                                        )
+                                    },
+                                    colors = AssistChipDefaults.assistChipColors(
+                                        containerColor = if (usuario.rol == Rol.ADMINISTRADOR)
+                                            MaterialTheme.colorScheme.primaryContainer
+                                        else
+                                            MaterialTheme.colorScheme.secondaryContainer,
+                                        labelColor = if (usuario.rol == Rol.ADMINISTRADOR)
+                                            MaterialTheme.colorScheme.primary
+                                        else
+                                            MaterialTheme.colorScheme.secondary
+                                    )
+                                )
+                            },
+                            leadingContent = {
+                                Icon(
+                                    Icons.Outlined.Shield,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            colors = ListItemDefaults.colors(
+                                containerColor = MaterialTheme.colorScheme.background
                             )
                         )
-                    },
-                    leadingContent = {
-                        Icon(
-                            Icons.Outlined.Shield,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    },
-                    colors = ListItemDefaults.colors(
-                        containerColor = MaterialTheme.colorScheme.background
-                    )
-                )
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    }
+                }
             }
         }
     }

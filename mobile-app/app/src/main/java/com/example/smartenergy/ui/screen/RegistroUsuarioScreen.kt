@@ -13,14 +13,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.smartenergy.model.Administrador
+import com.example.smartenergy.model.ApoyoLogistico
 import com.example.smartenergy.model.Rol
+import com.example.smartenergy.viewmodel.usuarios.UsuariosViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegistroUsuarioScreen(
-    onRegistroSuccess: () -> Unit = {}
+    onRegistroSuccess: () -> Unit = {},
+    viewModel: UsuariosViewModel
 ) {
-    var id by remember { mutableStateOf("") }
     var nombre by remember { mutableStateOf("") }
     var apellido by remember { mutableStateOf("") }
     var cif by remember { mutableStateOf("") }
@@ -30,6 +33,8 @@ fun RegistroUsuarioScreen(
     var nivelAcceso by remember { mutableStateOf("") } // Solo para Administrador
 
     var expandedRol by remember { mutableStateOf(false) }
+    var isSaving by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     Scaffold(
         topBar = {
@@ -128,16 +133,71 @@ fun RegistroUsuarioScreen(
                 )
             }
 
+            if (errorMessage != null) {
+                Text(
+                    text = errorMessage!!,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
-                onClick = { onRegistroSuccess() },
+                onClick = {
+                    isSaving = true
+                    errorMessage = null
+                    if (rol == Rol.ADMINISTRADOR) {
+                        val admin = Administrador(
+                            id = null,
+                            nombre = nombre,
+                            apellido = apellido,
+                            cif = cif,
+                            password = password,
+                            activo = activo,
+                            nivelAcceso = nivelAcceso
+                        )
+                        viewModel.agregarAdministrador(admin) { success ->
+                            isSaving = false
+                            if (success) {
+                                onRegistroSuccess()
+                            } else {
+                                errorMessage = "Error al registrar Administrador"
+                            }
+                        }
+                    } else {
+                        val logistico = ApoyoLogistico(
+                            id = null,
+                            nombre = nombre,
+                            apellido = apellido,
+                            cif = cif,
+                            password = password,
+                            activo = activo
+                        )
+                        viewModel.agregarLogistico(logistico) { success ->
+                            isSaving = false
+                            if (success) {
+                                onRegistroSuccess()
+                            } else {
+                                errorMessage = "Error al registrar Apoyo Logístico"
+                            }
+                        }
+                    }
+                },
+                enabled = !isSaving,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
                 shape = RoundedCornerShape(16.dp)
             ) {
-                Text("Registrar Usuario", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                if (isSaving) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                } else {
+                    Text("Registrar Usuario", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                }
             }
         }
     }

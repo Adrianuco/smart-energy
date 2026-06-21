@@ -8,20 +8,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.smartenergy.model.EstadoIncidencia
+import com.example.smartenergy.model.EstadoAlerta
 import com.example.smartenergy.ui.theme.AppColors
 
 @Composable
-fun StatusBadge(estado: EstadoIncidencia) {
-    val color = when (estado) {
-        EstadoIncidencia.PENDIENTE -> AppColors.StatusError
-        EstadoIncidencia.EN_REVISION -> AppColors.StatusWarning
-        EstadoIncidencia.RESUELTA -> AppColors.StatusOk
+fun StatusBadge(estado: EstadoAlerta?) {
+    val safeEstado = estado ?: EstadoAlerta.PENDIENTE
+    val color = when (safeEstado) {
+        EstadoAlerta.PENDIENTE -> AppColors.StatusError
+        EstadoAlerta.ATENDIDA -> AppColors.StatusOk
     }
-    val bgColor = when (estado) {
-        EstadoIncidencia.PENDIENTE -> AppColors.StatusErrorBackground
-        EstadoIncidencia.EN_REVISION -> AppColors.StatusWarningBackground
-        EstadoIncidencia.RESUELTA -> AppColors.StatusOkBackground
+    val bgColor = when (safeEstado) {
+        EstadoAlerta.PENDIENTE -> AppColors.StatusErrorBackground
+        EstadoAlerta.ATENDIDA -> AppColors.StatusOkBackground
     }
 
     Surface(
@@ -29,7 +28,7 @@ fun StatusBadge(estado: EstadoIncidencia) {
         shape = RoundedCornerShape(8.dp)
     ) {
         Text(
-            text = estado.name.replace("_", " "),
+            text = safeEstado.name.replace("_", " "),
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
             style = MaterialTheme.typography.labelSmall,
             color = color

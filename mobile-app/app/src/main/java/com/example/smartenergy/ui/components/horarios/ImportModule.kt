@@ -63,7 +63,7 @@ fun ImportModule() {
                         color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
-                        "Actualice la programación académica (.xlsx .csv)",
+                        "Actualice la programación académica (.xlsx)",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

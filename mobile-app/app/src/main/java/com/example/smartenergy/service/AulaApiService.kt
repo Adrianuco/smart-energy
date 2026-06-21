@@ -10,18 +10,18 @@ import retrofit2.http.Path
 import java.util.UUID
 
 interface AulaApiService {
-    @GET("aulas/all")
+    @GET("aula/all")
     suspend fun obtenerAulas(): Response<List<Aula>>
 
-    @GET("aulas/{id}")
+    @GET("aula/{id}")
     suspend fun obtenerAulaPorId(@Path("id") id: UUID): Response<Aula>
 
-    @POST("aulas/save")
+    @POST("aula/save")
     suspend fun guardarAula(@Body aula: Aula): Response<Aula>
 
-    @PUT("aulas/update")
+    @PUT("aula/update")
     suspend fun actualizarAula(@Body aula: Aula): Response<Aula>
 
-    @GET("aulas/edificio/{id}")
+    @GET("aula/edificio/{id}")
     suspend fun obtenerAulasPorEdificioId(@Path("id") id: UUID): Response<List<Aula>>
 }
