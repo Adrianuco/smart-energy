@@ -13,7 +13,10 @@ import lombok.Setter;
 @Entity
 @Table(name = "Equipo")
 public class Equipo extends BaseEntity {
+    private String marca;
     private String modelo;
+    private int btu;
+    private String eficiencia;
     private Boolean operativo;
     private double potenciaMinima;
     private double potenciaNominal;

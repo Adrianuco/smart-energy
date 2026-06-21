@@ -29,7 +29,10 @@ public class EquipoController {
     @PutMapping("/update")
     public ResponseEntity<Equipo> update(@RequestBody Equipo equipo) {
         Equipo i = service.findById(equipo.getId());
+        i.setMarca(equipo.getMarca());
         i.setModelo(equipo.getModelo());
+        i.setBtu(equipo.getBtu());
+        i.setEficiencia(equipo.getEficiencia());
         i.setOperativo(equipo.getOperativo());
         i.setPotenciaMinima(equipo.getPotenciaMinima());
         i.setPotenciaNominal(equipo.getPotenciaNominal());
