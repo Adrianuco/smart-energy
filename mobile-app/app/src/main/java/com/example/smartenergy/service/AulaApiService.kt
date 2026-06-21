@@ -21,4 +21,7 @@ interface AulaApiService {
 
     @PUT("aulas/update")
     suspend fun actualizarAula(@Body aula: Aula): Response<Aula>
+
+    @GET("aulas/edificio/{id}")
+    suspend fun obtenerAulasPorEdificioId(@Path("id") id: UUID): Response<List<Aula>>
 }

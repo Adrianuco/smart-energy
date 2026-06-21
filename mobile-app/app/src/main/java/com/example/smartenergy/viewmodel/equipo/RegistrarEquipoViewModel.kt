@@ -1,4 +1,10 @@
 package com.example.smartenergy.viewmodel.equipo
 
-class RegistrarEquipoViewModel {
+import androidx.lifecycle.ViewModel
+import com.example.smartenergy.repository.EquipoRepository
+
+class RegistrarEquipoViewModel(
+    private val repository: EquipoRepository
+): ViewModel() {
+
 }

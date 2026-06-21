@@ -1,43 +1,37 @@
 package com.example.smartenergy.viewmodel.equipo
 
+import android.view.View
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.smartenergy.model.Equipo
 import com.example.smartenergy.repository.EquipoRepository
+import com.example.smartenergy.service.ApiResult
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
-class EquiposViewModel : ViewModel() {
+class EquiposViewModel(
+    private val repository: EquipoRepository
+): ViewModel() {
 
-    private val repository = EquipoRepository()
+    private val _state = MutableStateFlow<EquiposState>(EquiposState.Loading)
 
-    var equipos by mutableStateOf(listOf<Equipo>())
-        private set
+    val state = _state.asStateFlow()
 
     init {
-        cargarEquipos()
+        findAll()
     }
 
-    fun cargarEquipos() {
-        equipos = repository.obtenerEquipos()
-    }
-
-    fun agregarEquipo(equipo: Equipo) {
-        repository.agregarEquipo(equipo)
-        cargarEquipos()
-    }
-
-    fun buscarEquipoPorId(id: String): Equipo? {
-        return repository.buscarEquipoPorId(id)
-    }
-
-    fun actualizarEquipo(equipo: Equipo) {
-        repository.actualizarEquipo(equipo)
-        cargarEquipos()
-    }
-
-    fun eliminarEquipo(id: String) {
-        repository.eliminarEquipo(id)
-        cargarEquipos()
+    private fun findAll() {
+        viewModelScope.launch{
+            _state.value = EquiposState.Loading
+            when(val result = repository.findAll()) {
+                is ApiResult.Success -> _state.value = EquiposState.Success(result.data)
+                is ApiResult.Error -> _state.value = EquiposState.Error(result.message)
+            }
+        }
     }
 }

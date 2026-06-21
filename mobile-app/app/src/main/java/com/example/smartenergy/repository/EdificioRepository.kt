@@ -1,5 +1,6 @@
 package com.example.smartenergy.repository
 
+import com.example.smartenergy.model.DetalleEdificio
 import com.example.smartenergy.model.Edificio
 import com.example.smartenergy.service.ApiResult
 import com.example.smartenergy.service.EdificioApiService
@@ -20,9 +21,9 @@ class EdificioRepository(private val apiService: EdificioApiService) {
         }
     }
 
-    suspend fun findById(id: UUID): ApiResult<Edificio> {
+    suspend fun findDetalle(id: UUID): ApiResult<DetalleEdificio> {
         return try {
-            val response = apiService.obtenerEdificioPorId(id)
+            val response = apiService.obtenerDetalle(id)
             if (response.isSuccessful) {
                 ApiResult.Success(response.body()!!)
             } else {
@@ -32,6 +33,7 @@ class EdificioRepository(private val apiService: EdificioApiService) {
             ApiResult.Error("Error: ${ex.message}")
         }
     }
+
     suspend fun save(edificio: Edificio): ApiResult<Edificio> {
         return try {
             val response = apiService.guardarEdificio(edificio)

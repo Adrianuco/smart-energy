@@ -1,39 +1,35 @@
 package com.example.smartenergy.viewmodel.reports
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.example.smartenergy.repository.RegistroOperativoRepository
-import com.example.smartenergy.repository.RegistroConsumoRepository
+import androidx.lifecycle.viewModelScope
+import com.example.smartenergy.repository.EdificioRepository
+import com.example.smartenergy.service.ApiResult
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
-class ReportsViewModel : ViewModel() {
+class ReportsViewModel(
+    private val repository: EdificioRepository
+) : ViewModel() {
 
-    private val registroRepository = RegistroConsumoRepository()
-    private val estadoRepository = RegistroOperativoRepository()
-
-    var registrosConsumo by mutableStateOf(listOf<RegistroConsumo>())
-        private set
-
-    var estadosEquipo by mutableStateOf(listOf<EstadoEquipo>())
-        private set
+    private val _state = MutableStateFlow<ReportsState>(ReportsState.Loading)
+    val state = _state.asStateFlow()
 
     init {
-        cargarReportes()
+        loadEdificios()
     }
 
-    fun cargarReportes() {
-        registrosConsumo = registroRepository.obtenerRegistros()
-        estadosEquipo = estadoRepository.obtenerEstados()
-    }
-
-    fun agregarRegistroConsumo(registro: RegistroConsumo) {
-        registroRepository.agregarRegistro(registro)
-        cargarReportes()
-    }
-
-    fun agregarEstadoEquipo(estado: EstadoEquipo) {
-        estadoRepository.agregarEstado(estado)
-        cargarReportes()
+    fun loadEdificios() {
+        viewModelScope.launch {
+            _state.value = ReportsState.Loading
+            when (val result = repository.findAll()) {
+                is ApiResult.Success -> {
+                    _state.value = ReportsState.Success(result.data)
+                }
+                is ApiResult.Error -> {
+                    _state.value = ReportsState.Error(result.message)
+                }
+            }
+        }
     }
 }

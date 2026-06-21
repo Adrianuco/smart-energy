@@ -57,4 +57,17 @@ class AulaRepository(private val apiService: AulaApiService) {
             ApiResult.Error("Error: ${ex.message}")
         }
     }
+
+    suspend fun findByEdificioId(edfificioId: UUID): ApiResult<List<Aula>> {
+        return try {
+            val response = apiService.obtenerAulasPorEdificioId(edfificioId)
+            if (response.isSuccessful) {
+                ApiResult.Success(response.body() ?: emptyList())
+            } else {
+                ApiResult.Error("Error HTTP: ${response.code()}")
+            }
+        } catch (ex: Exception) {
+            ApiResult.Error("Error: ${ex.message}")
+        }
+    }
 }

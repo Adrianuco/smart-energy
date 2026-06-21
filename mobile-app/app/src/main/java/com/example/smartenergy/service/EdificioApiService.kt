@@ -1,5 +1,6 @@
 package com.example.smartenergy.service
 
+import com.example.smartenergy.model.DetalleEdificio
 import com.example.smartenergy.model.Edificio
 import retrofit2.Response
 import retrofit2.http.Body
@@ -21,4 +22,7 @@ interface EdificioApiService {
 
     @PUT("edificio/update")
     suspend fun actualizarEdificio(@Body edificio: Edificio): Response<Edificio>
+
+    @GET("edificio/detalle/{id}")
+    suspend fun obtenerDetalle(@Path("id") id: UUID): Response<DetalleEdificio>
 }
