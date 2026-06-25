@@ -7,5 +7,7 @@ data class Edificio(
     val consumo: Float = 0f,
     val estado: String = "OK",
     val aulas: List<Aula>? = emptyList(),
-    val id: String? = null
+    val id: String? = null,
+    val consumoEsperado: Float = 0f,
+    val ahorro: Float = 0f
 )

@@ -1,6 +1,7 @@
 package com.example.smartenergy.service
 
 import com.example.smartenergy.model.RegistroOperativo
+import com.example.smartenergy.model.Estado
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -21,4 +22,10 @@ interface RegistroOperativoApiService {
 
     @PUT("registro/update")
     suspend fun actualizarRegistroOperativo(@Body registroOperativo: RegistroOperativo): Response<RegistroOperativo>
+
+    @POST("registro/cambiar-estado/{equipoId}")
+    suspend fun cambiarEstado(
+        @Path("equipoId") equipoId: UUID,
+        @Body estado: Estado
+    ): Response<okhttp3.ResponseBody>
 }

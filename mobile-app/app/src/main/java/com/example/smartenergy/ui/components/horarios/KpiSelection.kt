@@ -15,9 +15,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.smartenergy.model.HorarioAcademico
 
 @Composable
-fun KpiSection() {
+fun KpiSection(horarios: List<HorarioAcademico>) {
+    val uniqueAulas = horarios.mapNotNull { it.aula?.codigo }.distinct().size
+    val totalMinutes = horarios.sumOf {
+        java.time.Duration.between(it.horaInicio, it.horaFin).toMinutes()
+    }
+    val totalHours = totalMinutes / 60.0
+    val formattedHours = if (totalHours % 1.0 == 0.0) "${totalHours.toInt()}h" else String.format(java.util.Locale.US, "%.1fh", totalHours)
+
     Column {
         Text(
             text = "Resumen del Semestre",
@@ -32,13 +40,13 @@ fun KpiSection() {
             KpiCard(
                 modifier = Modifier.weight(1f),
                 label = "Aulas con Horario",
-                value = "42",
+                value = uniqueAulas.toString(),
                 icon = Icons.Outlined.MeetingRoom
             )
             KpiCard(
                 modifier = Modifier.weight(1f),
-                label = "Horas/Día",
-                value = "128h",
+                label = "Horas Programadas",
+                value = formattedHours,
                 icon = Icons.Outlined.Schedule
             )
         }
@@ -46,7 +54,7 @@ fun KpiSection() {
         KpiCard(
             modifier = Modifier.fillMaxWidth(),
             label = "Última actualización",
-            value = "10 May 2026, 08:30 AM",
+            value = if (horarios.isNotEmpty()) "Recientemente actualizado" else "Sin horarios programados",
             icon = Icons.Outlined.Update
         )
     }

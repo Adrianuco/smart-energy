@@ -59,4 +59,17 @@ class EdificioRepository(private val apiService: EdificioApiService) {
             ApiResult.Error("Error: ${ex.message}")
         }
     }
+
+    suspend fun getConsumoHistorico(id: UUID, periodo: String): ApiResult<List<Double>> {
+        return try {
+            val response = apiService.obtenerConsumoHistorico(id, periodo)
+            if (response.isSuccessful) {
+                ApiResult.Success(response.body() ?: emptyList())
+            } else {
+                ApiResult.Error("Error HTTP: ${response.code()}")
+            }
+        } catch (ex: Exception) {
+            ApiResult.Error("Error: ${ex.message}")
+        }
+    }
 }

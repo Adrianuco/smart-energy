@@ -1,39 +1,46 @@
 package com.example.smartenergy.ui.components.horarios
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import android.content.Context
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FileUpload
 import androidx.compose.material.icons.outlined.TableChart
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.smartenergy.ui.theme.AppColors
+import com.example.smartenergy.viewmodel.horarios.HorariosViewModel
+import com.example.smartenergy.viewmodel.horarios.ImportState
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
+import java.io.FileOutputStream
 
 @Composable
-fun ImportModule() {
-    var isUploading by remember { mutableStateOf(false) }
+fun ImportModule(viewModel: HorariosViewModel) {
+    val context = LocalContext.current
+    val importState by viewModel.importState.collectAsState()
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            val tempFile = uriToTempFile(context, it)
+            if (tempFile != null) {
+                val requestFile = tempFile.asRequestBody("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".toMediaTypeOrNull())
+                val body = MultipartBody.Part.createFormData("file", tempFile.name, requestFile)
+                viewModel.import(body)
+            }
+        }
+    }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -73,11 +80,13 @@ fun ImportModule() {
             Spacer(Modifier.height(16.dp))
 
             Button(
-                onClick = { isUploading = true },
+                onClick = {
+                    launcher.launch("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = AppColors.ExcelGreen),
-                enabled = !isUploading
+                enabled = importState !is ImportState.Loading
             ) {
                 Icon(Icons.Outlined.FileUpload, contentDescription = null)
                 Spacer(Modifier.width(8.dp))
@@ -87,16 +96,51 @@ fun ImportModule() {
                 )
             }
 
-            if (isUploading) {
-                Spacer(Modifier.height(16.dp))
-                LinearProgressIndicator(
-                    progress = { 0.6f },
-                    modifier = Modifier.fillMaxWidth(),
-                    color = AppColors.ExcelGreen,
-                    trackColor = MaterialTheme.colorScheme.outlineVariant
-                )
-                Spacer(Modifier.height(8.dp))
+            when (val currentImport = importState) {
+                is ImportState.Loading -> {
+                    Spacer(Modifier.height(16.dp))
+                    LinearProgressIndicator(
+                        modifier = Modifier.fillMaxWidth(),
+                        color = AppColors.ExcelGreen,
+                        trackColor = MaterialTheme.colorScheme.outlineVariant
+                    )
+                }
+                is ImportState.Success -> {
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = currentImport.message,
+                        color = AppColors.StatusOk,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+                is ImportState.Error -> {
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = currentImport.message,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+                else -> {}
             }
         }
+    }
+}
+
+fun uriToTempFile(context: Context, uri: Uri): File? {
+    return try {
+        val inputStream = context.contentResolver.openInputStream(uri) ?: return null
+        val tempFile = File.createTempFile("schedule_import", ".xlsx", context.cacheDir)
+        tempFile.deleteOnExit()
+        val outputStream = FileOutputStream(tempFile)
+        inputStream.use { input ->
+            outputStream.use { output ->
+                input.copyTo(output)
+            }
+        }
+        tempFile
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
 }

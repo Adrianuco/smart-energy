@@ -1,6 +1,7 @@
 package com.example.smartenergy.repository
 
 import com.example.smartenergy.model.RegistroOperativo
+import com.example.smartenergy.model.Estado
 import com.example.smartenergy.service.ApiResult
 import com.example.smartenergy.service.RegistroOperativoApiService
 import java.util.UUID
@@ -50,6 +51,19 @@ class RegistroOperativoRepository(private val apiService: RegistroOperativoApiSe
             val response = apiService.actualizarRegistroOperativo(registroOperativo)
             if (response.isSuccessful) {
                 ApiResult.Success(response.body()!!)
+            } else {
+                ApiResult.Error("Error HTTP: ${response.code()}")
+            }
+        } catch (ex: Exception) {
+            ApiResult.Error("Error: ${ex.message}")
+        }
+    }
+
+    suspend fun cambiarEstado(equipoId: UUID, estado: Estado): ApiResult<Unit> {
+        return try {
+            val response = apiService.cambiarEstado(equipoId, estado)
+            if (response.isSuccessful) {
+                ApiResult.Success(Unit)
             } else {
                 ApiResult.Error("Error HTTP: ${response.code()}")
             }

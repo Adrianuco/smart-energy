@@ -77,10 +77,10 @@ fun HorariosScreen(
                     verticalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
                     // 1. Resumen Estadístico (KPIs)
-                    KpiSection()
+                    KpiSection(horarios = currentState.horarios)
 
                     // 2. Módulo de Carga Excel
-                    ImportModule()
+                    ImportModule(viewModel = viewModel)
 
                     // 3. Explorador de Horarios Real-Time
                     ScheduleExplorer(horarios = currentState.horarios)

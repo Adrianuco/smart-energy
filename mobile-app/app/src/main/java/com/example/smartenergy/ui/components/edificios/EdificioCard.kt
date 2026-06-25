@@ -76,7 +76,7 @@ fun EdificioCard(edificio: Edificio, onCardClick: (Edificio) -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = "${edificio.consumo} kWh",
+                    text = "${edificio.consumo} kWh · ${edificio.aulas?.size ?: 0} aulas",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

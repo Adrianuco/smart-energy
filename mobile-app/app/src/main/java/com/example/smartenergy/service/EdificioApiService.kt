@@ -25,4 +25,10 @@ interface EdificioApiService {
 
     @GET("edificio/detalle/{id}")
     suspend fun obtenerDetalle(@Path("id") id: UUID): Response<DetalleEdificio>
+
+    @GET("reportes/consumo-historico/{id}")
+    suspend fun obtenerConsumoHistorico(
+        @Path("id") id: UUID,
+        @retrofit2.http.Query("periodo") periodo: String
+    ): Response<List<Double>>
 }

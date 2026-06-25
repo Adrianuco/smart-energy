@@ -20,11 +20,12 @@ class HorariosViewModel(
     private val _state = MutableStateFlow<HorariosState>(HorariosState.Loading)
     private val _importState = MutableStateFlow<ImportState>(ImportState.Idle)
     val state = _state.asStateFlow()
+    val importState = _importState.asStateFlow()
 
     init {
         findAll()
     }
-    private fun findAll() {
+    fun findAll() {
         viewModelScope.launch{
             _state.value = HorariosState.Loading
             when(val result = repository.findAll()) {
@@ -34,12 +35,15 @@ class HorariosViewModel(
         }
     }
 
-    private fun import(file: MultipartBody.Part) {
+    fun import(file: MultipartBody.Part) {
         viewModelScope.launch {
             _importState.value = ImportState.Loading
 
             when(val result = repository.import(file)) {
-                is ApiResult.Success -> _importState.value = ImportState.Success(result.data)
+                is ApiResult.Success -> {
+                    _importState.value = ImportState.Success(result.data)
+                    findAll()
+                }
                 is ApiResult.Error -> _importState.value = ImportState.Error(result.message)
             }
         }

@@ -64,7 +64,7 @@ class HorarioAcademicoRepository(private val apiService: HorarioAcademicoApiServ
         return try {
             val response = apiService.importarHorarios(file)
             if (response.isSuccessful) {
-                ApiResult.Success(response.body()!!)
+                ApiResult.Success(response.body()?.string() ?: "")
             } else {
                 ApiResult.Error("Error HTTP: ${response.code()}")
             }

@@ -102,7 +102,10 @@ fun AppNavigation() {
             composable<DetalleRuta> { backStackEntry ->
                 val destino = backStackEntry.toRoute<DetalleRuta>()
                 val vm: DetalleEdificioViewModel = viewModel(
-                    factory = DetalleEdificioViewModelFactory(ServiceLocator.edificioRepository)
+                    factory = DetalleEdificioViewModelFactory(
+                        ServiceLocator.edificioRepository,
+                        ServiceLocator.registroOperativoRepository
+                    )
                 )
                 DetalleEdificioScreen(
                     edificioId = destino.edificioId,
@@ -222,7 +225,10 @@ fun AppNavigation() {
             composable<AtenderAlertaRuta> { backStackEntry ->
                 val destino = backStackEntry.toRoute<AtenderAlertaRuta>()
                 val vm: AtenderAlertaViewModel = viewModel(
-                    factory = AtenderAlertaViewModelFactory(ServiceLocator.alertaRepository)
+                    factory = AtenderAlertaViewModelFactory(
+                        ServiceLocator.alertaRepository,
+                        ServiceLocator.registroOperativoRepository
+                    )
                 )
                 AtenderAlertaScreen(
                     alertaId = destino.alertaId,

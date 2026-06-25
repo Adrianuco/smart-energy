@@ -150,12 +150,13 @@ fun ReportsScreen(
             }
             is ReportsState.Success -> {
                 val edificiosReport = currentState.edificios.map { ed ->
+                    val ahorroLogrado = kotlin.math.max(0f, ed.consumoEsperado - ed.consumo)
                     EdificioReport(
                         id = ed.id ?: "",
                         nombre = ed.nombre,
                         consumoActual = ed.consumo,
-                        consumoPeorEscenario = ed.consumo * 1.5f + 100f,
-                        ahorroLogrado = ed.consumo * 0.5f + 50f,
+                        consumoPeorEscenario = ed.consumoEsperado,
+                        ahorroLogrado = ahorroLogrado,
                         tendencia = 10f
                     )
                 }
@@ -173,6 +174,12 @@ fun ReportsScreen(
                     if (edificiosReport.none { it.id == edificioSeleccionado.id }) {
                         edificioSeleccionado = edificiosReport[0]
                     }
+
+                    LaunchedEffect(edificioSeleccionado.id, periodoSeleccionado) {
+                        viewModel.loadHistorico(edificioSeleccionado.id, periodoSeleccionado)
+                    }
+
+                    val historicoData by viewModel.historico.collectAsState()
 
                     Column(
                         modifier = Modifier
@@ -327,7 +334,18 @@ fun ReportsScreen(
                                     )
                                 }
                                 Spacer(modifier = Modifier.height(24.dp))
-                                GraficoLineasHistorico(getHistorico(edificioSeleccionado.id, periodoSeleccionado))
+                                val labels = when (periodoSeleccionado) {
+                                    "Hoy" -> listOf("6h", "5h", "4h", "3h", "2h", "1h", "Actual")
+                                    "Semana" -> listOf("L", "M", "X", "J", "V", "S", "D")
+                                    else -> listOf("S1", "S2", "S3", "S4")
+                                }
+                                val chartData = historicoData.mapIndexed { index, value ->
+                                    ConsumoHistorico(
+                                        label = labels.getOrElse(index) { "" },
+                                        consumo = value.toFloat()
+                                    )
+                                }
+                                GraficoLineasHistorico(chartData)
                             }
                         }
 

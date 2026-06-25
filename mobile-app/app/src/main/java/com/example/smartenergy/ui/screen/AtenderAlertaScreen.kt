@@ -136,6 +136,70 @@ fun AtenderAlertaScreen(
                         }
                     }
 
+                    val equipo = alerta.aula?.equipo
+                    if (equipo != null) {
+                        Text(
+                            "Estado del Aire Acondicionado",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        Card(
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                            elevation = CardDefaults.cardElevation(2.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                                DetailRow(icon = Icons.Outlined.DeviceThermostat, label = "Equipo", value = "${equipo.marca} ${equipo.modelo}")
+                                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                
+                                val isEncendido = equipo.estado == com.example.smartenergy.model.Estado.ENCENDIDO
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(
+                                            Icons.Outlined.Air,
+                                            contentDescription = null,
+                                            tint = if (isEncendido) AppColors.StatusOk else MaterialTheme.colorScheme.onSurfaceVariant,
+                                            modifier = Modifier.size(24.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(12.dp))
+                                        Column {
+                                            Text(
+                                                "Estado actual",
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                            Text(
+                                                text = if (isEncendido) "ENCENDIDO" else "APAGADO",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                fontWeight = FontWeight.Bold,
+                                                color = if (isEncendido) AppColors.StatusOk else MaterialTheme.colorScheme.onSurface
+                                            )
+                                        }
+                                    }
+                                    Switch(
+                                        checked = isEncendido,
+                                        onCheckedChange = { checked ->
+                                            val nuevoEstado = if (checked) com.example.smartenergy.model.Estado.ENCENDIDO else com.example.smartenergy.model.Estado.APAGADO
+                                            if (equipo.id != null) {
+                                                viewModel.cambiarEstado(
+                                                    java.util.UUID.fromString(equipo.id),
+                                                    nuevoEstado
+                                                ) {
+                                                    viewModel.findById(java.util.UUID.fromString(alertaId))
+                                                }
+                                            }
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Button(

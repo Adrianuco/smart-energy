@@ -27,19 +27,19 @@ import java.time.LocalTime
 @Composable
 fun AulaCard(aula: Aula, horarios: List<HorarioAcademico>) {
     val now = LocalTime.now()
-    val aulaHorarios = horarios.filter { it.aula?.id == aula.id }
+    val todayOfWeek = java.time.LocalDate.now().dayOfWeek.value
+    val aulaHorarios = horarios.filter { it.aula?.id == aula.id || it.aula?.codigo == aula.codigo }
 
     val currentClass = aulaHorarios.find {
-        now.isAfter(it.horaInicio) && now.isBefore(it.horaFin)
-    } ?: aulaHorarios.firstOrNull()
+        it.diaSemana == todayOfWeek && !now.isBefore(it.horaInicio) && !now.isAfter(it.horaFin)
+    }
 
     val nextClass = aulaHorarios.filter {
-        it.horaInicio.isAfter(now)
-    }.minByOrNull { it.horaInicio } ?: if (aulaHorarios.size > 1 && currentClass == aulaHorarios.firstOrNull()) {
-        aulaHorarios[1]
-    } else {
-        null
-    }
+        it.diaSemana == todayOfWeek && it.horaInicio.isAfter(now)
+    }.minByOrNull { it.horaInicio }
+        ?: aulaHorarios.filter { it.diaSemana > todayOfWeek }
+            .minWithOrNull(compareBy<HorarioAcademico> { it.diaSemana }.thenBy { it.horaInicio })
+        ?: aulaHorarios.minWithOrNull(compareBy<HorarioAcademico> { it.diaSemana }.thenBy { it.horaInicio })
 
     Card(
         modifier = Modifier.fillMaxWidth(),

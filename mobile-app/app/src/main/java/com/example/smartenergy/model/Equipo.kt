@@ -11,5 +11,6 @@ data class Equipo(
     val operativo: Boolean,
     val potenciaMinima: Double,
     val potenciaNominal: Double,
-    val aula: Aula? = null
+    val aula: Aula? = null,
+    val estado: Estado? = null
 )

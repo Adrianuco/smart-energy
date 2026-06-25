@@ -20,6 +20,9 @@ import com.example.smartenergy.ui.theme.AppColors
 
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
+import com.example.smartenergy.model.Aula
+import com.example.smartenergy.model.Estado
 import com.example.smartenergy.viewmodel.edificio.DetalleEdificioState
 import com.example.smartenergy.viewmodel.edificio.DetalleEdificioViewModel
 
@@ -37,7 +40,11 @@ fun DetalleEdificioScreen(
     }
 
     val state = viewModel.state.collectAsState()
-    val porcentajeAhorro = 35 // Ejemplo de ahorro vs peor escenario
+    var selectedAula by remember { mutableStateOf<Aula?>(null) }
+    val ahorroVal = when (val currentState = state.value) {
+        is DetalleEdificioState.Success -> (currentState.detalleEdificio.ahorro * 100).toInt()
+        else -> 0
+    }
 
     Scaffold(
         topBar = {
@@ -142,7 +149,7 @@ fun DetalleEdificioScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 CircularProgressIndicator(
-                                    progress = { porcentajeAhorro / 100f },
+                                    progress = { ahorroVal / 100f },
                                     modifier = Modifier.fillMaxSize(),
                                     color = AppColors.StatusOk,
                                     strokeWidth = 10.dp,
@@ -152,7 +159,7 @@ fun DetalleEdificioScreen(
 
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                     Text(
-                                        text = "$porcentajeAhorro%",
+                                        text = "$ahorroVal%",
                                         style = MaterialTheme.typography.headlineMedium,
                                         color = AppColors.StatusOk
                                     )
@@ -245,7 +252,7 @@ fun DetalleEdificioScreen(
 
                     // ── Aulas List ──
                     Text(
-                        "Eficiencia por Aula",
+                        "Listado de Aulas",
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onBackground
                     )
@@ -255,6 +262,7 @@ fun DetalleEdificioScreen(
                     ) {
                         edificio.aulas?.forEach { aula ->
                             Card(
+                                onClick = { selectedAula = aula },
                                 shape = RoundedCornerShape(12.dp),
                                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                                 elevation = CardDefaults.cardElevation(1.dp)
@@ -267,12 +275,13 @@ fun DetalleEdificioScreen(
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
+                                        val dotColor = if (aula.equipo == null) AppColors.StatusError
+                                                       else if (aula.equipo.estado == Estado.ENCENDIDO) AppColors.StatusOk
+                                                       else AppColors.StatusWarning
                                         Surface(
                                             modifier = Modifier.size(8.dp),
                                             shape = CircleShape,
-                                            color = if (aula.eficiencia >= 60f) AppColors.StatusOk
-                                            else if (aula.eficiencia >= 40f) AppColors.StatusWarning
-                                            else AppColors.StatusError
+                                            color = dotColor
                                         ) {}
                                         Spacer(modifier = Modifier.width(12.dp))
                                         Text(
@@ -281,8 +290,10 @@ fun DetalleEdificioScreen(
                                             color = MaterialTheme.colorScheme.onBackground
                                         )
                                     }
+                                    val statusText = if (aula.equipo == null) "Sin equipo"
+                                                     else "Aire: ${aula.equipo.estado?.name ?: "APAGADO"}"
                                     Text(
-                                        "${aula.eficiencia}%",
+                                        statusText,
                                         style = MaterialTheme.typography.titleSmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -295,5 +306,83 @@ fun DetalleEdificioScreen(
                 }
             }
         }
+    }
+
+    selectedAula?.let { aula ->
+        AlertDialog(
+            onDismissRequest = { selectedAula = null },
+            title = {
+                Text(
+                    text = "Detalle de ${aula.codigo}",
+                    style = MaterialTheme.typography.headlineSmall
+                )
+            },
+            text = {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = "Información del Aula",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text("Piso: ${aula.piso}")
+                    Text("Eficiencia: ${aula.eficiencia}%")
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    val equipo = aula.equipo
+                    if (equipo != null) {
+                        Text(
+                            text = "Aire Acondicionado",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Text("Marca: ${equipo.marca}")
+                        Text("Modelo: ${equipo.modelo}")
+                        Text("BTU: ${equipo.btu}")
+                        Text("Potencia Nominal: ${equipo.potenciaNominal} W")
+                        
+                        val isEncendido = equipo.estado == Estado.ENCENDIDO
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                        ) {
+                            Text(
+                                text = if (isEncendido) "Estado: ENCENDIDO" else "Estado: APAGADO",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = if (isEncendido) AppColors.StatusOk else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Switch(
+                                checked = isEncendido,
+                                onCheckedChange = { checked ->
+                                    val nuevoEstado = if (checked) Estado.ENCENDIDO else Estado.APAGADO
+                                    if (equipo.id != null && edificioId != null) {
+                                        viewModel.cambiarEstado(
+                                            java.util.UUID.fromString(equipo.id),
+                                            nuevoEstado,
+                                            java.util.UUID.fromString(edificioId)
+                                        )
+                                        selectedAula = null
+                                    }
+                                }
+                            )
+                        }
+                    } else {
+                        Text(
+                            text = "No hay aire acondicionado registrado para esta aula.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { selectedAula = null }) {
+                    Text("Cerrar")
+                }
+            }
+        )
     }
 }
