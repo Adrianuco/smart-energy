@@ -2,6 +2,8 @@ package com.smartenergy.backendapi.service;
 
 import com.smartenergy.backendapi.model.Alerta;
 import com.smartenergy.backendapi.model.Aula;
+import com.smartenergy.backendapi.model.Equipo;
+import com.smartenergy.backendapi.model.Estado;
 import com.smartenergy.backendapi.model.EstadoAlerta;
 import com.smartenergy.backendapi.repository.IAlertaRepository;
 import org.springframework.stereotype.Service;
@@ -13,12 +15,19 @@ import java.util.UUID;
 @Service
 public class AlertaService {
     private final IAlertaRepository repo;
+    private final RegistroOperativoService registroOperativoService;
 
-    public AlertaService(IAlertaRepository repo) {
+    public AlertaService(IAlertaRepository repo, RegistroOperativoService registroOperativoService) {
         this.repo = repo;
+        this.registroOperativoService = registroOperativoService;
     }
 
-    public Alerta save(Alerta alerta) {return repo.save(alerta);}
+    public Alerta save(Alerta alerta) {
+        if(alerta.getEstado() == EstadoAlerta.ATENDIDA) {
+            atenderAlerta(alerta);
+        }
+        return repo.save(alerta);
+    }
 
     public List<Alerta> findAll() {return repo.findAll();}
 
@@ -39,5 +48,20 @@ public class AlertaService {
         alerta.setEstado(EstadoAlerta.PENDIENTE);
 
         repo.save(alerta);
+    }
+
+    public void atenderAlerta(Alerta alerta) {
+        Equipo equipo = alerta.getAula().getEquipo();
+
+        switch(alerta.getTipoAlerta()) {
+            case "Falta Climatizacion":
+                registroOperativoService.cambiarEstado(equipo, Estado.ENCENDIDO);
+                break;
+            case "Desperdicio":
+                registroOperativoService.cambiarEstado(equipo, Estado.APAGADO);
+                break;
+        }
+
+        alerta.setEstado(EstadoAlerta.ATENDIDA);
     }
 }

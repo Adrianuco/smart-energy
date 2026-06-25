@@ -13,7 +13,7 @@ public interface AulaRepository extends JpaRepository<Aula, UUID> {
 
     Optional<Aula> findByCodigo(String codigo);
 
-    Optional<List<Aula>> findByEdificioId(UUID edificioId);
+    List<Aula> findByEdificioId(UUID edificioId);
 
     UUID id(UUID id);
 }

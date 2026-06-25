@@ -8,4 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface EquipoRepository extends JpaRepository<Equipo, UUID> {
+    boolean existsByAula(com.smartenergy.backendapi.model.Aula aula);
 }

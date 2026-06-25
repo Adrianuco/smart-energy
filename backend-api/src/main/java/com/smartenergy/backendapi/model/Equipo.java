@@ -5,8 +5,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
+
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 
 @Getter
 @Setter
@@ -20,6 +24,9 @@ public class Equipo extends BaseEntity {
     private Boolean operativo;
     private double potenciaMinima;
     private double potenciaNominal;
+
+    @Enumerated(EnumType.STRING)
+    private Estado estado = Estado.APAGADO;
 
     @OneToOne
     @JoinColumn(name = "aula_id")

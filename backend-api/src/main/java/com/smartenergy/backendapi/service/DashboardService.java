@@ -11,6 +11,14 @@ import com.smartenergy.backendapi.repository.RegistroOperativoRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
+
+import static java.util.Locale.ENGLISH;
+
 @Service
 public class DashboardService {
     private final CalculoService calculoService;
@@ -38,9 +46,9 @@ public class DashboardService {
         dto.setIncidencias(incidenciaService.findAll().stream().filter(a -> a.getEstado() == EstadoAlerta.PENDIENTE).count());
         dto.setConsumoUltimasHoras(calculoService.calcularConsumoUltimasHoras());
 
-        java.time.LocalDateTime now = java.time.LocalDateTime.now();
-        java.util.List<String> horas = new java.util.ArrayList<>();
-        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("ha", java.util.Locale.ENGLISH);
+        LocalDateTime now = LocalDateTime.now();
+        List<String> horas = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ha", ENGLISH);
         for (int i = 6; i >= 0; i--) {
             horas.add(now.minusHours(i).format(formatter).toLowerCase());
         }

@@ -9,6 +9,7 @@ import java.util.UUID;
 
 @Service
 public class AulaService extends BaseService<Aula, AulaRepository> {
+
     protected AulaService(AulaRepository repository) {
         super(repository);
     }
@@ -18,6 +19,6 @@ public class AulaService extends BaseService<Aula, AulaRepository> {
     }
 
     public List<Aula> findByEdificioId(UUID edificioId) {
-        return repo.findByEdificioId(edificioId).orElseThrow(() -> new RuntimeException("No existen aulas"));
+        return repo.findByEdificioId(edificioId);
     }
 }

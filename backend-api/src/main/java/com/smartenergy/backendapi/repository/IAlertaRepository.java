@@ -11,4 +11,6 @@ import java.util.UUID;
 @Repository
 public interface IAlertaRepository extends JpaRepository<Alerta, UUID> {
     boolean existsByAulaAndTipoAlertaAndEstado(Aula aula, String tipoAlerta, EstadoAlerta estadoAlerta);
+
+    boolean existsByAulaEdificioIdAndEstado(java.util.UUID edificioId, EstadoAlerta estado);
 }

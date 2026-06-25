@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -72,7 +73,7 @@ public class CalculoService {
 
     public List<Double> calcularConsumoUltimasHoras() {
         LocalDateTime now = LocalDateTime.now();
-        java.util.List<Double> consumos = new java.util.ArrayList<>();
+        List<Double> consumos = new ArrayList<>();
         for (int i = 6; i >= 0; i--) {
             LocalDateTime startOfHour = now.minusHours(i).withMinute(0).withSecond(0).withNano(0);
             LocalDateTime endOfHour = startOfHour.plusHours(1);
@@ -136,10 +137,37 @@ public class CalculoService {
 
 
         Equipo equipo = aula.getEquipo();
-
+        if (equipo == null) {
+            return 0.0;
+        }
 
         return ((equipo.getPotenciaNominal() + equipo.getPotenciaMinima()) / 2) * horasTotales;
 
+    }
+
+    public double calcularConsumoEsperadoEdificio(UUID edificioId) {
+        return aulaRepository.findByEdificioId(edificioId).stream()
+                .mapToDouble(aula -> {
+                    try {
+                        if (aula.getEquipo() == null) {
+                            return 0.0;
+                        }
+                        return calcularConsumoEsperadoAula(aula.getId());
+                    } catch (Exception e) {
+                        return 0.0;
+                    }
+                })
+                .sum();
+    }
+
+    public double calcularAhorroEdificio(UUID edificioId) {
+        double consumoActual = calcularConsumoEdificio(edificioId);
+        double consumoEsperado = calcularConsumoEsperadoEdificio(edificioId);
+        if (consumoEsperado <= 0) {
+            return 0.0;
+        }
+        double diff = (consumoEsperado - consumoActual) / consumoEsperado;
+        return Math.max(0.0, diff);
     }
 }
 

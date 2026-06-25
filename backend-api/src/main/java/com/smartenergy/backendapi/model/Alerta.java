@@ -17,7 +17,6 @@ public class Alerta extends BaseEntity{
     private EstadoAlerta estado;
     @ManyToOne
     @JoinColumn(name = "aula_id")
-    @JsonIgnore
     private Aula aula;
     private LocalDateTime fechaHora;
 }

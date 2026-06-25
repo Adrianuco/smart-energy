@@ -16,6 +16,8 @@ public interface HorarioAcademicoRepository extends JpaRepository<HorarioAcademi
 
     List<HorarioAcademico> findByAulaId(UUID id);
 
+    boolean existsByAulaAndDiaSemanaAndHoraInicioAndHoraFin(Aula aula, int diaSemana, LocalTime horaInicio, LocalTime horaFin);
+
     @Query("""
         SELECT COUNT(h) > 0 FROM HorarioAcademico h
         WHERE h.aula = ?1 AND h.diaSemana = ?2

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class EquipoService extends BaseService<Equipo, EquipoRepository> {
+
     protected EquipoService(EquipoRepository repository) {
         super(repository);
     }

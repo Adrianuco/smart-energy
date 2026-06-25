@@ -2,6 +2,7 @@ package com.smartenergy.backendapi.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,4 +14,5 @@ import java.util.List;
 @Table(name = "Edificio")
 public class Edificio extends BaseEntity {
     private String nombre;
+
 }
