@@ -92,7 +92,7 @@ fun RegistroEquipoACScreen(
             OutlinedTextField(
                 value = potenciaMinima,
                 onValueChange = { potenciaMinima = it },
-                label = { Text("Potencia Mínima (kW)") },
+                label = { Text("Potencia Mínima (W)") },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 shape = RoundedCornerShape(12.dp)
@@ -101,7 +101,7 @@ fun RegistroEquipoACScreen(
             OutlinedTextField(
                 value = potenciaNominal,
                 onValueChange = { potenciaNominal = it },
-                label = { Text("Potencia Nominal (kW)") },
+                label = { Text("Potencia Nominal (W)") },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 shape = RoundedCornerShape(12.dp)
@@ -125,8 +125,8 @@ fun RegistroEquipoACScreen(
                         btu = btu.toIntOrNull() ?: 12000,
                         eficiencia = eficiencia,
                         operativo = true,
-                        potenciaMinima = potenciaMinima.toDoubleOrNull() ?: 0.5,
-                        potenciaNominal = potenciaNominal.toDoubleOrNull() ?: 2.5
+                        potenciaMinima = potenciaMinima.toDoubleOrNull() ?: 500.0,
+                        potenciaNominal = potenciaNominal.toDoubleOrNull() ?: 2500.0
                     )
                     viewModel.registrar(equipo) { success ->
                         if (success) {

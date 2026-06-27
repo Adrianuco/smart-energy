@@ -4,6 +4,7 @@ import com.smartenergy.backendapi.model.*;
 import com.smartenergy.backendapi.repository.AulaRepository;
 import com.smartenergy.backendapi.repository.HorarioAcademicoRepository;
 import com.smartenergy.backendapi.repository.RegistroOperativoRepository;
+import com.smartenergy.backendapi.repository.IConfigSistemaRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,54 +21,55 @@ public class CalculoService {
     private final RegistroOperativoRepository registroOperativoRepository;
     private final AulaRepository aulaRepository;
     private final HorarioAcademicoRepository horarioAcademicoRepository;
+    private final IConfigSistemaRepository configSistemaRepository;
 
-    public CalculoService(RegistroOperativoRepository registroOperativoRepository, AulaRepository aulaRepository, HorarioAcademicoRepository horarioAcademicoRepository) {
+    public CalculoService(RegistroOperativoRepository registroOperativoRepository, AulaRepository aulaRepository, HorarioAcademicoRepository horarioAcademicoRepository, IConfigSistemaRepository configSistemaRepository) {
         this.registroOperativoRepository = registroOperativoRepository;
         this.aulaRepository = aulaRepository;
         this.horarioAcademicoRepository = horarioAcademicoRepository;
+        this.configSistemaRepository = configSistemaRepository;
+    }
+
+    public double obtenerConsumoDeRegistro(RegistroOperativo r) {
+        if (r.getEstado() == Estado.APAGADO) {
+            return 0.0;
+        }
+        Equipo equipo = r.getEquipo();
+        if (equipo == null) {
+            return 0.0;
+        }
+        LocalDateTime finTemporal = r.getFin() != null ? r.getFin() : LocalDateTime.now();
+        long minutosDiferencia = ChronoUnit.MINUTES.between(r.getInicio(), finTemporal);
+        double tiempoConsumo = minutosDiferencia / 60.0;
+        return (((equipo.getPotenciaMinima() + equipo.getPotenciaNominal()) / 2) * tiempoConsumo) / 1000.0;
     }
 
     public void calcularConsumoRegistro(RegistroOperativo registroOperativo) {
-
-        if (registroOperativo.getEstado() == Estado.ENCENDIDO) {
-            Equipo equipo = registroOperativo.getEquipo();
-            double potenciaMinima = equipo.getPotenciaMinima();
-            double potenciaNominal = equipo.getPotenciaNominal();
-            long minutosDiferencia = ChronoUnit.MINUTES.between(registroOperativo.getInicio(), registroOperativo.getFin());
-            double tiempoConsumo = minutosDiferencia / 60.0;
-            double consumo = ((potenciaMinima + potenciaNominal) / 2) * tiempoConsumo;
-
-            registroOperativo.setConsumo(consumo);
-        }
-        else {
-            registroOperativo.setConsumo(0);
-        }
-
+        registroOperativo.setConsumo(obtenerConsumoDeRegistro(registroOperativo));
     }
 
     public double calcularConsumoEdificio(UUID edificioId) {
         LocalDateTime inicio = LocalDate.now().atStartOfDay();
-        LocalDateTime fin = LocalDate.now().atTime(LocalTime.MAX);
+        LocalDateTime fin = LocalDateTime.now();
 
         List<RegistroOperativo> registros = registroOperativoRepository.findByInicioBetween(inicio, fin);
 
         return registros.stream().filter(r ->
-                        r.getEquipo()
-                                .getAula()
-                                .getEdificio()
-                                .getId()
-                                .equals(edificioId))
-                .mapToDouble(RegistroOperativo::getConsumo)
+                        r.getEquipo() != null &&
+                        r.getEquipo().getAula() != null &&
+                        r.getEquipo().getAula().getEdificio() != null &&
+                        r.getEquipo().getAula().getEdificio().getId().equals(edificioId))
+                .mapToDouble(this::obtenerConsumoDeRegistro)
                 .sum();
     }
 
     public double calcularConsumoHoy() {
         LocalDateTime inicio = LocalDate.now().atStartOfDay();
-        LocalDateTime fin = LocalDate.now().atTime(LocalTime.MAX);
+        LocalDateTime fin = LocalDateTime.now();
 
         return registroOperativoRepository.findByInicioBetween(inicio, fin)
                 .stream()
-                .mapToDouble(RegistroOperativo::getConsumo)
+                .mapToDouble(this::obtenerConsumoDeRegistro)
                 .sum();
     }
 
@@ -80,7 +82,7 @@ public class CalculoService {
 
             double sum = registroOperativoRepository.findByInicioBetween(startOfHour, endOfHour)
                     .stream()
-                    .mapToDouble(RegistroOperativo::getConsumo)
+                    .mapToDouble(this::obtenerConsumoDeRegistro)
                     .sum();
             consumos.add(sum);
         }
@@ -120,18 +122,29 @@ public class CalculoService {
         List<HorarioAcademico> horarios =
                 horarioAcademicoRepository.findByAulaId(aulaId);
 
+        int diaSemanaActual = LocalDate.now().getDayOfWeek().getValue();
+        LocalTime now = LocalTime.now();
+
+        ConfigSistema config = configSistemaRepository.findFirstByOrderByIdAsc().orElse(null);
+        int margenEncendido = (config != null) ? config.getMargenEncendido() : 0;
 
         double horasTotales = horarios.stream()
+                .filter(h -> h.getDiaSemana() == diaSemanaActual)
                 .mapToDouble(h -> {
+                    LocalTime horaInicioAjustada = h.getHoraInicio().minusMinutes(margenEncendido);
+                    if (horaInicioAjustada.isAfter(h.getHoraInicio())) {
+                        horaInicioAjustada = LocalTime.MIN;
+                    }
 
-                    long minutos =
-                            ChronoUnit.MINUTES.between(
-                                    h.getHoraInicio(),
-                                    h.getHoraFin()
-                            );
-
-                    return minutos / 60.0;
-
+                    if (horaInicioAjustada.isAfter(now)) {
+                        return 0.0;
+                    } else if (h.getHoraFin().isBefore(now)) {
+                        long minutos = ChronoUnit.MINUTES.between(horaInicioAjustada, h.getHoraFin());
+                        return minutos / 60.0;
+                    } else {
+                        long minutos = ChronoUnit.MINUTES.between(horaInicioAjustada, now);
+                        return minutos / 60.0;
+                    }
                 })
                 .sum();
 
@@ -141,7 +154,7 @@ public class CalculoService {
             return 0.0;
         }
 
-        return ((equipo.getPotenciaNominal() + equipo.getPotenciaMinima()) / 2) * horasTotales;
+        return (((equipo.getPotenciaNominal() + equipo.getPotenciaMinima()) / 2) * horasTotales) / 1000.0;
 
     }
 

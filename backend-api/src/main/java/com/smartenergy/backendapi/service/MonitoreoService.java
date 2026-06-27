@@ -48,10 +48,9 @@ public class MonitoreoService {
         boolean hayClase = horarioAcademicoRepository.hayClase(aula, diaActual, horaActual);
 
         RegistroOperativo estado = registroOperativoRepository.findByEquipoAndFinIsNull(aula.getEquipo()).orElse(null);
+        ConfigSistema configSistema = configSistemaRepository.findFirstByOrderByIdAsc().orElse(null);
 
-        ConfigSistema configSistema = configSistemaRepository.findFirstByOrderByIdAsc().orElseThrow();
-
-        if (estado == null) {
+        if (configSistema == null || estado == null) {
             return;
         }
 
