@@ -173,7 +173,12 @@ fun AppNavigation() {
 
             composable<HorariosRuta> {
                 val vm: HorariosViewModel = viewModel(
-                    factory = HorariosViewModelFactory(ServiceLocator.horarioAcademicoRepository)
+                    factory = HorariosViewModelFactory(
+                        ServiceLocator.horarioAcademicoRepository,
+                        ServiceLocator.aulaRepository,
+                        ServiceLocator.equipoRepository,
+                        ServiceLocator.registroOperativoRepository
+                    )
                 )
                 HorariosScreen(viewModel = vm)
             }

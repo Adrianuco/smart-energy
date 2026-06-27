@@ -29,7 +29,7 @@ public class ConfigSistemaController {
 
     @PutMapping("/update")
     public ResponseEntity<ConfigSistema> update(@RequestBody ConfigSistema configSistema) {
-        ConfigSistema i = service.findById(configSistema.getId());
+        ConfigSistema i = service.findAll().stream().findFirst().orElseGet(ConfigSistema::new);
         i.setMargenEncendido(configSistema.getMargenEncendido());
         i.setTiempoMinimoDesperdicio(configSistema.getTiempoMinimoDesperdicio());
         i.setActivo(configSistema.isActivo());

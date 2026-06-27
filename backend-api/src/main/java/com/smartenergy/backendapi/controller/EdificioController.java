@@ -19,10 +19,10 @@ public class EdificioController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Edificio>> findAll() {return ResponseEntity.ok(service.findAll());}
+    public ResponseEntity<List<EdificioDTO>> findAll() {return ResponseEntity.ok(service.findAllDTO());}
 
     @GetMapping("/{id}")
-    public ResponseEntity<Edificio> findById(@PathVariable UUID id) {return ResponseEntity.ok(service.findById(id));}
+    public ResponseEntity<EdificioDTO> findById(@PathVariable UUID id) {return ResponseEntity.ok(service.findDTOById(id));}
 
     @PostMapping("/save")
     public ResponseEntity<Edificio> save(@RequestBody Edificio edificio) {return ResponseEntity.ok(service.save(edificio));}

@@ -1,6 +1,7 @@
 package com.smartenergy.backendapi.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
@@ -30,6 +31,6 @@ public class Equipo extends BaseEntity {
 
     @OneToOne
     @JoinColumn(name = "aula_id")
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Aula aula;
 }

@@ -66,8 +66,8 @@ fun GeneralSettings(
         }
         is SettingsState.Success -> {
             val config = currentState.configSistema
-            var warningMinutes by remember(config) { mutableFloatStateOf(config.tiempoMinimoDesperdicio.toFloat()) }
-            var minWasteHours by remember(config) { mutableFloatStateOf(config.margenEncendido.toFloat()) }
+            var warningMinutes by remember(config) { mutableFloatStateOf(config.margenEncendido.toFloat()) }
+            var minWasteHours by remember(config) { mutableFloatStateOf(config.tiempoMinimoDesperdicio.toFloat()) }
             var isDarkMode by remember { mutableStateOf(false) }
             var isSaving by remember { mutableStateOf(false) }
 
@@ -112,15 +112,15 @@ fun GeneralSettings(
                             color = MaterialTheme.colorScheme.onBackground
                         )
                         Text(
-                            "Ignorar huecos menores a ${minWasteHours.toInt()}h para alertas",
+                            "Ignorar huecos menores a ${minWasteHours.toInt()} min para alertas",
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Slider(
                             value = minWasteHours,
                             onValueChange = { minWasteHours = it },
-                            valueRange = 1f..5f,
-                            steps = 3,
+                            valueRange = 60f..240f,
+                            steps = 2,
                             colors = SliderDefaults.colors(
                                 thumbColor = MaterialTheme.colorScheme.primary,
                                 activeTrackColor = MaterialTheme.colorScheme.primary,
@@ -135,8 +135,8 @@ fun GeneralSettings(
                         onClick = {
                             isSaving = true
                             val updatedConfig = config.copy(
-                                tiempoMinimoDesperdicio = warningMinutes.toInt(),
-                                margenEncendido = minWasteHours.toInt()
+                                tiempoMinimoDesperdicio = minWasteHours.toInt(),
+                                margenEncendido = warningMinutes.toInt()
                             )
                             viewModel.updateConfig(updatedConfig) {
                                 isSaving = false

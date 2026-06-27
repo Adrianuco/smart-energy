@@ -82,11 +82,6 @@ public class EdificioService extends BaseService<Edificio, EdificioRepository> {
         );
 
 
-        dto.setCantidadAulas(
-                aulaRepository.countByEdificioId(edificio.getId())
-        );
-
-
         return dto;
     }
 

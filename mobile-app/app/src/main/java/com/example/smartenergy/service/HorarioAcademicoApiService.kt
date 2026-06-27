@@ -2,6 +2,7 @@ package com.example.smartenergy.service
 
 import com.example.smartenergy.model.HorarioAcademico
 import okhttp3.MultipartBody
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -27,5 +28,5 @@ interface HorarioAcademicoApiService {
 
     @Multipart
     @POST("horario/upload")
-    suspend fun importarHorarios(@Part file: MultipartBody.Part): Response<String>
+    suspend fun importarHorarios(@Part file: MultipartBody.Part): Response<ResponseBody>
 }

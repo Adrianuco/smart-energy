@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import com.example.smartenergy.ui.components.horarios.ImportModule
 import com.example.smartenergy.ui.components.horarios.KpiSection
 import com.example.smartenergy.ui.components.horarios.ScheduleExplorer
+import com.example.smartenergy.ui.components.horarios.PendingAssignmentsModule
 
 import androidx.compose.ui.Alignment
 import androidx.compose.runtime.collectAsState
@@ -81,6 +82,13 @@ fun HorariosScreen(
 
                     // 2. Módulo de Carga Excel
                     ImportModule(viewModel = viewModel)
+
+                    // 2.5 Módulo de asignación de equipos para aulas pendientes
+                    PendingAssignmentsModule(
+                        aulasSinEquipo = currentState.aulasSinEquipo,
+                        equiposDisponibles = currentState.equiposDisponibles,
+                        viewModel = viewModel
+                    )
 
                     // 3. Explorador de Horarios Real-Time
                     ScheduleExplorer(horarios = currentState.horarios)
