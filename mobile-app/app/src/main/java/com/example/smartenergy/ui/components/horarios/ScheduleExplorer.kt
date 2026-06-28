@@ -31,14 +31,13 @@ fun ScheduleExplorer(
 ) {
     // Extraer edificios dinámicamente o usar default si no hay asignados
     val buildings = horarios.mapNotNull { it.aula?.edificio?.nombre }.distinct().sorted()
-        .ifEmpty { listOf("Edificio A", "Edificio B", "Edificio C", "Edificio D") }
 
     var selectedBuilding by remember(buildings) { mutableStateOf<String?>(buildings.firstOrNull()) }
     var searchQuery by remember { mutableStateOf("") }
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Text(
-            text = "Auditoría en Tiempo Real",
+            text = "Horarios en Tiempo Real",
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary
         )

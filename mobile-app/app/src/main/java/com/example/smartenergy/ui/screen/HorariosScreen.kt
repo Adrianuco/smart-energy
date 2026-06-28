@@ -8,7 +8,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.smartenergy.ui.components.horarios.ImportModule
-import com.example.smartenergy.ui.components.horarios.KpiSection
 import com.example.smartenergy.ui.components.horarios.ScheduleExplorer
 import com.example.smartenergy.ui.components.horarios.PendingAssignmentsModule
 
@@ -77,8 +76,6 @@ fun HorariosScreen(
                         .padding(horizontal = 20.dp, vertical = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
-                    // 1. Resumen Estadístico (KPIs)
-                    KpiSection(horarios = currentState.horarios)
 
                     // 2. Módulo de Carga Excel
                     ImportModule(viewModel = viewModel)

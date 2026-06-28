@@ -128,25 +128,37 @@ public class CalculoService {
         ConfigSistema config = configSistemaRepository.findFirstByOrderByIdAsc().orElse(null);
         int margenEncendido = (config != null) ? config.getMargenEncendido() : 0;
 
-        double horasTotales = horarios.stream()
+        List<HorarioAcademico> horariosHoy = horarios.stream()
                 .filter(h -> h.getDiaSemana() == diaSemanaActual)
-                .mapToDouble(h -> {
-                    LocalTime horaInicioAjustada = h.getHoraInicio().minusMinutes(margenEncendido);
-                    if (horaInicioAjustada.isAfter(h.getHoraInicio())) {
-                        horaInicioAjustada = LocalTime.MIN;
-                    }
+                .toList();
 
-                    if (horaInicioAjustada.isAfter(now)) {
-                        return 0.0;
-                    } else if (h.getHoraFin().isBefore(now)) {
-                        long minutos = ChronoUnit.MINUTES.between(horaInicioAjustada, h.getHoraFin());
-                        return minutos / 60.0;
-                    } else {
-                        long minutos = ChronoUnit.MINUTES.between(horaInicioAjustada, now);
-                        return minutos / 60.0;
-                    }
-                })
-                .sum();
+        if (horariosHoy.isEmpty()) {
+            return 0.0;
+        }
+
+        LocalTime horaInicioMinima = null;
+        LocalTime horaFinMaxima = null;
+
+        for (HorarioAcademico h : horariosHoy) {
+            LocalTime horaInicioAjustada = h.getHoraInicio().minusMinutes(margenEncendido);
+            if (horaInicioAjustada.isAfter(h.getHoraInicio())) {
+                horaInicioAjustada = LocalTime.MIN;
+            }
+            if (horaInicioMinima == null || horaInicioAjustada.isBefore(horaInicioMinima)) {
+                horaInicioMinima = horaInicioAjustada;
+            }
+            if (horaFinMaxima == null || h.getHoraFin().isAfter(horaFinMaxima)) {
+                horaFinMaxima = h.getHoraFin();
+            }
+        }
+
+        if (horaInicioMinima == null || now.isBefore(horaInicioMinima)) {
+            return 0.0;
+        }
+
+        LocalTime finCalculo = now.isBefore(horaFinMaxima) ? now : horaFinMaxima;
+        long minutos = ChronoUnit.MINUTES.between(horaInicioMinima, finCalculo);
+        double horasTotales = minutos / 60.0;
 
 
         Equipo equipo = aula.getEquipo();
@@ -170,17 +182,36 @@ public class CalculoService {
         ConfigSistema config = configSistemaRepository.findFirstByOrderByIdAsc().orElse(null);
         int margenEncendido = (config != null) ? config.getMargenEncendido() : 0;
 
-        double horasTotales = horarios.stream()
+        List<HorarioAcademico> horariosHoy = horarios.stream()
                 .filter(h -> h.getDiaSemana() == diaSemanaActual)
-                .mapToDouble(h -> {
-                    LocalTime horaInicioAjustada = h.getHoraInicio().minusMinutes(margenEncendido);
-                    if (horaInicioAjustada.isAfter(h.getHoraInicio())) {
-                        horaInicioAjustada = LocalTime.MIN;
-                    }
-                    long minutos = ChronoUnit.MINUTES.between(horaInicioAjustada, h.getHoraFin());
-                    return minutos / 60.0;
-                })
-                .sum();
+                .toList();
+
+        if (horariosHoy.isEmpty()) {
+            return 0.0;
+        }
+
+        LocalTime horaInicioMinima = null;
+        LocalTime horaFinMaxima = null;
+
+        for (HorarioAcademico h : horariosHoy) {
+            LocalTime horaInicioAjustada = h.getHoraInicio().minusMinutes(margenEncendido);
+            if (horaInicioAjustada.isAfter(h.getHoraInicio())) {
+                horaInicioAjustada = LocalTime.MIN;
+            }
+            if (horaInicioMinima == null || horaInicioAjustada.isBefore(horaInicioMinima)) {
+                horaInicioMinima = horaInicioAjustada;
+            }
+            if (horaFinMaxima == null || h.getHoraFin().isAfter(horaFinMaxima)) {
+                horaFinMaxima = h.getHoraFin();
+            }
+        }
+
+        if (horaInicioMinima == null || horaFinMaxima == null) {
+            return 0.0;
+        }
+
+        long minutos = ChronoUnit.MINUTES.between(horaInicioMinima, horaFinMaxima);
+        double horasTotales = minutos / 60.0;
 
         Equipo equipo = aula.getEquipo();
         if (equipo == null) {

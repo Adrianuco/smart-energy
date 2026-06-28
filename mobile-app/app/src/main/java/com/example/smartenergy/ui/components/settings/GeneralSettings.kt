@@ -68,7 +68,6 @@ fun GeneralSettings(
             val config = currentState.configSistema
             var warningMinutes by remember(config) { mutableFloatStateOf(config.margenEncendido.toFloat()) }
             var minWasteHours by remember(config) { mutableFloatStateOf(config.tiempoMinimoDesperdicio.toFloat()) }
-            var isDarkMode by remember { mutableStateOf(false) }
             var isSaving by remember { mutableStateOf(false) }
 
             Column(
@@ -157,35 +156,6 @@ fun GeneralSettings(
                         } else {
                             Text("Guardar Configuración")
                         }
-                    }
-                }
-
-                SettingsGroup(title = "Apariencia", icon = Icons.Outlined.Palette) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column {
-                            Text(
-                                "Modo Oscuro",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
-                            Text(
-                                "Cambiar tema de la aplicación",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                        Switch(
-                            checked = isDarkMode,
-                            onCheckedChange = { isDarkMode = it },
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
-                                checkedTrackColor = MaterialTheme.colorScheme.primary
-                            )
-                        )
                     }
                 }
 

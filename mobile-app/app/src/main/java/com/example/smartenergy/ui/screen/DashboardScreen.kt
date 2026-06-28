@@ -278,31 +278,7 @@ fun DashboardScreen(
 
                                     Spacer(modifier = Modifier.height(16.dp))
 
-                                    Surface(
-                                        shape = RoundedCornerShape(8.dp),
-                                        color = AppColors.StatusOk.copy(alpha = 0.2f)
-                                    ) {
-                                        Row(
-                                            modifier = Modifier.padding(
-                                                horizontal = 10.dp,
-                                                vertical = 4.dp
-                                            ),
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Icon(
-                                                Icons.AutoMirrored.Outlined.TrendingUp,
-                                                contentDescription = null,
-                                                modifier = Modifier.size(14.dp),
-                                                tint = AppColors.StatusOk
-                                            )
-                                            Spacer(modifier = Modifier.width(4.dp))
-                                            Text(
-                                                "-12% vs ayer",
-                                                style = MaterialTheme.typography.labelSmall,
-                                                color = AppColors.StatusOk
-                                            )
-                                        }
-                                    }
+
                                 }
 
                                 Box(
