@@ -2,16 +2,16 @@ package com.example.smartenergy.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// ── Primary: Deep Professional Blue ──
-val BluePrimary = Color(0xFF1E3A5F)
-val BluePrimaryLight = Color(0xFF234E70)
-val BluePrimaryContainer = Color(0xFFD4E3F5)
-val BlueSurface = Color(0xFFEBF0F7)
+// ── Primary: Deep Modern Green ──
+val GreenPrimary = Color(0xFF155843)
+val GreenPrimaryLight = Color(0xFF2E8B69)
+val GreenPrimaryContainer = Color(0xFFD3EDE3)
+val GreenSurface = Color(0xFFEAF5F0)
 
-// ── Secondary: Elegant Efficiency Green ──
-val GreenSecondary = Color(0xFF3FA37C)
-val GreenSecondaryDark = Color(0xFF2E8B57)
-val GreenSecondaryContainer = Color(0xFFD4F0E4)
+// ── Secondary: Elegant Efficiency Mint/Teal ──
+val MintSecondary = Color(0xFF3FA37C)
+val MintSecondaryDark = Color(0xFF2E8B57)
+val MintSecondaryContainer = Color(0xFFD4F0E4)
 
 // ── Backgrounds & Surfaces ──
 val BackgroundLight = Color(0xFFF5F7FA)

@@ -54,17 +54,7 @@ data class ConsumoHistorico(
     val consumo: Float
 )
 
-fun getHistorico(
-    edificioId: String,
-    periodo: String
-): List<ConsumoHistorico> {
-    val baseData = listOf(120f, 180f, 220f, 190f, 250f, 210f, 260f)
 
-    return when (periodo) {
-        "Semana" -> baseData.mapIndexed { index, value -> ConsumoHistorico(listOf("L", "M", "X", "J", "V", "S", "D")[index], value) }
-        else -> List(4) { index -> ConsumoHistorico("S${index + 1}", baseData[index % baseData.size] * 1.3f) }
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,26 +64,6 @@ fun ReportsScreen(
     val state by viewModel.state.collectAsState()
     var periodoSeleccionado by remember { mutableStateOf("Semana") }
     var fechaSeleccionada by remember { mutableStateOf(LocalDate.now()) }
-    var showDatePicker by remember { mutableStateOf(false) }
-
-    val datePickerState = rememberDatePickerState()
-
-    if (showDatePicker) {
-        DatePickerDialog(
-            onDismissRequest = { showDatePicker = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    datePickerState.selectedDateMillis?.let {
-                        fechaSeleccionada = java.time.Instant.ofEpochMilli(it)
-                            .atZone(java.time.ZoneId.systemDefault()).toLocalDate()
-                    }
-                    showDatePicker = false
-                }) { Text("OK") }
-            }
-        ) {
-            DatePicker(state = datePickerState)
-        }
-    }
 
     Scaffold(
         topBar = {
@@ -105,23 +75,6 @@ fun ReportsScreen(
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.Bold
                         )
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable { showDatePicker = true }
-                        ) {
-                            Icon(
-                                Icons.Default.CalendarToday,
-                                contentDescription = null,
-                                modifier = Modifier.size(12.dp),
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = fechaSeleccionada.format(DateTimeFormatter.ofPattern("d 'de' MMMM, yyyy", Locale.forLanguageTag("es-MX"))),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -155,7 +108,7 @@ fun ReportsScreen(
                         id = ed.id ?: "",
                         nombre = ed.nombre,
                         consumoActual = ed.consumo,
-                        consumoPeorEscenario = ed.consumoEsperado,
+                        consumoPeorEscenario = ed.consumoEsperadoDiaCompleto,
                         ahorroLogrado = ahorroLogrado,
                         tendencia = 10f
                     )

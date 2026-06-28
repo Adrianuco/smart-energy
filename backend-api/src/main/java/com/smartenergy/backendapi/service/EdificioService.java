@@ -65,6 +65,10 @@ public class EdificioService extends BaseService<Edificio, EdificioRepository> {
                 calculoService.calcularConsumoEsperadoEdificio(edificio.getId())
         );
 
+        dto.setConsumoEsperadoDiaCompleto(
+                calculoService.calcularConsumoEsperadoDiaCompletoEdificio(edificio.getId())
+        );
+
         dto.setAhorro(
                 calculoService.calcularAhorroEdificio(edificio.getId())
         );

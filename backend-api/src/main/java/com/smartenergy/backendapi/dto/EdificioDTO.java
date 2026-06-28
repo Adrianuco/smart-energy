@@ -14,6 +14,7 @@ public class EdificioDTO {
     private String nombre;
     private double consumo;
     private double consumoEsperado;
+    private double consumoEsperadoDiaCompleto;
     private double ahorro;
     private String estado;
     private List<Aula> aulas;

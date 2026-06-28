@@ -140,7 +140,7 @@ fun IncidenciaScreen(
                         imageVector = Icons.Default.Image,
                         contentDescription = null,
                         modifier = Modifier.size(60.dp),
-                        tint = Color(0xFF6750A4)
+                        tint = MaterialTheme.colorScheme.primary
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))

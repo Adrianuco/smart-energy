@@ -18,10 +18,10 @@ object AppColors {
     val StatusErrorBackground = Color(0xFFFDE8E7)
 
     // ── Chart / Data Viz ──
-    val ChartPrimary = Color(0xFF1E3A5F)
+    val ChartPrimary = Color(0xFF155843)
     val ChartSecondary = Color(0xFF3FA37C)
     val ChartTertiary = Color(0xFFF4B942)
-    val ChartQuaternary = Color(0xFF7C8DB5)
+    val ChartQuaternary = Color(0xFF7CA08D)
     val ChartGrid = Color(0xFFE5E7EB)
 
     // ── Cards ──

@@ -13,22 +13,22 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val LightColorScheme = lightColorScheme(
-    primary = BluePrimary,
+    primary = GreenPrimary,
     onPrimary = TextOnPrimary,
-    primaryContainer = BluePrimaryContainer,
-    onPrimaryContainer = BluePrimary,
+    primaryContainer = GreenPrimaryContainer,
+    onPrimaryContainer = GreenPrimary,
 
-    secondary = GreenSecondary,
+    secondary = MintSecondary,
     onSecondary = TextOnPrimary,
-    secondaryContainer = GreenSecondaryContainer,
-    onSecondaryContainer = GreenSecondaryDark,
+    secondaryContainer = MintSecondaryContainer,
+    onSecondaryContainer = MintSecondaryDark,
 
     background = BackgroundLight,
     onBackground = TextPrimary,
 
     surface = SurfaceWhite,
     onSurface = TextPrimary,
-    surfaceVariant = BlueSurface,
+    surfaceVariant = GreenSurface,
     onSurfaceVariant = TextSecondary,
 
     error = Error,
@@ -41,22 +41,22 @@ private val LightColorScheme = lightColorScheme(
 )
 
 private val DarkColorScheme = darkColorScheme(
-    primary = BluePrimaryLight,
+    primary = GreenPrimaryLight,
     onPrimary = TextOnPrimary,
-    primaryContainer = BluePrimary,
-    onPrimaryContainer = BluePrimaryContainer,
+    primaryContainer = GreenPrimary,
+    onPrimaryContainer = GreenPrimaryContainer,
 
-    secondary = GreenSecondary,
+    secondary = MintSecondary,
     onSecondary = TextOnPrimary,
-    secondaryContainer = GreenSecondaryDark,
-    onSecondaryContainer = GreenSecondaryContainer,
+    secondaryContainer = MintSecondaryDark,
+    onSecondaryContainer = MintSecondaryContainer,
 
     background = TextPrimary,
     onBackground = BackgroundLight,
 
     surface = TextPrimary,
     onSurface = BackgroundLight,
-    surfaceVariant = BluePrimaryLight,
+    surfaceVariant = GreenPrimaryLight,
     onSurfaceVariant = DividerLight,
 
     error = Error,

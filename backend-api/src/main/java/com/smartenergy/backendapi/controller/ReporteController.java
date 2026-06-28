@@ -17,13 +17,16 @@ public class ReporteController {
 
     private final RegistroOperativoRepository registroRepository;
     private final EdificioRepository edificioRepository;
+    private final com.smartenergy.backendapi.service.CalculoService calculoService;
 
     public ReporteController(
             RegistroOperativoRepository registroRepository,
-            EdificioRepository edificioRepository
+            EdificioRepository edificioRepository,
+            com.smartenergy.backendapi.service.CalculoService calculoService
     ) {
         this.registroRepository = registroRepository;
         this.edificioRepository = edificioRepository;
+        this.calculoService = calculoService;
     }
 
     @GetMapping("/consumo-total")
@@ -32,7 +35,7 @@ public class ReporteController {
         double total =
                 registroRepository.findAll()
                         .stream()
-                        .mapToDouble(RegistroOperativo::getConsumo)
+                        .mapToDouble(calculoService::obtenerConsumoDeRegistro)
                         .sum();
 
         return ResponseEntity.ok(total);
@@ -47,12 +50,11 @@ public class ReporteController {
                 registroRepository.findAll()
                         .stream()
                         .filter(r ->
-                                r.getEquipo()
-                                        .getAula()
-                                        .getEdificio()
-                                        .getId()
-                                        .equals(id))
-                        .mapToDouble(RegistroOperativo::getConsumo)
+                                r.getEquipo() != null &&
+                                r.getEquipo().getAula() != null &&
+                                r.getEquipo().getAula().getEdificio() != null &&
+                                r.getEquipo().getAula().getEdificio().getId().equals(id))
+                        .mapToDouble(calculoService::obtenerConsumoDeRegistro)
                         .sum();
 
         String nombreEdificio =
@@ -76,15 +78,14 @@ public class ReporteController {
                 registroRepository.findAll()
                         .stream()
                         .filter(r ->
-                                r.getEquipo()
-                                        .getAula()
-                                        .getEdificio()
-                                        .getId()
-                                        .equals(id))
+                                r.getEquipo() != null &&
+                                r.getEquipo().getAula() != null &&
+                                r.getEquipo().getAula().getEdificio() != null &&
+                                r.getEquipo().getAula().getEdificio().getId().equals(id))
                         .collect(Collectors.groupingBy(
                                 r -> r.getInicio().getMonthValue(),
                                 Collectors.summingDouble(
-                                        RegistroOperativo::getConsumo
+                                        calculoService::obtenerConsumoDeRegistro
                                 )
                         ));
 
@@ -103,9 +104,9 @@ public class ReporteController {
             for (int i = 6; i >= 0; i--) {
                 java.time.LocalDateTime start = now.minusHours(i).withMinute(0).withSecond(0).withNano(0);
                 java.time.LocalDateTime end = start.plusHours(1);
-                double sum = registroRepository.findByInicioBetween(start, end).stream()
+                double sum = registroRepository.findOverlapping(start, end).stream()
                         .filter(r -> r.getEquipo() != null && r.getEquipo().getAula() != null && r.getEquipo().getAula().getEdificio() != null && r.getEquipo().getAula().getEdificio().getId().equals(id))
-                        .mapToDouble(RegistroOperativo::getConsumo)
+                        .mapToDouble(r -> calculoService.obtenerConsumoEnIntervalo(r, start, end))
                         .sum();
                 consumos.add(sum);
             }
@@ -114,9 +115,9 @@ public class ReporteController {
             for (int i = 6; i >= 0; i--) {
                 java.time.LocalDateTime start = now.minusDays(i).withHour(0).withMinute(0).withSecond(0).withNano(0);
                 java.time.LocalDateTime end = start.plusDays(1);
-                double sum = registroRepository.findByInicioBetween(start, end).stream()
+                double sum = registroRepository.findOverlapping(start, end).stream()
                         .filter(r -> r.getEquipo() != null && r.getEquipo().getAula() != null && r.getEquipo().getAula().getEdificio() != null && r.getEquipo().getAula().getEdificio().getId().equals(id))
-                        .mapToDouble(RegistroOperativo::getConsumo)
+                        .mapToDouble(r -> calculoService.obtenerConsumoEnIntervalo(r, start, end))
                         .sum();
                 consumos.add(sum);
             }
@@ -125,9 +126,9 @@ public class ReporteController {
             for (int i = 3; i >= 0; i--) {
                 java.time.LocalDateTime start = now.minusWeeks(i).withHour(0).withMinute(0).withSecond(0).withNano(0);
                 java.time.LocalDateTime end = start.plusWeeks(1);
-                double sum = registroRepository.findByInicioBetween(start, end).stream()
+                double sum = registroRepository.findOverlapping(start, end).stream()
                         .filter(r -> r.getEquipo() != null && r.getEquipo().getAula() != null && r.getEquipo().getAula().getEdificio() != null && r.getEquipo().getAula().getEdificio().getId().equals(id))
-                        .mapToDouble(RegistroOperativo::getConsumo)
+                        .mapToDouble(r -> calculoService.obtenerConsumoEnIntervalo(r, start, end))
                         .sum();
                 consumos.add(sum);
             }

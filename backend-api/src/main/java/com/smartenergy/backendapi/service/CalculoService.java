@@ -158,6 +158,75 @@ public class CalculoService {
 
     }
 
+    public double calcularConsumoEsperadoDiaCompletoAula(UUID aulaId){
+        Aula aula = aulaRepository.findById(aulaId)
+                .orElseThrow();
+
+        List<HorarioAcademico> horarios =
+                horarioAcademicoRepository.findByAulaId(aulaId);
+
+        int diaSemanaActual = LocalDate.now().getDayOfWeek().getValue();
+
+        ConfigSistema config = configSistemaRepository.findFirstByOrderByIdAsc().orElse(null);
+        int margenEncendido = (config != null) ? config.getMargenEncendido() : 0;
+
+        double horasTotales = horarios.stream()
+                .filter(h -> h.getDiaSemana() == diaSemanaActual)
+                .mapToDouble(h -> {
+                    LocalTime horaInicioAjustada = h.getHoraInicio().minusMinutes(margenEncendido);
+                    if (horaInicioAjustada.isAfter(h.getHoraInicio())) {
+                        horaInicioAjustada = LocalTime.MIN;
+                    }
+                    long minutos = ChronoUnit.MINUTES.between(horaInicioAjustada, h.getHoraFin());
+                    return minutos / 60.0;
+                })
+                .sum();
+
+        Equipo equipo = aula.getEquipo();
+        if (equipo == null) {
+            return 0.0;
+        }
+
+        return (((equipo.getPotenciaNominal() + equipo.getPotenciaMinima()) / 2) * horasTotales) / 1000.0;
+    }
+
+    public double calcularConsumoEsperadoDiaCompletoEdificio(UUID edificioId) {
+        return aulaRepository.findByEdificioId(edificioId).stream()
+                .mapToDouble(aula -> {
+                    try {
+                        if (aula.getEquipo() == null) {
+                            return 0.0;
+                        }
+                        return calcularConsumoEsperadoDiaCompletoAula(aula.getId());
+                    } catch (Exception e) {
+                        return 0.0;
+                    }
+                })
+                .sum();
+    }
+
+    public double obtenerConsumoEnIntervalo(RegistroOperativo r, LocalDateTime start, LocalDateTime end) {
+        if (r.getEstado() == Estado.APAGADO) {
+            return 0.0;
+        }
+        Equipo equipo = r.getEquipo();
+        if (equipo == null) {
+            return 0.0;
+        }
+        LocalDateTime finTemporal = r.getFin() != null ? r.getFin() : LocalDateTime.now();
+
+        // Find overlap
+        LocalDateTime overlapStart = r.getInicio().isBefore(start) ? start : r.getInicio();
+        LocalDateTime overlapEnd = finTemporal.isAfter(end) ? end : finTemporal;
+
+        if (overlapStart.isBefore(overlapEnd)) {
+            long minutosDiferencia = ChronoUnit.MINUTES.between(overlapStart, overlapEnd);
+            double tiempoConsumo = minutosDiferencia / 60.0;
+            return (((equipo.getPotenciaMinima() + equipo.getPotenciaNominal()) / 2) * tiempoConsumo) / 1000.0;
+        }
+        return 0.0;
+    }
+
     public double calcularConsumoEsperadoEdificio(UUID edificioId) {
         return aulaRepository.findByEdificioId(edificioId).stream()
                 .mapToDouble(aula -> {
