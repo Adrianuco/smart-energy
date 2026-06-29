@@ -33,7 +33,7 @@ public interface HorarioAcademicoRepository extends JpaRepository<HorarioAcademi
         AND h.horaInicio >= ?3
         ORDER BY h.horaInicio ASC
     """)
-    Optional<HorarioAcademico> findProximaClase(Aula aula, int dia, LocalTime hora);
+    List<HorarioAcademico> findProximaClase(Aula aula, int dia, LocalTime hora);
 
     @Query("""
         SELECT h FROM HorarioAcademico h
@@ -42,6 +42,6 @@ public interface HorarioAcademicoRepository extends JpaRepository<HorarioAcademi
         AND h.horaFin <= ?3
         ORDER BY h.horaFin DESC
     """)
-    Optional<HorarioAcademico> findClaseAnterior(Aula aula, int dia, LocalTime hora);
+    List<HorarioAcademico> findClaseAnterior(Aula aula, int dia, LocalTime hora);
 
 }

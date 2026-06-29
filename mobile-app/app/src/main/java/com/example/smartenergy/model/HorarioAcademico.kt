@@ -4,7 +4,7 @@ import java.time.LocalTime
 import java.util.UUID
 
 data class HorarioAcademico(
-    val id: String = UUID.randomUUID().toString(),
+    val id: String? = null,
     val asignatura: String,
     val diaSemana: Int,
     val horaInicio: LocalTime,

@@ -54,7 +54,7 @@ public class AlertaService {
         Equipo equipo = alerta.getAula().getEquipo();
 
         switch(alerta.getTipoAlerta()) {
-            case "Falta Climatizacion":
+            case "Falta Climatización":
                 registroOperativoService.cambiarEstado(equipo, Estado.ENCENDIDO);
                 break;
             case "Desperdicio":

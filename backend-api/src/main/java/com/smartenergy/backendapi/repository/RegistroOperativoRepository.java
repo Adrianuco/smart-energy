@@ -17,6 +17,8 @@ public interface RegistroOperativoRepository extends JpaRepository<RegistroOpera
 
     Optional<RegistroOperativo> findByEquipoAndFinIsNull(Equipo equipo);
 
+    Optional<RegistroOperativo> findFirstByEquipoOrderByInicioAsc(Equipo equipo);
+
     List<RegistroOperativo> findByInicioBetween(LocalDateTime inicio, LocalDateTime fin);
 
     @Query("SELECT r FROM RegistroOperativo r WHERE r.inicio < :end AND (r.fin IS NULL OR r.fin > :start)")

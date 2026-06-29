@@ -108,7 +108,7 @@ fun ReportsScreen(
                         id = ed.id ?: "",
                         nombre = ed.nombre,
                         consumoActual = ed.consumo,
-                        consumoPeorEscenario = ed.consumoEsperadoDiaCompleto,
+                        consumoPeorEscenario = ed.consumoEsperado,
                         ahorroLogrado = ahorroLogrado,
                         tendencia = 10f
                     )
@@ -197,7 +197,7 @@ fun ReportsScreen(
 
                                 Row(verticalAlignment = Alignment.Bottom) {
                                     Text(
-                                        text = "${edificioSeleccionado.ahorroLogrado.roundToInt()}",
+                                        text = String.format(Locale.US, "%.1f", edificioSeleccionado.ahorroLogrado),
                                         style = MaterialTheme.typography.displayMedium,
                                         fontWeight = FontWeight.Bold,
                                         color = Color.White

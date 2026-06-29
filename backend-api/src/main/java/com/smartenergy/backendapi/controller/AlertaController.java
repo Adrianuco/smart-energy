@@ -30,11 +30,6 @@ public class AlertaController {
     public ResponseEntity<Alerta> update(@RequestBody Alerta alerta) {
         Alerta a = service.findById(alerta.getId());
         a.setEstado(alerta.getEstado());
-        if (alerta.getAula() != null) {
-            a.setAula(alerta.getAula());
-        }
-        a.setFechaHora(alerta.getFechaHora());
-        a.setTipoAlerta(alerta.getTipoAlerta());
 
         return ResponseEntity.ok(service.save(a));
     }

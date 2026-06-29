@@ -121,7 +121,7 @@ fun DashboardScreen(
         }
         is DashboardState.Success -> {
             val dashboard = currentState.dashboard
-            val consumo = dashboard.consumoActual.toInt()
+            val ahorroKwh = "%.2f".format(Locale.US, dashboard.kwhAhorrados.toFloat())
             val ahorroEnergia = dashboard.ahorro.toFloat()
             val alertas = dashboard.alertasActivas.toInt()
             val incidencias = dashboard.incidencias.toInt()
@@ -226,7 +226,7 @@ fun DashboardScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    "Consumo Energético",
+                                    "Ahorro Energético",
                                     style = MaterialTheme.typography.labelLarge,
                                     color = Color.White.copy(alpha = 0.75f)
                                 )
@@ -263,7 +263,7 @@ fun DashboardScreen(
                             ) {
                                 Column {
                                     Text(
-                                        "$consumo",
+                                        "$ahorroKwh",
                                         style = MaterialTheme.typography.displayLarge.copy(
                                             fontSize = 48.sp,
                                             fontWeight = FontWeight.Bold
@@ -271,7 +271,7 @@ fun DashboardScreen(
                                         color = Color.White
                                     )
                                     Text(
-                                        "kWh consumidos hoy",
+                                        "kWh ahorrados hoy",
                                         style = MaterialTheme.typography.bodySmall,
                                         color = Color.White.copy(alpha = 0.7f)
                                     )

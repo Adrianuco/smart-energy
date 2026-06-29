@@ -49,7 +49,8 @@ class HorariosViewModel(
                 _state.value = HorariosState.Success(
                     horarios = horariosResult.data,
                     aulasSinEquipo = aulasSinEquipo,
-                    equiposDisponibles = equiposResult.data
+                    equiposDisponibles = equiposResult.data,
+                    todasAulas = aulasResult.data
                 )
             } else {
                 val hoMsg = (horariosResult as? ApiResult.Error)?.message ?: ""
@@ -130,6 +131,20 @@ class HorariosViewModel(
                     findAll()
                 }
                 is ApiResult.Error -> _importState.value = ImportState.Error(result.message)
+            }
+        }
+    }
+
+    fun crearHorario(horario: HorarioAcademico) {
+        viewModelScope.launch {
+            _state.value = HorariosState.Loading
+            when (val result = repository.save(horario)) {
+                is ApiResult.Success -> {
+                    findAll()
+                }
+                is ApiResult.Error -> {
+                    _state.value = HorariosState.Error(result.message)
+                }
             }
         }
     }

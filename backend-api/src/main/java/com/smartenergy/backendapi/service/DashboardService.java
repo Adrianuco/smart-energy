@@ -38,8 +38,13 @@ public class DashboardService {
     public DashboardDTO getDashboard() {
         DashboardDTO dto = new DashboardDTO();
 
-        dto.setConsumoActual(calculoService.calcularConsumoHoy());
+        double consumoActual = calculoService.calcularConsumoHoy();
+        double consumoEsperado = calculoService.calcularConsumoEsperadoTotalHoy();
+        double kwhAhorrados = Math.max(0.0, consumoEsperado - consumoActual);
+
+        dto.setConsumoActual(consumoActual);
         dto.setAhorro(calculoService.calcularAhorro());
+        dto.setKwhAhorrados(kwhAhorrados);
         dto.setAlertasActivas(alertaService.findAll().stream().filter(a -> a.getEstado() == EstadoAlerta.PENDIENTE).count());
         dto.setEdificios(edificioRepository.count());
         dto.setEquiposActivos(equipoRepository.count());

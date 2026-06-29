@@ -13,6 +13,7 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -52,14 +53,14 @@ public class CalculoService {
         LocalDateTime inicio = LocalDate.now().atStartOfDay();
         LocalDateTime fin = LocalDateTime.now();
 
-        List<RegistroOperativo> registros = registroOperativoRepository.findByInicioBetween(inicio, fin);
+        List<RegistroOperativo> registros = registroOperativoRepository.findOverlapping(inicio, fin);
 
         return registros.stream().filter(r ->
                         r.getEquipo() != null &&
                         r.getEquipo().getAula() != null &&
                         r.getEquipo().getAula().getEdificio() != null &&
                         r.getEquipo().getAula().getEdificio().getId().equals(edificioId))
-                .mapToDouble(this::obtenerConsumoDeRegistro)
+                .mapToDouble(r -> obtenerConsumoEnIntervalo(r, inicio, fin))
                 .sum();
     }
 
@@ -67,9 +68,9 @@ public class CalculoService {
         LocalDateTime inicio = LocalDate.now().atStartOfDay();
         LocalDateTime fin = LocalDateTime.now();
 
-        return registroOperativoRepository.findByInicioBetween(inicio, fin)
+        return registroOperativoRepository.findOverlapping(inicio, fin)
                 .stream()
-                .mapToDouble(this::obtenerConsumoDeRegistro)
+                .mapToDouble(r -> obtenerConsumoEnIntervalo(r, inicio, fin))
                 .sum();
     }
 
@@ -80,9 +81,9 @@ public class CalculoService {
             LocalDateTime startOfHour = now.minusHours(i).withMinute(0).withSecond(0).withNano(0);
             LocalDateTime endOfHour = startOfHour.plusHours(1);
 
-            double sum = registroOperativoRepository.findByInicioBetween(startOfHour, endOfHour)
+            double sum = registroOperativoRepository.findOverlapping(startOfHour, endOfHour)
                     .stream()
-                    .mapToDouble(this::obtenerConsumoDeRegistro)
+                    .mapToDouble(r -> obtenerConsumoEnIntervalo(r, startOfHour, endOfHour))
                     .sum();
             consumos.add(sum);
         }
@@ -111,6 +112,18 @@ public class CalculoService {
 
         return (consumoEsperadoTotal - consumoActual) / consumoEsperadoTotal;
 
+    }
+
+    public double calcularConsumoEsperadoTotalHoy() {
+        return aulaRepository.findAll().stream()
+                .mapToDouble(aula -> {
+                    try {
+                        return calcularConsumoEsperadoAula(aula.getId());
+                    } catch (Exception e) {
+                        return 0.0;
+                    }
+                })
+                .sum();
     }
 
     public double calcularConsumoEsperadoAula(UUID aulaId){
@@ -156,15 +169,29 @@ public class CalculoService {
             return 0.0;
         }
 
-        LocalTime finCalculo = now.isBefore(horaFinMaxima) ? now : horaFinMaxima;
-        long minutos = ChronoUnit.MINUTES.between(horaInicioMinima, finCalculo);
-        double horasTotales = minutos / 60.0;
-
-
         Equipo equipo = aula.getEquipo();
         if (equipo == null) {
             return 0.0;
         }
+
+        Optional<RegistroOperativo> primerRegistro = registroOperativoRepository.findFirstByEquipoOrderByInicioAsc(equipo);
+        if (primerRegistro.isPresent()) {
+            LocalDateTime registroInicio = primerRegistro.get().getInicio();
+            if (registroInicio.toLocalDate().equals(LocalDate.now())) {
+                LocalTime horaRegistro = registroInicio.toLocalTime();
+                if (horaInicioMinima.isBefore(horaRegistro)) {
+                    horaInicioMinima = horaRegistro;
+                }
+            }
+        }
+
+        LocalTime finCalculo = now.isBefore(horaFinMaxima) ? now : horaFinMaxima;
+        if (horaInicioMinima == null || finCalculo.isBefore(horaInicioMinima)) {
+            return 0.0;
+        }
+
+        long minutos = ChronoUnit.MINUTES.between(horaInicioMinima, finCalculo);
+        double horasTotales = minutos / 60.0;
 
         return (((equipo.getPotenciaNominal() + equipo.getPotenciaMinima()) / 2) * horasTotales) / 1000.0;
 
@@ -206,17 +233,28 @@ public class CalculoService {
             }
         }
 
-        if (horaInicioMinima == null || horaFinMaxima == null) {
+        Equipo equipo = aula.getEquipo();
+        if (equipo == null) {
+            return 0.0;
+        }
+
+        Optional<RegistroOperativo> primerRegistro = registroOperativoRepository.findFirstByEquipoOrderByInicioAsc(equipo);
+        if (primerRegistro.isPresent()) {
+            LocalDateTime registroInicio = primerRegistro.get().getInicio();
+            if (registroInicio.toLocalDate().equals(LocalDate.now())) {
+                LocalTime horaRegistro = registroInicio.toLocalTime();
+                if (horaInicioMinima.isBefore(horaRegistro)) {
+                    horaInicioMinima = horaRegistro;
+                }
+            }
+        }
+
+        if (horaInicioMinima == null || horaFinMaxima == null || horaFinMaxima.isBefore(horaInicioMinima)) {
             return 0.0;
         }
 
         long minutos = ChronoUnit.MINUTES.between(horaInicioMinima, horaFinMaxima);
         double horasTotales = minutos / 60.0;
-
-        Equipo equipo = aula.getEquipo();
-        if (equipo == null) {
-            return 0.0;
-        }
 
         return (((equipo.getPotenciaNominal() + equipo.getPotenciaMinima()) / 2) * horasTotales) / 1000.0;
     }

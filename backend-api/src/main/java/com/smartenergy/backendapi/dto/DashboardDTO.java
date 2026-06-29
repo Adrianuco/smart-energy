@@ -11,6 +11,7 @@ public class DashboardDTO {
 
     private double consumoActual;
     private double ahorro;
+    private double kwhAhorrados;
     private long alertasActivas;
     private long edificios;
     private long equiposActivos;

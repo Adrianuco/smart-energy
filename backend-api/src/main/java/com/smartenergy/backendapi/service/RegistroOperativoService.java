@@ -26,10 +26,13 @@ public class RegistroOperativoService extends BaseService<RegistroOperativo, Reg
     }
 
     public void cambiarEstado(Equipo equipo, Estado nuevoEstado) {
-        equipo.setEstado(nuevoEstado);
-        equipoRepository.save(equipo);
+        Equipo equipoManaged = equipoRepository.findById(equipo.getId())
+                .orElseThrow(() -> new RuntimeException("No se encontró el equipo"));
 
-        Optional<RegistroOperativo> actual = repo.findByEquipoAndFinIsNull(equipo);
+        equipoManaged.setEstado(nuevoEstado);
+        equipoRepository.save(equipoManaged);
+
+        Optional<RegistroOperativo> actual = repo.findByEquipoAndFinIsNull(equipoManaged);
 
         if (actual.isPresent()) {
             RegistroOperativo registroActual = actual.get();
@@ -40,7 +43,7 @@ public class RegistroOperativoService extends BaseService<RegistroOperativo, Reg
 
         RegistroOperativo nuevoRegistro = new RegistroOperativo();
 
-        nuevoRegistro.setEquipo(equipo);
+        nuevoRegistro.setEquipo(equipoManaged);
         nuevoRegistro.setEstado(nuevoEstado);
         nuevoRegistro.setInicio(LocalDateTime.now());
         nuevoRegistro.setConsumo(0);
