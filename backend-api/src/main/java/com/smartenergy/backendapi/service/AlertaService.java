@@ -35,11 +35,13 @@ public class AlertaService {
 
     public void delete(UUID id) { repo.deleteById(id); }
 
+    // metodo para generar una alerta
     public void generarAlerta(Aula aula, String tipo) {
+        // se verifica si la alerta ya existe
         boolean existe = repo.existsByAulaAndTipoAlertaAndEstado(aula, tipo, EstadoAlerta.PENDIENTE);
-
         if (existe) { return; }
 
+        // si no existe se instancia la alerta nueva
         Alerta alerta = new Alerta();
 
         alerta.setTipoAlerta(tipo);
@@ -50,18 +52,25 @@ public class AlertaService {
         repo.save(alerta);
     }
 
+    // metodo que representa la accion fisica de atender una alerta
     public void atenderAlerta(Alerta alerta) {
+        // se obtiene el equipo asociado al aula de la alerta
         Equipo equipo = alerta.getAula().getEquipo();
 
+        // switch para atender la alerta segun su tipo
         switch(alerta.getTipoAlerta()) {
+            // al atender:
             case "Falta Climatización":
+                // se cambia el estado del equipo a Encendido
                 registroOperativoService.cambiarEstado(equipo, Estado.ENCENDIDO);
                 break;
             case "Desperdicio":
+                // se cambia el estado del equipo a Apagado
                 registroOperativoService.cambiarEstado(equipo, Estado.APAGADO);
                 break;
         }
 
+        // una vez cambiado el estado, se marca como atendida
         alerta.setEstado(EstadoAlerta.ATENDIDA);
     }
 }

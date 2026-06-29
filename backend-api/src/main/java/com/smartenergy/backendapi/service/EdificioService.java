@@ -30,9 +30,10 @@ public class EdificioService extends BaseService<Edificio, EdificioRepository> {
         this.aulaRepository = aulaRepository;
     }
 
-    
+    // buscar todos los edificios
     public List<EdificioDTO> findAllDTO() {
 
+        // findAll pero se convierten a DTO para android studio
         return repo.findAll()
                 .stream()
                 .map(this::convertToDTO)
@@ -48,39 +49,29 @@ public class EdificioService extends BaseService<Edificio, EdificioRepository> {
         return convertToDTO(edificio);
     }
 
-
+    // metodo para convertir un edificio en un dto con todos sus valores calculados
     private EdificioDTO convertToDTO(Edificio edificio) {
 
         EdificioDTO dto = new EdificioDTO();
 
+        // se le agregan los datos del edificio al dto
         dto.setId(edificio.getId());
         dto.setNombre(edificio.getNombre());
 
 
-        dto.setConsumo(
-                calculoService.calcularConsumoEdificio(edificio.getId())
-        );
+        // se calculan los consumos y ahorros de ese edifico en especifico
+        dto.setConsumo(calculoService.calcularConsumoEdificio(edificio.getId()));
+        dto.setConsumoEsperado(calculoService.calcularConsumoEsperadoEdificio(edificio.getId()));
+        dto.setAhorro(calculoService.calcularAhorroEdificio(edificio.getId()));
 
-        dto.setConsumoEsperado(
-                calculoService.calcularConsumoEsperadoEdificio(edificio.getId())
-        );
-
-        dto.setConsumoEsperadoDiaCompleto(
-                calculoService.calcularConsumoEsperadoDiaCompletoEdificio(edificio.getId())
-        );
-
-        dto.setAhorro(
-                calculoService.calcularAhorroEdificio(edificio.getId())
-        );
-
-
+        // se verifica si tiene alertas activas
         boolean tieneAlertas =
                 alertaRepository.existsByAulaEdificioIdAndEstado(
                         edificio.getId(),
                         EstadoAlerta.PENDIENTE
                 );
 
-
+        // se define el estado del edificio en base a si tiene alertas o no
         dto.setEstado(
                 tieneAlertas ? "Problemas" : "OK"
         );
@@ -89,30 +80,20 @@ public class EdificioService extends BaseService<Edificio, EdificioRepository> {
         return dto;
     }
 
-
+    // dto especifico para el detalle edificio en la app
     public EdificioDTO findDetalle(UUID id) {
 
-        Edificio edificio = repo.findById(id)
-                .orElseThrow(() -> new RuntimeException("No existe edificio"));
+        // se busca el edificio
+        Edificio edificio = repo.findById(id).orElseThrow(() -> new RuntimeException("No existe edificio"));
 
 
         EdificioDTO detalle = new EdificioDTO();
 
+        // se establecen los datos
         detalle.setNombre(edificio.getNombre());
-
-        detalle.setAulas(
-                aulaRepository.findByEdificioId(id)
-        );
-
-
-        detalle.setConsumo(
-                calculoService.calcularConsumoEdificio(id)
-        );
-
-
-        detalle.setAhorro(
-                calculoService.calcularAhorroEdificio(id)
-        );
+        detalle.setAulas(aulaRepository.findByEdificioId(id));
+        detalle.setConsumo(calculoService.calcularConsumoEdificio(id));
+        detalle.setAhorro(calculoService.calcularAhorroEdificio(id));
 
 
         return detalle;

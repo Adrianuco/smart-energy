@@ -23,11 +23,14 @@ public class AuthService {
 
     public LoginResponse login(String cif, String password) {
 
+        // caso administrador
+        // se manda a buscar el admin por cif
         Administrador admin =
                 administradorRepository.findByCif(cif).orElse(null);
 
         if (admin != null) {
 
+            // se verifica la contraseña
             if (!admin.getPassword().equals(password)) {
                 throw new RuntimeException("Contraseña incorrecta");
             }
@@ -42,6 +45,7 @@ public class AuthService {
             return response;
         }
 
+        // caso apoyo losgistico
         ApoyoLogistica apoyo =
                 apoyoLogisticaRepository.findByCif(cif).orElse(null);
 

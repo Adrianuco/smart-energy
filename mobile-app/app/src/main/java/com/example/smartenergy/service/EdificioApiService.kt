@@ -14,8 +14,6 @@ interface EdificioApiService {
     @GET("edificio/all")
     suspend fun obtenerEdificios(): Response<List<Edificio>>
 
-    @GET("edificio/{id}")
-    suspend fun obtenerEdificioPorId(@Path("id") id: UUID): Response<Edificio>
 
     @POST("edificio/save")
     suspend fun guardarEdificio(@Body edificio: Edificio): Response<Edificio>

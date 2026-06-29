@@ -29,20 +29,29 @@ public class AulaService extends BaseService<Aula, AulaRepository> {
 
     @Override
     @Transactional
+    // metodo utilizado en la creacion de aulas manuales
     public Aula save(Aula aula) {
+        // verificar si el aula ya existe
         if (aula.getId() != null) {
             Aula existing = repo.findById(aula.getId()).orElse(null);
+            // verificamos si realmente existe el aula y su equipo
             if (existing != null && existing.getEquipo() != null) {
                 return repo.save(aula);
             }
         }
 
-        Equipo equipoModel = aula.getEquipo();
-        aula.setEquipo(null);
+        // aula nueva o no tiene equipo
 
+        // se guarda una copia del equipo que trae el aula
+        Equipo equipoModel = aula.getEquipo();
+
+        // desasociamos el equipo del aula
+        aula.setEquipo(null);
         Aula savedAula = repo.save(aula);
 
+        // en caso de que el aula si tenia equipo
         if (equipoModel != null) {
+            // creamos un nuevo equipo basandonos en la copia que guardamos antes
             Equipo nuevoEquipo = new Equipo();
             nuevoEquipo.setMarca(equipoModel.getMarca());
             nuevoEquipo.setModelo(equipoModel.getModelo());
@@ -51,20 +60,18 @@ public class AulaService extends BaseService<Aula, AulaRepository> {
             nuevoEquipo.setOperativo(true);
             nuevoEquipo.setPotenciaMinima(equipoModel.getPotenciaMinima());
             nuevoEquipo.setPotenciaNominal(equipoModel.getPotenciaNominal());
+            // se inicializa como apagado y el nuevo se asocia al aula creada
             nuevoEquipo.setEstado(Estado.APAGADO);
             nuevoEquipo.setAula(savedAula);
-
             nuevoEquipo = equipoRepository.save(nuevoEquipo);
+
+            // se inicializa el registro operativo del equipo
             registroOperativoService.cambiarEstado(nuevoEquipo, Estado.APAGADO);
 
             savedAula.setEquipo(nuevoEquipo);
         }
 
         return savedAula;
-    }
-
-    public Aula findByCodigo(String codigo){
-        return repo.findByCodigo(codigo).orElseThrow(() -> new RuntimeException("No existe el aula: " + codigo));
     }
 
     public List<Aula> findByEdificioId(UUID edificioId) {

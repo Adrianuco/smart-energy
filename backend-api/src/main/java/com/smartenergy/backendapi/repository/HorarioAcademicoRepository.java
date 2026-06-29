@@ -16,8 +16,10 @@ public interface HorarioAcademicoRepository extends JpaRepository<HorarioAcademi
 
     List<HorarioAcademico> findByAulaId(UUID id);
 
+    // saber si ya existe un horario
     boolean existsByAulaAndDiaSemanaAndHoraInicioAndHoraFin(Aula aula, int diaSemana, LocalTime horaInicio, LocalTime horaFin);
 
+    // saber si en un momento en especifico hay clase
     @Query("""
         SELECT COUNT(h) > 0 FROM HorarioAcademico h
         WHERE h.aula = ?1 AND h.diaSemana = ?2
@@ -25,7 +27,7 @@ public interface HorarioAcademicoRepository extends JpaRepository<HorarioAcademi
     """)
     boolean hayClase(Aula aula, int dia, LocalTime hora);
 
-
+    // retornar horarios proximos segun hora actual
     @Query("""
         SELECT h FROM HorarioAcademico h
         WHERE h.aula = ?1
@@ -35,6 +37,7 @@ public interface HorarioAcademicoRepository extends JpaRepository<HorarioAcademi
     """)
     List<HorarioAcademico> findProximaClase(Aula aula, int dia, LocalTime hora);
 
+    // retornar horarios anteriores segun hora actual
     @Query("""
         SELECT h FROM HorarioAcademico h
         WHERE h.aula = ?1

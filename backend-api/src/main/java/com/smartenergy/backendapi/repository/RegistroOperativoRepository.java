@@ -15,12 +15,15 @@ import java.util.UUID;
 @Repository
 public interface RegistroOperativoRepository extends JpaRepository<RegistroOperativo, UUID> {
 
+    // buscar registro operativo actual
     Optional<RegistroOperativo> findByEquipoAndFinIsNull(Equipo equipo);
 
+    // busca el registro operativo mas antiguo
     Optional<RegistroOperativo> findFirstByEquipoOrderByInicioAsc(Equipo equipo);
 
-    List<RegistroOperativo> findByInicioBetween(LocalDateTime inicio, LocalDateTime fin);
-
-    @Query("SELECT r FROM RegistroOperativo r WHERE r.inicio < :end AND (r.fin IS NULL OR r.fin > :start)")
+    // retorna todos los registros operativos en el rango desde start hasta end
+    @Query(
+            "SELECT r FROM RegistroOperativo r WHERE r.inicio < :end AND (r.fin IS NULL OR r.fin > :start)"
+    )
     List<RegistroOperativo> findOverlapping(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 }

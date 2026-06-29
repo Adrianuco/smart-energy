@@ -35,22 +35,32 @@ public class DashboardService {
         this.equipoRepository = equipoRepository;
     }
 
+    // metodo para obtener el dashboard
     public DashboardDTO getDashboard() {
         DashboardDTO dto = new DashboardDTO();
 
+        // se calculan los datos de consumo y ahorro
         double consumoActual = calculoService.calcularConsumoHoy();
         double consumoEsperado = calculoService.calcularConsumoEsperadoTotalHoy();
         double kwhAhorrados = Math.max(0.0, consumoEsperado - consumoActual);
 
         dto.setConsumoActual(consumoActual);
+        // se calcula el ahorro hasta ese momento en el tiempo
         dto.setAhorro(calculoService.calcularAhorro());
         dto.setKwhAhorrados(kwhAhorrados);
+
+        // se cuentan todas las alertas e incidencias filtradas por pendiente
         dto.setAlertasActivas(alertaService.findAll().stream().filter(a -> a.getEstado() == EstadoAlerta.PENDIENTE).count());
+        dto.setIncidencias(incidenciaService.findAll().stream().filter(a -> a.getEstado() == EstadoAlerta.PENDIENTE).count());
+
+        // se cuentan todos los edificios y equipos
         dto.setEdificios(edificioRepository.count());
         dto.setEquiposActivos(equipoRepository.count());
-        dto.setIncidencias(incidenciaService.findAll().stream().filter(a -> a.getEstado() == EstadoAlerta.PENDIENTE).count());
+
+        // se calcula el consumo para las ultimas horas
         dto.setConsumoUltimasHoras(calculoService.calcularConsumoUltimasHoras());
 
+        // se calculan los labels de las horas para el grafico del dashboard
         LocalDateTime now = LocalDateTime.now();
         List<String> horas = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ha", ENGLISH);

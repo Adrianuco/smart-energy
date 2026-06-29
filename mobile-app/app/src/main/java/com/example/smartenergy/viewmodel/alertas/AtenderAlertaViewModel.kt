@@ -22,6 +22,7 @@ class AtenderAlertaViewModel(
 
     val state = _state.asStateFlow()
 
+    // buscar alerta al seleccionarla
     fun findById(id: UUID) {
         viewModelScope.launch{
             when(val result = repository.findById(id)) {
@@ -31,9 +32,12 @@ class AtenderAlertaViewModel(
         }
     }
 
+    // metodo al atender la alerta
     fun atenderAlerta(alerta: Alerta, onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
+            // creamos una copia de la alerta y le cambiamos el estado
             val updated = alerta.copy(estado = EstadoAlerta.ATENDIDA)
+            // actualizamos
             when (repository.update(updated)) {
                 is ApiResult.Success -> {
                     onResult(true)

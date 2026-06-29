@@ -25,15 +25,20 @@ public class RegistroOperativoService extends BaseService<RegistroOperativo, Reg
         this.equipoRepository = equipoRepository;
     }
 
+    // metodo para cambiar el estado de un reguistro operativo
     public void cambiarEstado(Equipo equipo, Estado nuevoEstado) {
+        // buscamos si existe el equipo
         Equipo equipoManaged = equipoRepository.findById(equipo.getId())
                 .orElseThrow(() -> new RuntimeException("No se encontró el equipo"));
 
+        // establecemos el nuevo estado del equipo y guardamos
         equipoManaged.setEstado(nuevoEstado);
         equipoRepository.save(equipoManaged);
 
+        // buscamos el registro operativo actual
         Optional<RegistroOperativo> actual = repo.findByEquipoAndFinIsNull(equipoManaged);
 
+        // cerramos el registro operativo actual y calculamos su consumo hasta ese momento
         if (actual.isPresent()) {
             RegistroOperativo registroActual = actual.get();
             registroActual.setFin(LocalDateTime.now());
@@ -41,6 +46,7 @@ public class RegistroOperativoService extends BaseService<RegistroOperativo, Reg
             repo.save(registroActual);
         }
 
+        // inicializamos un nuevo registro operativo para el equipo con el tiempo actual
         RegistroOperativo nuevoRegistro = new RegistroOperativo();
 
         nuevoRegistro.setEquipo(equipoManaged);

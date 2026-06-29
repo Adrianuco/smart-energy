@@ -10,5 +10,6 @@ import java.util.UUID;
 @Repository
 public interface IConfigSistemaRepository extends JpaRepository<ConfigSistema, UUID> {
 
+    // obtener la primera configuracion
     Optional<ConfigSistema> findFirstByOrderByIdAsc();
 }

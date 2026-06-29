@@ -9,6 +9,5 @@ data class Edificio(
     val aulas: List<Aula>? = emptyList(),
     val id: String? = null,
     val consumoEsperado: Float = 0f,
-    val consumoEsperadoDiaCompleto: Float = 0f,
     val ahorro: Float = 0f
 )
