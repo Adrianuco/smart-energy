@@ -8,6 +8,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 import java.util.UUID
 
 interface EdificioApiService {
@@ -27,6 +28,6 @@ interface EdificioApiService {
     @GET("reportes/consumo-historico/{id}")
     suspend fun obtenerConsumoHistorico(
         @Path("id") id: UUID,
-        @retrofit2.http.Query("periodo") periodo: String
+        @Query("periodo") periodo: String
     ): Response<List<Double>>
 }
