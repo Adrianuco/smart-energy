@@ -63,7 +63,6 @@ fun ReportsScreen(
 ) {
     val state by viewModel.state.collectAsState()
     var periodoSeleccionado by remember { mutableStateOf("Semana") }
-    var fechaSeleccionada by remember { mutableStateOf(LocalDate.now()) }
 
     Scaffold(
         topBar = {

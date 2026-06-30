@@ -1,5 +1,6 @@
 package com.example.smartenergy.service
 
+import com.example.smartenergy.model.AsignacionEquiposRequest
 import com.example.smartenergy.model.Equipo
 import retrofit2.Response
 import retrofit2.http.Body
@@ -21,4 +22,7 @@ interface EquipoApiService {
 
     @PUT("equipo/update")
     suspend fun actualizarEquipo(@Body equipo: Equipo): Response<Equipo>
+
+    @POST("equipo/asignar-equipos")
+    suspend fun asignarEquipos(@Body request: AsignacionEquiposRequest): Response<Void>
 }

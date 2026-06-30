@@ -4,11 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.smartenergy.model.Aula
 import com.example.smartenergy.model.Edificio
-import com.example.smartenergy.model.Equipo
 import com.example.smartenergy.repository.AulaRepository
 import com.example.smartenergy.repository.EdificioRepository
 import com.example.smartenergy.repository.EquipoRepository
 import com.example.smartenergy.service.ApiResult
+import com.example.smartenergy.viewmodel.OperationState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -52,26 +52,39 @@ class InfrastructureViewModel(
         }
     }
 
-    fun guardarEdificio(edificio: Edificio, onResult: (Boolean) -> Unit) {
+    private val _saveState = MutableStateFlow<OperationState>(OperationState.Idle)
+    val saveState = _saveState.asStateFlow()
+
+    fun resetSaveState() {
+        _saveState.value = OperationState.Idle
+    }
+
+    fun guardarEdificio(edificio: Edificio) {
         viewModelScope.launch {
+            _saveState.value = OperationState.Loading
             when (edificioRepository.save(edificio)) {
                 is ApiResult.Success -> {
                     loadInfrastructure()
-                    onResult(true)
+                    _saveState.value = OperationState.Success
                 }
-                is ApiResult.Error -> onResult(false)
+                is ApiResult.Error -> {
+                    _saveState.value = OperationState.Error("Error")
+                }
             }
         }
     }
 
-    fun guardarAula(aula: Aula, onResult: (Boolean) -> Unit) {
+    fun guardarAula(aula: Aula) {
         viewModelScope.launch {
+            _saveState.value = OperationState.Loading
             when (aulaRepository.save(aula)) {
                 is ApiResult.Success -> {
                     loadInfrastructure()
-                    onResult(true)
+                    _saveState.value = OperationState.Success
                 }
-                is ApiResult.Error -> onResult(false)
+                is ApiResult.Error -> {
+                    _saveState.value = OperationState.Error("Error")
+                }
             }
         }
     }

@@ -36,6 +36,28 @@ fun RegistroUsuarioScreen(
     var isSaving by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
+    val mutationState by viewModel.mutationState.collectAsState()
+
+    LaunchedEffect(mutationState) {
+        when (mutationState) {
+            is com.example.smartenergy.viewmodel.OperationState.Loading -> {
+                isSaving = true
+                errorMessage = null
+            }
+            is com.example.smartenergy.viewmodel.OperationState.Success -> {
+                isSaving = false
+                viewModel.resetMutationState()
+                onRegistroSuccess()
+            }
+            is com.example.smartenergy.viewmodel.OperationState.Error -> {
+                isSaving = false
+                errorMessage = (mutationState as com.example.smartenergy.viewmodel.OperationState.Error).message
+                viewModel.resetMutationState()
+            }
+            else -> {}
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -145,8 +167,6 @@ fun RegistroUsuarioScreen(
 
             Button(
                 onClick = {
-                    isSaving = true
-                    errorMessage = null
                     if (rol == Rol.ADMINISTRADOR) {
                         val admin = Administrador(
                             id = null,
@@ -157,14 +177,7 @@ fun RegistroUsuarioScreen(
                             activo = activo,
                             nivelAcceso = nivelAcceso
                         )
-                        viewModel.agregarAdministrador(admin) { success ->
-                            isSaving = false
-                            if (success) {
-                                onRegistroSuccess()
-                            } else {
-                                errorMessage = "Error al registrar Administrador"
-                            }
-                        }
+                        viewModel.agregarAdministrador(admin)
                     } else {
                         val logistico = ApoyoLogistico(
                             id = null,
@@ -174,14 +187,7 @@ fun RegistroUsuarioScreen(
                             password = password,
                             activo = activo
                         )
-                        viewModel.agregarLogistico(logistico) { success ->
-                            isSaving = false
-                            if (success) {
-                                onRegistroSuccess()
-                            } else {
-                                errorMessage = "Error al registrar Apoyo Logístico"
-                            }
-                        }
+                        viewModel.agregarLogistico(logistico)
                     }
                 },
                 enabled = !isSaving,

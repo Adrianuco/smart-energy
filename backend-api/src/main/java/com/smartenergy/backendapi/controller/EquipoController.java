@@ -1,5 +1,6 @@
 package com.smartenergy.backendapi.controller;
 
+import com.smartenergy.backendapi.dto.AsignacionEquiposRequest;
 import com.smartenergy.backendapi.model.Equipo;
 import com.smartenergy.backendapi.service.EquipoService;
 import org.springframework.http.ResponseEntity;
@@ -45,5 +46,11 @@ public class EquipoController {
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/asignar-equipos")
+    public ResponseEntity<Void> asignarEquipos(@RequestBody AsignacionEquiposRequest request) {
+        service.asignarEquipos(request.getAulas(), request.getModelo());
+        return ResponseEntity.ok().build();
     }
 }

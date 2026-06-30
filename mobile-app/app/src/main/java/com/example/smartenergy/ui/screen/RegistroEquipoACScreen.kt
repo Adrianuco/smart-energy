@@ -107,6 +107,13 @@ fun RegistroEquipoACScreen(
                 shape = RoundedCornerShape(12.dp)
             )
 
+            LaunchedEffect(state) {
+                if (state is RegistrarEquipoState.Success) {
+                    onRegistroSuccess()
+                    viewModel.resetState()
+                }
+            }
+
             if (state is RegistrarEquipoState.Error) {
                 Text(
                     text = (state as RegistrarEquipoState.Error).message,
@@ -128,11 +135,7 @@ fun RegistroEquipoACScreen(
                         potenciaMinima = potenciaMinima.toDoubleOrNull() ?: 500.0,
                         potenciaNominal = potenciaNominal.toDoubleOrNull() ?: 2500.0
                     )
-                    viewModel.registrar(equipo) { success ->
-                        if (success) {
-                            onRegistroSuccess()
-                        }
-                    }
+                    viewModel.registrar(equipo)
                 },
                 enabled = state !is RegistrarEquipoState.Loading,
                 modifier = Modifier

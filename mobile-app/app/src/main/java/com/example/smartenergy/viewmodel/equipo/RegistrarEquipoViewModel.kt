@@ -17,19 +17,22 @@ class RegistrarEquipoViewModel(
     private val _state = MutableStateFlow<RegistrarEquipoState?>(null)
     val state = _state.asStateFlow()
 
-    fun registrar(equipo: Equipo, onResult: (Boolean) -> Unit) {
+    // metodo para registrar un equipo
+    fun registrar(equipo: Equipo) {
         viewModelScope.launch {
             _state.value = RegistrarEquipoState.Loading
             when (val result = repository.save(equipo)) {
                 is ApiResult.Success -> {
                     _state.value = RegistrarEquipoState.Success(result.data)
-                    onResult(true)
                 }
                 is ApiResult.Error -> {
                     _state.value = RegistrarEquipoState.Error(result.message)
-                    onResult(false)
                 }
             }
         }
+    }
+
+    fun resetState() {
+        _state.value = null
     }
 }

@@ -8,6 +8,7 @@ import com.example.smartenergy.service.ApiResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 class AtenderIncidenciaViewModel(
     private val repository: IncidenciaRepository
@@ -16,8 +17,8 @@ class AtenderIncidenciaViewModel(
 
     val state = _state.asStateFlow()
 
-
-    fun findById(id: java.util.UUID) {
+    // buscar incidencia por id al seleccionar una
+    fun findById(id: UUID) {
         viewModelScope.launch {
             _state.value = AtenderIncidenciaState.Loading
             when (val result = repository.findById(id)) {
@@ -27,6 +28,7 @@ class AtenderIncidenciaViewModel(
         }
     }
 
+    // actualizar una incidencia al gestionar
     fun update(incidencia: Incidencia) {
         viewModelScope.launch{
             _state.value = AtenderIncidenciaState.Loading

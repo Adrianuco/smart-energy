@@ -1,5 +1,6 @@
 package com.example.smartenergy.repository
 
+import com.example.smartenergy.model.AsignacionEquiposRequest
 import com.example.smartenergy.model.Equipo
 import com.example.smartenergy.service.ApiResult
 import com.example.smartenergy.service.EquipoApiService
@@ -50,6 +51,19 @@ class EquipoRepository(private val apiService: EquipoApiService) {
             val response = apiService.actualizarEquipo(equipo)
             if (response.isSuccessful) {
                 ApiResult.Success(response.body()!!)
+            } else {
+                ApiResult.Error("Error HTTP: ${response.code()}")
+            }
+        } catch (ex: Exception) {
+            ApiResult.Error("Error: ${ex.message}")
+        }
+    }
+
+    suspend fun asignarEquipos(request: AsignacionEquiposRequest): ApiResult<Unit> {
+        return try {
+            val response = apiService.asignarEquipos(request)
+            if (response.isSuccessful) {
+                ApiResult.Success(Unit)
             } else {
                 ApiResult.Error("Error HTTP: ${response.code()}")
             }

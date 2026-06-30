@@ -22,6 +22,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -80,10 +82,29 @@ fun SingleAulaForm(
 
         ACSelector(selectedAC, equipos) { selectedAC = it }
 
+        val saveState by viewModel.saveState.collectAsState()
+
+        LaunchedEffect(saveState) {
+            when (saveState) {
+                is com.example.smartenergy.viewmodel.OperationState.Loading -> {
+                    isSaving = true
+                }
+                is com.example.smartenergy.viewmodel.OperationState.Success -> {
+                    isSaving = false
+                    aulaNombre = ""
+                    viewModel.resetSaveState()
+                }
+                is com.example.smartenergy.viewmodel.OperationState.Error -> {
+                    isSaving = false
+                    viewModel.resetSaveState()
+                }
+                else -> {}
+            }
+        }
+
         Button(
             onClick = {
                 if (aulaNombre.isNotBlank()) {
-                    isSaving = true
                     val edificioObj = edificios.find { it.nombre == selectedBuilding }
                     val nuevoAula = Aula(
                         id = null,
@@ -93,12 +114,7 @@ fun SingleAulaForm(
                         equipo = selectedAC,
                         edificio = edificioObj
                     )
-                    viewModel.guardarAula(nuevoAula) { success ->
-                        isSaving = false
-                        if (success) {
-                            aulaNombre = ""
-                        }
-                    }
+                    viewModel.guardarAula(nuevoAula)
                 }
             },
             enabled = !isSaving && aulaNombre.isNotBlank(),

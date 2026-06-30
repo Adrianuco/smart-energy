@@ -21,6 +21,7 @@ class DetalleEdificioViewModel(
 
     val state = _state.asStateFlow()
 
+    // buscar el detalle de un edificio
     fun findDetalle(id: UUID) {
         viewModelScope.launch{
             when(val result = repository.findDetalle(id)) {
@@ -30,6 +31,7 @@ class DetalleEdificioViewModel(
         }
     }
 
+    // cambiar el estado de un equipo de un aula del edificio
     fun cambiarEstado(equipoId: UUID, nuevoEstado: Estado, edificioId: UUID) {
         viewModelScope.launch {
             when(val result = registroOperativoRepository.cambiarEstado(equipoId, nuevoEstado)) {

@@ -183,7 +183,7 @@ fun DynamicAulaForm(
                                 equipo = selectedAC,
                                 edificio = edificioObj
                             )
-                            viewModel.guardarAula(aula) { }
+                            viewModel.guardarAula(aula)
                         }
                     }
                 }

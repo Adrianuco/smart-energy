@@ -26,6 +26,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.smartenergy.model.Edificio
@@ -62,10 +64,29 @@ fun EdificiosSection(
             )
         )
         Spacer(Modifier.height(12.dp))
+        val saveState by viewModel.saveState.collectAsState()
+
+        LaunchedEffect(saveState) {
+            when (saveState) {
+                is com.example.smartenergy.viewmodel.OperationState.Loading -> {
+                    isSaving = true
+                }
+                is com.example.smartenergy.viewmodel.OperationState.Success -> {
+                    isSaving = false
+                    buildingName = ""
+                    viewModel.resetSaveState()
+                }
+                is com.example.smartenergy.viewmodel.OperationState.Error -> {
+                    isSaving = false
+                    viewModel.resetSaveState()
+                }
+                else -> {}
+            }
+        }
+
         Button(
             onClick = {
                 if (buildingName.isNotBlank()) {
-                    isSaving = true
                     val nuevoEdificio = Edificio(
                         id = null,
                         nombre = buildingName,
@@ -73,12 +94,7 @@ fun EdificiosSection(
                         estado = "OK",
                         aulas = emptyList()
                     )
-                    viewModel.guardarEdificio(nuevoEdificio) { success ->
-                        isSaving = false
-                        if (success) {
-                            buildingName = ""
-                        }
-                    }
+                    viewModel.guardarEdificio(nuevoEdificio)
                 }
             },
             enabled = !isSaving && buildingName.isNotBlank(),

@@ -14,16 +14,16 @@ import java.util.UUID;
 @Service
 public class AulaService extends BaseService<Aula, AulaRepository> {
 
-    private final EquipoRepository equipoRepository;
+    private final EquipoService equipoService;
     private final RegistroOperativoService registroOperativoService;
 
     protected AulaService(
             AulaRepository repository,
-            EquipoRepository equipoRepository,
+            EquipoService equipoService,
             RegistroOperativoService registroOperativoService
     ) {
         super(repository);
-        this.equipoRepository = equipoRepository;
+        this.equipoService = equipoService;
         this.registroOperativoService = registroOperativoService;
     }
 
@@ -52,21 +52,7 @@ public class AulaService extends BaseService<Aula, AulaRepository> {
         // en caso de que el aula si tenia equipo
         if (equipoModel != null) {
             // creamos un nuevo equipo basandonos en la copia que guardamos antes
-            Equipo nuevoEquipo = new Equipo();
-            nuevoEquipo.setMarca(equipoModel.getMarca());
-            nuevoEquipo.setModelo(equipoModel.getModelo());
-            nuevoEquipo.setBtu(equipoModel.getBtu());
-            nuevoEquipo.setEficiencia(equipoModel.getEficiencia());
-            nuevoEquipo.setOperativo(true);
-            nuevoEquipo.setPotenciaMinima(equipoModel.getPotenciaMinima());
-            nuevoEquipo.setPotenciaNominal(equipoModel.getPotenciaNominal());
-            // se inicializa como apagado y el nuevo se asocia al aula creada
-            nuevoEquipo.setEstado(Estado.APAGADO);
-            nuevoEquipo.setAula(savedAula);
-            nuevoEquipo = equipoRepository.save(nuevoEquipo);
-
-            // se inicializa el registro operativo del equipo
-            registroOperativoService.cambiarEstado(nuevoEquipo, Estado.APAGADO);
+            Equipo nuevoEquipo = equipoService.crearEquipoParaAula(savedAula, equipoModel);
 
             savedAula.setEquipo(nuevoEquipo);
         }

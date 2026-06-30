@@ -26,7 +26,7 @@ import androidx.compose.runtime.collectAsState
 import com.example.smartenergy.model.Aula
 import com.example.smartenergy.model.EstadoAlerta
 import com.example.smartenergy.model.Incidencia
-import com.example.smartenergy.viewmodel.incidencias.AtenderIncidenciaState
+import com.example.smartenergy.viewmodel.incidencias.CrearIncidenciaState
 import com.example.smartenergy.viewmodel.incidencias.CrearIncidenciaViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,8 +38,9 @@ fun IncidenciaScreen(
     val state by viewModel.state.collectAsState()
 
     LaunchedEffect(state) {
-        if (state is AtenderIncidenciaState.Success) {
+        if (state is CrearIncidenciaState.Success) {
             onEnviarClick()
+            viewModel.resetState()
         }
     }
 
@@ -50,19 +51,15 @@ fun IncidenciaScreen(
         "Otro"
     )
 
-    val dbAulas by viewModel.aulas.collectAsState()
+    val dbAulasState by viewModel.aulas.collectAsState()
 
-    val aulas = if (dbAulas.isNotEmpty()) {
-        dbAulas.map { it.codigo.removePrefix("Aula ").trim() }.distinct().sorted()
-    } else {
-        listOf(
-            "A-101",
-            "A-102",
-            "B-201",
-            "B-202",
-            "C-301",
-            "C-302"
-        )
+    val aulas = remember(dbAulasState) {
+        val stateVal = dbAulasState
+        if (stateVal is CrearIncidenciaState.AulasSucces) {
+            stateVal.aulas.map { it.codigo.removePrefix("Aula ").trim() }.distinct().sorted()
+        } else {
+            emptyList()
+        }
     }
 
     var descripcion by remember { mutableStateOf("") }
@@ -301,9 +298,9 @@ fun IncidenciaScreen(
             )
         }
 
-        if (state is AtenderIncidenciaState.Error) {
+        if (state is CrearIncidenciaState.Error) {
             Text(
-                text = (state as AtenderIncidenciaState.Error).message,
+                text = (state as CrearIncidenciaState.Error).message,
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall
             )
@@ -312,7 +309,9 @@ fun IncidenciaScreen(
         Button(
             onClick = {
                 val selectedAula = if (aulaSeleccionada != "Seleccionar aula") {
-                    dbAulas.find { it.codigo.removePrefix("Aula ").trim() == aulaSeleccionada || it.codigo == aulaSeleccionada }
+                    val stateVal = dbAulasState
+                    val listAulas = if (stateVal is CrearIncidenciaState.AulasSucces) stateVal.aulas else emptyList()
+                    listAulas.find { it.codigo.removePrefix("Aula ").trim() == aulaSeleccionada || it.codigo == aulaSeleccionada }
                         ?: Aula(
                             id = null,
                             codigo = "Aula $aulaSeleccionada",
@@ -329,13 +328,13 @@ fun IncidenciaScreen(
                 )
                 viewModel.save(incidencia)
             },
-            enabled = state !is AtenderIncidenciaState.Loading,
+            enabled = state !is CrearIncidenciaState.Loading,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
             shape = RoundedCornerShape(16.dp)
         ) {
-            if (state is AtenderIncidenciaState.Loading) {
+            if (state is CrearIncidenciaState.Loading) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(24.dp),
                     color = MaterialTheme.colorScheme.onPrimary

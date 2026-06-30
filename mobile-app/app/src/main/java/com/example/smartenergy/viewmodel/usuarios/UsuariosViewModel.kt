@@ -7,6 +7,7 @@ import com.example.smartenergy.model.ApoyoLogistico
 import com.example.smartenergy.repository.AdministradorRepository
 import com.example.smartenergy.repository.ApoyoLogisticoRepository
 import com.example.smartenergy.service.ApiResult
+import com.example.smartenergy.viewmodel.OperationState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -44,26 +45,39 @@ class UsuariosViewModel(
         }
     }
 
-    fun agregarAdministrador(administrador: Administrador, onResult: (Boolean) -> Unit) {
+    private val _mutationState = MutableStateFlow<OperationState>(OperationState.Idle)
+    val mutationState = _mutationState.asStateFlow()
+
+    fun resetMutationState() {
+        _mutationState.value = OperationState.Idle
+    }
+
+    fun agregarAdministrador(administrador: Administrador) {
         viewModelScope.launch {
+            _mutationState.value = OperationState.Loading
             when (adminRepository.save(administrador)) {
                 is ApiResult.Success -> {
                     loadUsuarios()
-                    onResult(true)
+                    _mutationState.value = OperationState.Success
                 }
-                is ApiResult.Error -> onResult(false)
+                is ApiResult.Error -> {
+                    _mutationState.value = OperationState.Error("Error al registrar Administrador")
+                }
             }
         }
     }
 
-    fun agregarLogistico(logistico: ApoyoLogistico, onResult: (Boolean) -> Unit) {
+    fun agregarLogistico(logistico: ApoyoLogistico) {
         viewModelScope.launch {
+            _mutationState.value = OperationState.Loading
             when (logisticaRepository.save(logistico)) {
                 is ApiResult.Success -> {
                     loadUsuarios()
-                    onResult(true)
+                    _mutationState.value = OperationState.Success
                 }
-                is ApiResult.Error -> onResult(false)
+                is ApiResult.Error -> {
+                    _mutationState.value = OperationState.Error("Error al registrar Apoyo Logístico")
+                }
             }
         }
     }

@@ -17,9 +17,12 @@ import androidx.compose.ui.unit.dp
 import com.example.smartenergy.ui.components.atenderalerta.DetailRow
 import com.example.smartenergy.ui.theme.AppColors
 import com.example.smartenergy.model.Alerta
+import com.example.smartenergy.model.Estado
+import com.example.smartenergy.viewmodel.OperationState
 
 import com.example.smartenergy.viewmodel.alertas.AtenderAlertaState
 import com.example.smartenergy.viewmodel.alertas.AtenderAlertaViewModel
+import java.util.UUID.fromString
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,10 +32,27 @@ fun AtenderAlertaScreen(
     onBack: () -> Unit
 ) {
     LaunchedEffect(alertaId) {
-        viewModel.findById(java.util.UUID.fromString(alertaId))
+        viewModel.findById(fromString(alertaId))
     }
 
     val state = viewModel.state.collectAsState()
+
+    val estadoState by viewModel.estadoState.collectAsState()
+    val atenderState by viewModel.atenderState.collectAsState()
+
+    LaunchedEffect(estadoState) {
+        if (estadoState is OperationState.Success) {
+            viewModel.findById(fromString(alertaId))
+            viewModel.resetEstadoState()
+        }
+    }
+
+    LaunchedEffect(atenderState) {
+        if (atenderState is OperationState.Success) {
+            viewModel.resetAtenderState()
+            onBack()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -153,7 +173,7 @@ fun AtenderAlertaScreen(
                                 DetailRow(icon = Icons.Outlined.DeviceThermostat, label = "Equipo", value = "${equipo.marca} ${equipo.modelo}")
                                 HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                                 
-                                val isEncendido = equipo.estado == com.example.smartenergy.model.Estado.ENCENDIDO
+                                val isEncendido = equipo.estado == Estado.ENCENDIDO
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -184,14 +204,12 @@ fun AtenderAlertaScreen(
                                     Switch(
                                         checked = isEncendido,
                                         onCheckedChange = { checked ->
-                                            val nuevoEstado = if (checked) com.example.smartenergy.model.Estado.ENCENDIDO else com.example.smartenergy.model.Estado.APAGADO
+                                            val nuevoEstado = if (checked) Estado.ENCENDIDO else Estado.APAGADO
                                             if (equipo.id != null) {
                                                 viewModel.cambiarEstado(
-                                                    java.util.UUID.fromString(equipo.id),
+                                                    fromString(equipo.id),
                                                     nuevoEstado
-                                                ) {
-                                                    viewModel.findById(java.util.UUID.fromString(alertaId))
-                                                }
+                                                )
                                             }
                                         }
                                     )
@@ -204,11 +222,7 @@ fun AtenderAlertaScreen(
 
                     Button(
                         onClick = {
-                            viewModel.atenderAlerta(alerta) { success ->
-                                if (success) {
-                                    onBack()
-                                }
-                            }
+                            viewModel.atenderAlerta(alerta)
                         },
                         modifier = Modifier.fillMaxWidth().height(56.dp),
                         shape = RoundedCornerShape(12.dp),

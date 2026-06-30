@@ -2,6 +2,7 @@ package com.example.smartenergy.viewmodel.horarios
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.smartenergy.model.AsignacionEquiposRequest
 import com.example.smartenergy.model.Aula
 import com.example.smartenergy.model.Equipo
 import com.example.smartenergy.model.Estado
@@ -25,7 +26,10 @@ class HorariosViewModel(
     private val registroOperativoRepository: RegistroOperativoRepository
 ) : ViewModel() {
 
+    // estado para carga de horarios
     private val _state = MutableStateFlow<HorariosState>(HorariosState.Loading)
+
+    // estado para la importacion de horarios
     private val _importState = MutableStateFlow<ImportState>(ImportState.Idle)
     val state = _state.asStateFlow()
     val importState = _importState.asStateFlow()
@@ -37,15 +41,20 @@ class HorariosViewModel(
     fun findAll() {
         viewModelScope.launch {
             _state.value = HorariosState.Loading
+            // buscamos todos los horarios, aulas y equipos
             val horariosResult = repository.findAll()
             val aulasResult = aulaRepository.findAll()
             val equiposResult = equipoRepository.findAll()
 
+            // en caso de success
             if (horariosResult is ApiResult.Success &&
                 aulasResult is ApiResult.Success &&
                 equiposResult is ApiResult.Success
             ) {
+                // filtramos las aulas que no tienen equipo
                 val aulasSinEquipo = aulasResult.data.filter { it.equipo == null }
+
+                // en success agregamos los datos
                 _state.value = HorariosState.Success(
                     horarios = horariosResult.data,
                     aulasSinEquipo = aulasSinEquipo,
@@ -53,6 +62,7 @@ class HorariosViewModel(
                     todasAulas = aulasResult.data
                 )
             } else {
+                // en error los errores de cada llamada
                 val hoMsg = (horariosResult as? ApiResult.Error)?.message ?: ""
                 val auMsg = (aulasResult as? ApiResult.Error)?.message ?: ""
                 val eqMsg = (equiposResult as? ApiResult.Error)?.message ?: ""
@@ -63,64 +73,23 @@ class HorariosViewModel(
         }
     }
 
+    // metodo al momento de asignar un modelo de equipo a las aulas
     fun asignarEquipo(aulas: List<Aula>, equipoModelo: Equipo) {
         viewModelScope.launch {
             _state.value = HorariosState.Loading
-            var success = true
-            var errorMessage = ""
-            for (aula in aulas) {
-                // Create a NEW equipment using the model as a template
-                val newEquipo = Equipo(
-                    id = null,
-                    marca = equipoModelo.marca,
-                    modelo = equipoModelo.modelo,
-                    btu = equipoModelo.btu,
-                    eficiencia = equipoModelo.eficiencia,
-                    operativo = equipoModelo.operativo,
-                    potenciaMinima = equipoModelo.potenciaMinima,
-                    potenciaNominal = equipoModelo.potenciaNominal,
-                    aula = aula,
-                    estado = Estado.APAGADO
-                )
-                // Save the new equipment in the backend
-                when (val equipoResult = equipoRepository.save(newEquipo)) {
-                    is ApiResult.Success -> {
-                        val savedEquipo = equipoResult.data
-                        // Create the RegistroOperativo for this new equipment
-                        val registro = RegistroOperativo(
-                            estado = Estado.APAGADO,
-                            consumo = 0.0,
-                            inicio = LocalDateTime.now(),
-                            fin = null,
-                            equipo = savedEquipo
-                        )
-                        // Save the RegistroOperativo
-                        when (val registroResult = registroOperativoRepository.save(registro)) {
-                            is ApiResult.Success -> {
-                                // OK
-                            }
-                            is ApiResult.Error -> {
-                                success = false
-                                errorMessage = registroResult.message
-                                break
-                            }
-                        }
-                    }
-                    is ApiResult.Error -> {
-                        success = false
-                        errorMessage = equipoResult.message
-                        break
-                    }
+            val request = AsignacionEquiposRequest(aulas, equipoModelo)
+            when (val result = equipoRepository.asignarEquipos(request)) {
+                is ApiResult.Success -> {
+                    findAll()
                 }
-            }
-            if (success) {
-                findAll()
-            } else {
-                _state.value = HorariosState.Error(errorMessage)
+                is ApiResult.Error -> {
+                    _state.value = HorariosState.Error(result.message)
+                }
             }
         }
     }
 
+    // momento de importar el excel
     fun import(file: MultipartBody.Part) {
         viewModelScope.launch {
             _importState.value = ImportState.Loading
@@ -135,6 +104,7 @@ class HorariosViewModel(
         }
     }
 
+    // al crear un horario de manera manual
     fun crearHorario(horario: HorarioAcademico) {
         viewModelScope.launch {
             _state.value = HorariosState.Loading

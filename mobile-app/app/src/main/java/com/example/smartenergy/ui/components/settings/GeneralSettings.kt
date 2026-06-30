@@ -39,6 +39,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -130,16 +131,32 @@ fun GeneralSettings(
 
                     Spacer(Modifier.height(12.dp))
 
+                    val updateState by viewModel.updateState.collectAsState()
+
+                    LaunchedEffect(updateState) {
+                        when (updateState) {
+                            is com.example.smartenergy.viewmodel.OperationState.Loading -> {
+                                isSaving = true
+                            }
+                            is com.example.smartenergy.viewmodel.OperationState.Success -> {
+                                isSaving = false
+                                viewModel.resetUpdateState()
+                            }
+                            is com.example.smartenergy.viewmodel.OperationState.Error -> {
+                                isSaving = false
+                                viewModel.resetUpdateState()
+                            }
+                            else -> {}
+                        }
+                    }
+
                     Button(
                         onClick = {
-                            isSaving = true
                             val updatedConfig = config.copy(
                                 tiempoMinimoDesperdicio = minWasteHours.toInt(),
                                 margenEncendido = warningMinutes.toInt()
                             )
-                            viewModel.updateConfig(updatedConfig) {
-                                isSaving = false
-                            }
+                            viewModel.updateConfig(updatedConfig)
                         },
                         enabled = !isSaving,
                         modifier = Modifier.fillMaxWidth(),

@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import com.example.smartenergy.model.Alerta
 import com.example.smartenergy.model.Estado
 import com.example.smartenergy.model.EstadoAlerta
+import com.example.smartenergy.viewmodel.OperationState
 import java.util.UUID
 
 class AtenderAlertaViewModel(
@@ -32,26 +33,50 @@ class AtenderAlertaViewModel(
         }
     }
 
-    // metodo al atender la alerta
-    fun atenderAlerta(alerta: Alerta, onResult: (Boolean) -> Unit) {
+    // definimos estados al momento de atender la alerta
+    private val _atenderState = MutableStateFlow<OperationState>(OperationState.Idle)
+    val atenderState = _atenderState.asStateFlow()
+
+
+    // estados al momento de cambiar el estado de un equipo
+    private val _estadoState = MutableStateFlow<OperationState>(OperationState.Idle)
+    val estadoState = _estadoState.asStateFlow()
+
+    // funciones para resetear estados a idle
+    fun resetAtenderState() {
+        _atenderState.value = OperationState.Idle
+    }
+
+    fun resetEstadoState() {
+        _estadoState.value = OperationState.Idle
+    }
+
+    // representacion de atender una alerta
+    fun atenderAlerta(alerta: Alerta) {
         viewModelScope.launch {
-            // creamos una copia de la alerta y le cambiamos el estado
+            _atenderState.value = OperationState.Loading
+            // se copia la alerta y solo se cambia el estado
             val updated = alerta.copy(estado = EstadoAlerta.ATENDIDA)
-            // actualizamos
             when (repository.update(updated)) {
                 is ApiResult.Success -> {
-                    onResult(true)
+                    _atenderState.value = OperationState.Success
                 }
-                is ApiResult.Error -> onResult(false)
+                is ApiResult.Error -> {
+                    _atenderState.value = OperationState.Error("Error")
+                }
             }
         }
     }
 
-    fun cambiarEstado(equipoId: UUID, nuevoEstado: Estado, callback: () -> Unit = {}) {
+    // funcion al cambiar el estado de un equipo
+    fun cambiarEstado(equipoId: UUID, nuevoEstado: Estado) {
         viewModelScope.launch {
+            _estadoState.value = OperationState.Loading
             val result = registroOperativoRepository.cambiarEstado(equipoId, nuevoEstado)
             if (result is ApiResult.Success) {
-                callback()
+                _estadoState.value = OperationState.Success
+            } else {
+                _estadoState.value = OperationState.Error("Error")
             }
         }
     }

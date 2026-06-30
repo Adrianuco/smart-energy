@@ -22,6 +22,7 @@ import com.example.smartenergy.model.Incidencia
 
 import com.example.smartenergy.viewmodel.incidencias.AtenderIncidenciaState
 import com.example.smartenergy.viewmodel.incidencias.AtenderIncidenciaViewModel
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,7 +32,7 @@ fun AtenderIncidenciaScreen(
     onBack: () -> Unit
 ) {
     LaunchedEffect(incidenciaId) {
-        viewModel.findById(java.util.UUID.fromString(incidenciaId))
+        viewModel.findById(UUID.fromString(incidenciaId))
     }
 
     val state = viewModel.state.collectAsState()

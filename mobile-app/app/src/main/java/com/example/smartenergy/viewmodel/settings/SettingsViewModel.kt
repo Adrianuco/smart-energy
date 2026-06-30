@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.smartenergy.model.ConfigSistema
 import com.example.smartenergy.repository.ConfigSistemaRepository
 import com.example.smartenergy.service.ApiResult
+import com.example.smartenergy.viewmodel.OperationState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -37,16 +38,24 @@ class SettingsViewModel(
         }
     }
 
-    fun updateConfig(config: ConfigSistema, onResult: (Boolean) -> Unit) {
+    private val _updateState = MutableStateFlow<OperationState>(OperationState.Idle)
+    val updateState = _updateState.asStateFlow()
+
+    fun resetUpdateState() {
+        _updateState.value = OperationState.Idle
+    }
+
+    fun updateConfig(config: ConfigSistema) {
         viewModelScope.launch {
+            _updateState.value = OperationState.Loading
             val result = repository.update(config)
             when (result) {
                 is ApiResult.Success -> {
                     _state.value = SettingsState.Success(result.data)
-                    onResult(true)
+                    _updateState.value = OperationState.Success
                 }
                 is ApiResult.Error -> {
-                    onResult(false)
+                    _updateState.value = OperationState.Error(result.message)
                 }
             }
         }

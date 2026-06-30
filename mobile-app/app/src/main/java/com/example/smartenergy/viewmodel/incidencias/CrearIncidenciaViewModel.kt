@@ -15,11 +15,11 @@ class CrearIncidenciaViewModel(
     private val repository: IncidenciaRepository,
     private val aulaRepository: AulaRepository
 ): ViewModel() {
-    private val _state = MutableStateFlow<AtenderIncidenciaState>(AtenderIncidenciaState.Idle)
+    private val _state = MutableStateFlow<CrearIncidenciaState>(CrearIncidenciaState.Idle)
     val state = _state.asStateFlow()
 
-    private val _aulas = MutableStateFlow<List<Aula>>(emptyList())
-    val aulas = _aulas.asStateFlow()
+    private val _stateAulas = MutableStateFlow<CrearIncidenciaState>(CrearIncidenciaState.Loading)
+    val aulas = _stateAulas.asStateFlow()
 
     init {
         loadAulas()
@@ -28,19 +28,23 @@ class CrearIncidenciaViewModel(
     private fun loadAulas() {
         viewModelScope.launch {
             when (val result = aulaRepository.findAll()) {
-                is ApiResult.Success -> _aulas.value = result.data
-                else -> { /* ignore error */ }
+                is ApiResult.Success -> _stateAulas.value = CrearIncidenciaState.AulasSucces(result.data)
+                is ApiResult.Error -> _stateAulas.value = CrearIncidenciaState.AulasError(result.message)
             }
         }
     }
 
     fun save(incidencia: Incidencia) {
         viewModelScope.launch{
-            _state.value = AtenderIncidenciaState.Loading
+            _state.value = CrearIncidenciaState.Loading
             when(val result = repository.save(incidencia)) {
-                is ApiResult.Success -> _state.value = AtenderIncidenciaState.Success(result.data)
-                is ApiResult.Error -> _state.value = AtenderIncidenciaState.Error(result.message)
+                is ApiResult.Success -> _state.value = CrearIncidenciaState.Success(result.data)
+                is ApiResult.Error -> _state.value = CrearIncidenciaState.Error(result.message)
             }
         }
+    }
+
+    fun resetState() {
+        _state.value = CrearIncidenciaState.Idle
     }
 }
