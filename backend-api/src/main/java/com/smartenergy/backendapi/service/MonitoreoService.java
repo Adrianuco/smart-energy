@@ -146,29 +146,34 @@ public class MonitoreoService {
         // buscamos la clase anterior de esa aula
         Optional<HorarioAcademico> claseAnterior = horarioAcademicoRepository.findClaseAnterior(aula, diaActual, horaActual).stream().findFirst();
 
-        // caso 3: aire encendido
-        if (claseAnterior.isPresent()) {
-            // obtenemos fin de clase anterior e inicio de siguiente clase
-            LocalTime finClase = claseAnterior.get().getHoraFin();
-            LocalTime proximoInicio = proximaClase.map(HorarioAcademico::getHoraInicio).orElse(null);
-
-            boolean esDesperdicio;
-            // 3.1: aire encendido entre clases y el bloque es mayor al tiempo minimo de desperdidico de config sistema
-            if (proximoInicio != null) {
-                Duration bloqueDesperdicio = Duration.between(finClase, proximoInicio);
-                esDesperdicio = !hayClase && estado.getEstado() == Estado.ENCENDIDO 
-                        && bloqueDesperdicio.toMinutes() >= configSistema.getTiempoMinimoDesperdicio();
-            } else {
-            // 3.2: no existe proximo inicio asi que es la ultima clase
-                Duration tiempoDesdeFin = Duration.between(finClase, horaActual);
-                esDesperdicio = estado.getEstado() == Estado.ENCENDIDO 
-                        && tiempoDesdeFin.toMinutes() >= configSistema.getTiempoMinimoDesperdicio();
+        // caso 3: aire encendido fuera de clase
+        if (estado.getEstado() == Estado.ENCENDIDO && !hayClase) {
+            boolean dentroDeMargen = false;
+            if (proximaClase.isPresent()) {
+                Duration tiempoHastaInicio = Duration.between(horaActual, proximaClase.get().getHoraInicio());
+                // hay una clase proxima, no se genera alerta
+                if (tiempoHastaInicio.toMinutes() <= configSistema.getMargenEncendido()) {
+                    dentroDeMargen = true;
+                }
             }
 
-            // se manda la alerta en cualquiera de los dos casos
-            if (esDesperdicio) {
-                System.out.println("MONITOREO [Aula: " + aula.getCodigo() + "] -> Generando alerta 'Desperdicio' (Equipo encendido fuera de clase)");
-                alertaService.generarAlerta(aula, "Desperdicio");
+            if (!dentroDeMargen) {
+                boolean esDesperdicio = false;
+                if (claseAnterior.isPresent()) {
+                    Duration tiempoDesdeFin = Duration.between(claseAnterior.get().getHoraFin(), horaActual);
+                    // verificar que sea mayor al minimo del tiempo de desperdicio
+                    if (tiempoDesdeFin.toMinutes() >= configSistema.getTiempoMinimoDesperdicio()) {
+                        esDesperdicio = true;
+                    }
+                } else {
+                    // No hay clase anterior hoy y estamos fuera del margen de la próxima clase
+                    esDesperdicio = true;
+                }
+
+                if (esDesperdicio) {
+                    System.out.println("MONITOREO [Aula: " + aula.getCodigo() + "] -> Generando alerta 'Desperdicio' (Equipo encendido fuera de clase)");
+                    alertaService.generarAlerta(aula, "Desperdicio");
+                }
             }
         }
 
