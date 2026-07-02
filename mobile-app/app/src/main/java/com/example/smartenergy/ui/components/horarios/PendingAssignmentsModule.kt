@@ -196,7 +196,8 @@ fun PendingAssignmentsModule(
                         expanded = dropdownExpanded,
                         onDismissRequest = { dropdownExpanded = false }
                     ) {
-                        equiposDisponibles.forEach { equipo ->
+                        val distinctEquipos = equiposDisponibles.distinctBy { it.modelo }
+                        distinctEquipos.forEach { equipo ->
                             DropdownMenuItem(
                                 text = {
                                     Text("${equipo.marca} ${equipo.modelo} (${equipo.btu} BTU)")

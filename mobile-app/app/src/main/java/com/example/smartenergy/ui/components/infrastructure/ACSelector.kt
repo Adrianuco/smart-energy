@@ -27,10 +27,11 @@ fun ACSelector(
             color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(8.dp))
-        equipos.forEach { equipo ->
+        val distinctEquipos = equipos.distinctBy { it.modelo }
+        distinctEquipos.forEach { equipo ->
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
-                    selected = (selectedAC?.id == equipo.id),
+                    selected = (selectedAC?.modelo == equipo.modelo),
                     onClick = { onACSelected(equipo) },
                     colors = RadioButtonDefaults.colors(
                         selectedColor = MaterialTheme.colorScheme.primary
