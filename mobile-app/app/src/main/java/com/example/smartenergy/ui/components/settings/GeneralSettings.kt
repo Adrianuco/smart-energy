@@ -1,0 +1,228 @@
+package com.example.smartenergy.ui.components.settings
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Logout
+import androidx.compose.material.icons.outlined.NotificationsActive
+import androidx.compose.material.icons.outlined.Palette
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.example.smartenergy.model.ConfigSistema
+import com.example.smartenergy.viewmodel.settings.SettingsState
+import com.example.smartenergy.viewmodel.settings.SettingsViewModel
+
+@Composable
+fun GeneralSettings(
+    viewModel: SettingsViewModel
+) {
+    val state by viewModel.state.collectAsState()
+    val scrollState = rememberScrollState()
+
+    when (val currentState = state) {
+        SettingsState.Loading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        }
+        is SettingsState.Error -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(text = "Error: ${currentState.message}", color = MaterialTheme.colorScheme.error)
+            }
+        }
+        is SettingsState.Success -> {
+            val config = currentState.configSistema
+            var warningMinutes by remember(config) { mutableFloatStateOf(config.margenEncendido.toFloat()) }
+            var minWasteHours by remember(config) { mutableFloatStateOf(config.tiempoMinimoDesperdicio.toFloat()) }
+            var isSaving by remember { mutableStateOf(false) }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                SettingsGroup(title = "Configuración de Tolerancia", icon = Icons.Outlined.NotificationsActive) {
+                    Column {
+                        Text(
+                            "Notificación de advertencia",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                        Text(
+                            "Enviar aviso ${warningMinutes.toInt()} min antes de fin de clase",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Slider(
+                            value = warningMinutes,
+                            onValueChange = { warningMinutes = it },
+                            valueRange = 5f..30f,
+                            steps = 4,
+                            colors = SliderDefaults.colors(
+                                thumbColor = MaterialTheme.colorScheme.primary,
+                                activeTrackColor = MaterialTheme.colorScheme.primary,
+                                inactiveTrackColor = MaterialTheme.colorScheme.outlineVariant
+                            )
+                        )
+                    }
+
+                    Spacer(Modifier.height(12.dp))
+
+                    Column {
+                        Text(
+                            "Margen de desperdicio",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                        Text(
+                            "Ignorar huecos menores a ${minWasteHours.toInt()} min para alertas",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Slider(
+                            value = minWasteHours,
+                            onValueChange = { minWasteHours = it },
+                            valueRange = 60f..240f,
+                            steps = 2,
+                            colors = SliderDefaults.colors(
+                                thumbColor = MaterialTheme.colorScheme.primary,
+                                activeTrackColor = MaterialTheme.colorScheme.primary,
+                                inactiveTrackColor = MaterialTheme.colorScheme.outlineVariant
+                            )
+                        )
+                    }
+
+                    Spacer(Modifier.height(12.dp))
+
+                    val updateState by viewModel.updateState.collectAsState()
+
+                    LaunchedEffect(updateState) {
+                        when (updateState) {
+                            is com.example.smartenergy.viewmodel.OperationState.Loading -> {
+                                isSaving = true
+                            }
+                            is com.example.smartenergy.viewmodel.OperationState.Success -> {
+                                isSaving = false
+                                viewModel.resetUpdateState()
+                            }
+                            is com.example.smartenergy.viewmodel.OperationState.Error -> {
+                                isSaving = false
+                                viewModel.resetUpdateState()
+                            }
+                            else -> {}
+                        }
+                    }
+
+                    Button(
+                        onClick = {
+                            val updatedConfig = config.copy(
+                                tiempoMinimoDesperdicio = minWasteHours.toInt(),
+                                margenEncendido = warningMinutes.toInt()
+                            )
+                            viewModel.updateConfig(updatedConfig)
+                        },
+                        enabled = !isSaving,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary
+                        )
+                    ) {
+                        if (isSaving) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        } else {
+                            Text("Guardar Configuración")
+                        }
+                    }
+                }
+
+                SettingsGroup(title = "Sistema", icon = Icons.Outlined.Settings) {
+                    ListItem(
+                        headlineContent = {
+                            Text(
+                                "Versión de la aplicación",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        },
+                        supportingContent = {
+                            Text(
+                                "v1.0 (SmartEnergy)",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        },
+                        leadingContent = {
+                            Icon(
+                                Icons.Outlined.Info,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        },
+                        colors = ListItemDefaults.colors(
+                            containerColor = MaterialTheme.colorScheme.surface
+                        )
+                    )
+
+                    Spacer(Modifier.height(8.dp))
+
+                    Button(
+                        onClick = { /* TODO Logout */ },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Icon(Icons.Outlined.Logout, contentDescription = null)
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            "Cerrar Sesión",
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
